@@ -45,14 +45,10 @@ public class TestPlugins {
     	SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd_HHMMSSsss");
     	String sTestCycle = df.format(new Date(System.currentTimeMillis()));
     	
-    	File[] fileImgs = new File[]{
-    					new File("./test/resources/images/Capture2.JPG")
-    					,new File("./test/resources/images/japan-grapes.jpg")
-    					//,new File("./test/resources/images/car-plate-sg01.jpg")
-    					//,new File("./test/resources/images/car-plate-sg02.jpg")
-    					//,new File("./test/resources/images/car-plate-sg03.jpg")
-    			};
+    	File imgFolder = new File("./test/resources/images"); 
     	
+    	File[] fileImgs = FileUtil.getFilesWithExtensions(imgFolder, new String[] {".jpg"});
+   
     	File pluginsFolder =  new File("./test/resources/plugins");
     	File[] fPluginJars =  FileUtil.getFilesWithExtensions(pluginsFolder, new String[]{".jar",".zip"});
     	
@@ -80,6 +76,7 @@ public class TestPlugins {
 	    	{
 	    		iFileCount++;
 	    		long lStartMs = System.currentTimeMillis();
+	    		
 	    		Map<String, ?> mapResult = detector.detectImage(fileImg);
 	    		long lDetectionMs = (System.currentTimeMillis()-lStartMs);
 	    		
