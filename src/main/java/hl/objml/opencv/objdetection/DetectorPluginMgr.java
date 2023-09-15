@@ -14,9 +14,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
 import hl.common.PropUtil;
-import hl.objml.opencv.TestPlugins;
 
 public class DetectorPluginMgr {
 	
@@ -44,6 +42,7 @@ public class DetectorPluginMgr {
 			if(instance==null)
 			{
 				instance = new DetectorPluginMgr();
+				instance.classLoaderPlugin = initPluginsClassLoader(new File[]{});
 			}
 		}
 		return instance;
@@ -51,12 +50,12 @@ public class DetectorPluginMgr {
 	
 	public void setPluginPropFileName(String aPropfileName)
 	{
-		this._PLUGIN_PROP_FILENAME = aPropfileName;
+		_PLUGIN_PROP_FILENAME = aPropfileName;
 	}
 	
 	public void setPluginPropKeyPrefix(String aPropPrefix)
 	{
-		this.DEF_PLUGIN_PROPKEY_PREFIX = aPropPrefix;
+		DEF_PLUGIN_PROPKEY_PREFIX = aPropPrefix;
 	}
 	
 	public void addPluginPath(File aPluginSource)
@@ -137,7 +136,7 @@ public class DetectorPluginMgr {
 	}
 	
 	/////////////////////////////////////////////////////////////////////
-	private URLClassLoader initPluginsClassLoader(File[] aPluginSources)
+	private static URLClassLoader initPluginsClassLoader(File[] aPluginSources)
 	{
 		//
     	List<URL> listSourceURL = new ArrayList<URL>();
@@ -152,7 +151,7 @@ public class DetectorPluginMgr {
     	}
     	return new URLClassLoader(
     			listSourceURL.toArray(new URL[listSourceURL.size()]),
-    			TestPlugins.class.getClassLoader());
+    			DetectorPluginMgr.class.getClassLoader());
     	//
 	}
 	
