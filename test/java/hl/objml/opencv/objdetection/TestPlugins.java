@@ -53,10 +53,15 @@ public class TestPlugins {
     	File[] fPluginJars =  FileUtil.getFilesWithExtensions(pluginsFolder, new String[]{".jar",".zip"});
     	
     	DetectorPluginMgr mgr = DetectorPluginMgr.getInstance();
-    	mgr.addPluginPath(pluginsFolder);
+    	mgr.setPluginPropFileName("aaa");
     	mgr.addPluginPaths(fPluginJars);
     	
+    	
+    	
+    	
     	List<String> listPluginClassName = mgr.scanForPluginJavaClassName();
+    	
+    	listPluginClassName.add("hl.objml.opencv.objdetection.dnn.plugins.superres.Upscale");
 	    	
     	int iPlugID = 0;
     	for(String sPluginClassName : listPluginClassName)

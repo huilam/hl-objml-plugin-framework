@@ -4,10 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,24 +11,21 @@ import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import hl.common.PropUtil;
+import hl.plugin.PluginMgr;
 
-public class DetectorPluginMgr {
-	
-	private static final String DEF_PLUGIN_PROP_FILENAME 	= "objml-plugin.properties";
-	private static String DEF_PLUGIN_PROPKEY_PREFIX 		= "objml.";
-	
-	private static String _PLUGIN_PROP_FILENAME 			= DEF_PLUGIN_PROP_FILENAME;
-	private static String _PLUGIN_PROPKEY_IMPL_CLASSNAME_ 	= "mlmodel.detection.implementation.classname";
-	
+public class DetectorPluginMgr extends PluginMgr {
+
+	//
 	private static Object objLock 				= new Object();
 	private static DetectorPluginMgr instance 	= null;
-	
-	private URLClassLoader classLoaderPlugin 	= null;
-	private List<File> listPluginSources 		= new ArrayList<File>();
+	//
+	private DetectorPluginConfig pluginConfig 	= new DetectorPluginConfig();
 	
 	//
-	private DetectorPluginMgr()
+	public DetectorPluginMgr()
 	{
+		super();
+		super.setCustomPluginMgr(DetectorPluginMgr.class);
 	}
 	
 	public static DetectorPluginMgr getInstance()
@@ -42,120 +35,51 @@ public class DetectorPluginMgr {
 			if(instance==null)
 			{
 				instance = new DetectorPluginMgr();
-				instance.classLoaderPlugin = initPluginsClassLoader(new File[]{});
 			}
 		}
 		return instance;
 	}
 	
+	public void setCustomPluginConfig(DetectorPluginConfig aPluginConfig)
+	{
+		if(aPluginConfig==null)
+		{
+			this.pluginConfig = new DetectorPluginConfig();
+		}
+		else
+		{
+			this.pluginConfig = aPluginConfig;
+		}
+	}
+	
 	public void setPluginPropFileName(String aPropfileName)
 	{
-		_PLUGIN_PROP_FILENAME = aPropfileName;
+		this.pluginConfig.setProp_filename(aPropfileName);
 	}
 	
-	public void setPluginPropKeyPrefix(String aPropPrefix)
-	{
-		DEF_PLUGIN_PROPKEY_PREFIX = aPropPrefix;
-	}
-	
-	public void addPluginPath(File aPluginSource)
-	{
-		addPluginPaths(new File[] {aPluginSource});
-	}
-	
-	public void addPluginPaths(File[] aPluginSource)
-	{
-		for(File f : aPluginSource)
-		{
-			if(f.isFile())
-			{
-				String sFileName = f.getName().toLowerCase();
-				if(sFileName.endsWith(".jar") || sFileName.endsWith(".zip"))
-				{
-					this.listPluginSources.add(f);
-				}
-			}
-			else if(f.isDirectory())
-			{
-				for(File f2 : f.listFiles())
-				{
-					//First subfolders of the "classpath"
-					if(f2.isDirectory())
-					{
-						this.listPluginSources.add(f2);
-					}
-				}
-			}
-		}
-		
-		File[] pluginPaths = listPluginSources.toArray(new File[listPluginSources.size()]);
-		
-		this.classLoaderPlugin = initPluginsClassLoader(pluginPaths);
-	}
-	
-	public void clearPluginPaths()
-	{
-		this.listPluginSources.clear();
-	}
+	///////////////
 	
 	public List<String> scanForPluginJavaClassName()
 	{
-		return searchPluginClasses(this.classLoaderPlugin, this.listPluginSources);
+		return scanForPluginJavaClassName(this.pluginConfig.getProp_filename());
+	}
+	
+	public List<String> scanForPluginJavaClassName(String aPluginPropFileName)
+	{
+		return searchPluginClasses(
+				super.classLoaderPlugin, super.listPluginSources, aPluginPropFileName);
 	}
 	
 	public IImgDetectorPlugin getDetectorInstance(String aPluginClassName)
 	{
-		IImgDetectorPlugin plugin = null;
-		try {
-			Class<?> classDetector = this.classLoaderPlugin.loadClass(aPluginClassName);
-	    	Constructor<?> constructor = classDetector.getDeclaredConstructor();
-	    	plugin = (IImgDetectorPlugin) constructor.newInstance();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return plugin;
+		return (IImgDetectorPlugin) getPluginInstance(aPluginClassName);
 	}
 	
 	/////////////////////////////////////////////////////////////////////
-	private static URLClassLoader initPluginsClassLoader(File[] aPluginSources)
-	{
-		//
-    	List<URL> listSourceURL = new ArrayList<URL>();
-    	for(File f : aPluginSources)
-    	{
-    		try {
-    			listSourceURL.add(f.toURI().toURL());
-			} catch (MalformedURLException e) {
-				//ignore
-				e.printStackTrace();
-			}
-    	}
-    	return new URLClassLoader(
-    			listSourceURL.toArray(new URL[listSourceURL.size()]),
-    			DetectorPluginMgr.class.getClassLoader());
-    	//
-	}
 	
-	private List<String> searchPluginClasses(URLClassLoader aPluginClassLoader, List<File> aPluginSources) 
+	private List<String> searchPluginClasses(
+			URLClassLoader aPluginClassLoader, List<File> aPluginSources, 
+			final String aPluginPropFileName) 
 	{
 		List<String> listPluginClasses = new ArrayList<String>();
 		
@@ -172,7 +96,7 @@ public class DetectorPluginMgr {
 					ZipEntry entry = null;
 					while((entry = jar.getNextEntry())!=null)
 					{
-						if(entry.getName().toLowerCase().indexOf("/"+_PLUGIN_PROP_FILENAME)>-1)
+						if(entry.getName().toLowerCase().indexOf("/"+aPluginPropFileName)>-1)
 						{
 							prop = new Properties();
 							prop.load(aPluginClassLoader.getResourceAsStream(entry.getName()));
@@ -198,7 +122,7 @@ public class DetectorPluginMgr {
 			else
 			{
 	    	    //classpath 
-				File fileProp = searchAllSubFolders(f, _PLUGIN_PROP_FILENAME);
+				File fileProp = searchAllSubFolders(f, aPluginPropFileName);
 				if(fileProp!=null)
 				{
 					try {
@@ -225,7 +149,9 @@ public class DetectorPluginMgr {
 	
 	private String getPropImplClassNameKey()
 	{
-		return DEF_PLUGIN_PROPKEY_PREFIX + _PLUGIN_PROPKEY_IMPL_CLASSNAME_;
+		return 
+			this.pluginConfig.getPropkey_prefix() + 
+			this.pluginConfig.getPropkey_pluginImplClassName();
 	}
 	
 	private String getPluginClassNameFromProp(Properties prop)
@@ -248,29 +174,4 @@ public class DetectorPluginMgr {
 		return null;
 	}
 	
-	private File searchAllSubFolders(File aFolder, String aTargetFileName)
-	{
-		File fileTarget = null;
-		
-		for(File f: aFolder.listFiles())
-		{
-			if(f.isDirectory())
-			{
-				fileTarget = searchAllSubFolders(f, aTargetFileName);
-				if(fileTarget!=null)
-					return fileTarget;
-			}
-			else
-			{
-				if(f.getName().equalsIgnoreCase(aTargetFileName))
-				{
-					return f;
-				}
-			}
-		}
-		
-		
-		return fileTarget;
-	}
-    
 }

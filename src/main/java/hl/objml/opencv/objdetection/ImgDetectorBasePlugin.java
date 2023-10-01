@@ -17,20 +17,15 @@ import hl.opencv.util.OpenCvUtil;
 
 public class ImgDetectorBasePlugin {
 	
-	protected static String _PLUGIN_PROP_FILENAME 	= "objml-plugin.properties";
 	//
-	private static String _PROP_MODEL_KEYPREFIX_			= "objml.";
-	private static String _PROP_MODEL_NAME_ 				= "mlmodel.name";
-	private static String _PROP_MODEL_DETECT_FILENAME_		= "mlmodel.detection.filename";
-	//
-
+	protected DetectorPluginConfig pluginConfig = new DetectorPluginConfig();
 	protected Class<?> thisclass 		= null;
 	protected Properties props_model 	= null;
 	protected String _model_filename 	= null;
 	
 	protected boolean isPluginOK(Class<?> aClass)
 	{
-		return isPluginOK(aClass, _PLUGIN_PROP_FILENAME);
+		return isPluginOK(aClass, this.pluginConfig.getProp_filename());
 	}
 	
 	protected boolean isPluginOK(Class<?> aClass, String aPropFileName)
@@ -47,7 +42,6 @@ public class ImgDetectorBasePlugin {
 		props_model = getPluginProps(aPropFileName);
 		if(props_model!=null)
 		{
-
 			_model_filename = getResPath()+"/"+props_model.getProperty(getPropModelDetectFileName());
 			fModelFile = getMLModelFile(_model_filename);
 			if(fModelFile!=null && fModelFile.isFile())
@@ -63,7 +57,6 @@ public class ImgDetectorBasePlugin {
 			fModelFile = null;
 		}
 		
-		
 		if(fModelFile==null)
 		{
 			System.err.println("props_model is NULL - "+aPropFileName);
@@ -73,12 +66,16 @@ public class ImgDetectorBasePlugin {
 	
 	protected String getPropModelDetectFileName()
 	{
-		return _PROP_MODEL_KEYPREFIX_ + _PROP_MODEL_DETECT_FILENAME_;
+		return
+			this.pluginConfig.getPropkey_prefix()
+			+ this.pluginConfig.getPropkey_pluginMLModelDetectFileName();
 	}
 	
 	protected String getPropModelName()
 	{
-		return _PROP_MODEL_KEYPREFIX_ + _PROP_MODEL_NAME_;
+		return
+			this.pluginConfig.getPropkey_prefix()
+			+ this.pluginConfig.getPropkey_pluginMLModelName();
 	}
 	
 	protected File getMLModelFile(String aModelFilePath)
@@ -154,7 +151,7 @@ public class ImgDetectorBasePlugin {
 		Properties propPlugin = new Properties();
 		
 		if(aPropFileName==null)
-			aPropFileName = _PLUGIN_PROP_FILENAME;
+			aPropFileName = this.pluginConfig.getProp_filename();
 		
 		String sPluginPropPath = getResPath()+"/"+aPropFileName;
 		try {
@@ -193,6 +190,5 @@ public class ImgDetectorBasePlugin {
 	{
 		return Imgcodecs.imread(aImgFile.getAbsolutePath(), aIMREAD_Type);
 	}
-	
     
 }
