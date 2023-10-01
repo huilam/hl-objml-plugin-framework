@@ -8,6 +8,8 @@ public interface IImgDetectorPlugin {
 	
 	public static final String _KEY_MAT_OUTPUT = "mat_output";
 
+	abstract public void setPluginConfig(DetectorPluginConfig pluginConfig);
+	
 	abstract public boolean isPluginOK();
 	abstract public Properties getPluginProps();
 	

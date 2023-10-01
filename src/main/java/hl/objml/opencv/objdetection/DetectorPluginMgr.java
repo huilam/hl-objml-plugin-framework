@@ -16,9 +16,6 @@ import hl.plugin.PluginMgr;
 public class DetectorPluginMgr extends PluginMgr {
 
 	//
-	private static Object objLock 				= new Object();
-	private static DetectorPluginMgr instance 	= null;
-	//
 	private DetectorPluginConfig pluginConfig 	= new DetectorPluginConfig();
 	
 	//
@@ -27,19 +24,8 @@ public class DetectorPluginMgr extends PluginMgr {
 		super();
 		super.setCustomPluginMgr(DetectorPluginMgr.class);
 	}
-	
-	public static DetectorPluginMgr getInstance()
-	{
-		synchronized (objLock)
-		{
-			if(instance==null)
-			{
-				instance = new DetectorPluginMgr();
-			}
-		}
-		return instance;
-	}
-	
+
+	//
 	public void setCustomPluginConfig(DetectorPluginConfig aPluginConfig)
 	{
 		if(aPluginConfig==null)
@@ -72,7 +58,11 @@ public class DetectorPluginMgr extends PluginMgr {
 	
 	public IImgDetectorPlugin getDetectorInstance(String aPluginClassName)
 	{
-		return (IImgDetectorPlugin) getPluginInstance(aPluginClassName);
+		IImgDetectorPlugin plugin = (IImgDetectorPlugin) getPluginInstance(aPluginClassName);
+		plugin.setPluginConfig(pluginConfig);
+		return plugin;
+		
+		
 	}
 	
 	/////////////////////////////////////////////////////////////////////

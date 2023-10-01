@@ -23,6 +23,11 @@ public class ImgDetectorBasePlugin {
 	protected Properties props_model 	= null;
 	protected String _model_filename 	= null;
 	
+	public void setPluginConfig(DetectorPluginConfig aPluginConfig)
+	{
+		this.pluginConfig = aPluginConfig;
+	}
+	
 	protected boolean isPluginOK(Class<?> aClass)
 	{
 		return isPluginOK(aClass, this.pluginConfig.getProp_filename());

@@ -10,6 +10,7 @@ import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 
 import hl.common.FileUtil;
+import hl.objml.opencv.objdetection.dnn.plugins.superres.Upscale;
 import hl.opencv.util.OpenCvUtil;
 
 public class TestPlugins {
@@ -52,16 +53,13 @@ public class TestPlugins {
     	File pluginsFolder =  new File("./test/resources/plugins");
     	File[] fPluginJars =  FileUtil.getFilesWithExtensions(pluginsFolder, new String[]{".jar",".zip"});
     	
-    	DetectorPluginMgr mgr = DetectorPluginMgr.getInstance();
-    	mgr.setPluginPropFileName("aaa");
+    	DetectorPluginMgr mgr = new DetectorPluginMgr();
     	mgr.addPluginPaths(fPluginJars);
-    	
-    	
-    	
     	
     	List<String> listPluginClassName = mgr.scanForPluginJavaClassName();
     	
-    	listPluginClassName.add("hl.objml.opencv.objdetection.dnn.plugins.superres.Upscale");
+    	listPluginClassName.add(
+    			Upscale.class.getName());
 	    	
     	int iPlugID = 0;
     	for(String sPluginClassName : listPluginClassName)
