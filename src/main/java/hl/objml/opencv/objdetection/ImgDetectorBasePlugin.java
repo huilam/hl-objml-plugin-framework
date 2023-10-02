@@ -193,7 +193,9 @@ public class ImgDetectorBasePlugin {
 	
 	protected Mat getCvMatFromFile(File aImgFile,  int aIMREAD_Type)
 	{
-		return Imgcodecs.imread(aImgFile.getAbsolutePath(), aIMREAD_Type);
+		Mat mat = Imgcodecs.imread(aImgFile.getAbsolutePath(), aIMREAD_Type);
+		OpenCvUtil.removeAlphaChannel(mat);
+		return mat;
 	}
     
 }

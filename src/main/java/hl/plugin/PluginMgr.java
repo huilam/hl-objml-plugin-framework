@@ -14,7 +14,7 @@ public class PluginMgr {
 	//
 	private static Object objLock 				= new Object();
 	private static PluginMgr instance 			= null;
-	private Class classPluginMgr 				= PluginMgr.class;
+	private Class<?> classPluginMgr 			= PluginMgr.class;
 	//
 	protected URLClassLoader classLoaderPlugin 	= null;
 	protected List<File> listPluginSources 		= new ArrayList<File>();
@@ -41,9 +41,9 @@ public class PluginMgr {
 		return instance;
 	}
 	
-	protected void setCustomPluginMgr(Class aPluginMgrClass)
+	public void setCustomPluginMgr(Class<?> aPluginMgrClass)
 	{
-		classPluginMgr = aPluginMgrClass;
+		this.classPluginMgr = aPluginMgrClass;
 	}
 	
 	protected void setPluginBundleExtension(String[] aBundleExts)
