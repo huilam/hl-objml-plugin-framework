@@ -62,9 +62,9 @@ public class ImgDetectorBasePlugin {
 			fModelFile = null;
 		}
 		
-		if(fModelFile==null)
+		if(fModelFile==null || !fModelFile.exists())
 		{
-			System.err.println("props_model is NULL - "+aPropFileName);
+			System.err.println("Failed to load MLModel - "+_model_filename);
 		}
 		return false;
 	}
