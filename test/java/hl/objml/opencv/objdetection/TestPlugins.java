@@ -53,6 +53,9 @@ public class TestPlugins {
     	File pluginsFolder =  new File("./test/resources/plugins");
     	File[] fPluginJars =  FileUtil.getFilesWithExtensions(pluginsFolder, new String[]{".jar",".zip"});
     	
+    	System.out.println();
+    	System.out.println("plugin bundles discovered : "+fPluginJars.length);
+    	
     	DetectorPluginMgr mgr = new DetectorPluginMgr();
     	mgr.addPluginPaths(fPluginJars);
     	

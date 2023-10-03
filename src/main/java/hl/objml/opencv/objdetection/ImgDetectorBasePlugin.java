@@ -7,6 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import org.opencv.core.Mat;
@@ -49,7 +52,7 @@ public class ImgDetectorBasePlugin {
 		{
 			_model_filename = getResPath()+"/"+props_model.getProperty(getPropModelDetectFileName());
 			fModelFile = getMLModelFile(_model_filename);
-			if(fModelFile!=null && fModelFile.isFile())
+			if(fModelFile!=null && fModelFile.exists())
 			{
 				String sModelName = getModelName();
 				if(sModelName!=null && sModelName.trim().length()>0)
@@ -115,18 +118,58 @@ public class ImgDetectorBasePlugin {
 			if(in==null)
 				return null;
 			
-			String sFileExt = "";
-			String sFileName = file.getName();
-			int iExtPos = sFileName.lastIndexOf('.');
-			if(iExtPos>=0)
+			List<File> listFiles = new ArrayList<File>();
+			File fileCache = null;
+			
+			if(file.isDirectory())
 			{
-				sFileExt = sFileName.substring(iExtPos);
+				listFiles.addAll(Arrays.asList(file.listFiles()));
+				
+				File fileTmp = File.createTempFile(file.getName()+"/empty", ".tmp");
+				//Folder
+				fileCache = fileTmp.getParentFile();
 			}
-			File fileTmp = File.createTempFile(sFileName, sFileExt);
-			Path pathTmp = Paths.get(fileTmp.getAbsolutePath());
-			long lCopied = Files.copy(in, pathTmp, StandardCopyOption.REPLACE_EXISTING);
-			if(lCopied>0)
-				return fileTmp;
+			else 
+			{
+				//single file
+				listFiles.add(file);
+			}
+			
+			
+			long lCopiedBytes = 0;
+			long lTotalCopied = 0;
+			for(File f : listFiles)
+			{
+				String sFileExt 	= "";
+				String sFileName 	= f.getName();
+				int iExtPos 		= sFileName.lastIndexOf('.');
+				if(iExtPos>=0)
+				{
+					sFileExt = sFileName.substring(iExtPos);
+				}
+				File fileTmp = File.createTempFile(sFileName, sFileExt);
+				
+				System.out.println("Extract - "+sFileName);
+				
+				if(in!=null)
+					in.close();
+				in = thisclass.getResourceAsStream(f.getAbsolutePath());
+				if(in==null)
+					in = thisclass.getResourceAsStream("/"+f.getAbsolutePath());
+				
+				Path pathTmp = Paths.get(fileTmp.getAbsolutePath());
+				lCopiedBytes += Files.copy(in, pathTmp, StandardCopyOption.REPLACE_EXISTING);
+				
+				if(lCopiedBytes>0)
+				{
+					lTotalCopied++;
+					if(fileCache==null)
+						fileCache = fileTmp;
+				}
+			}
+			
+			if(lTotalCopied == listFiles.size())
+				return fileCache;
 		
 		} catch (IOException e) {
 			e.printStackTrace();
