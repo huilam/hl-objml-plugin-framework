@@ -56,11 +56,26 @@ public class TestPlugins {
     	System.out.println();
     	System.out.println("plugin bundles discovered : "+fPluginJars.length);
     	
+    	
+    	
+    	/*** Custom configuration for properties ***/
+    	DetectorPluginConfig customPluginConfig = new DetectorPluginConfig();
+    	customPluginConfig.setProp_filename("objml-plugin.properties");
+    	customPluginConfig.setPropkey_prefix("objml.");
+    	
+    	/*** Init Plugin Mgr  ***/
     	DetectorPluginMgr mgr = new DetectorPluginMgr();
+    	
+    	/*** Init Custom Plugin Config  ***/
+    	mgr.setCustomPluginConfig(customPluginConfig);
+    	
+    	/*** Register non-classpath bundle files  ***/
     	mgr.addPluginPaths(fPluginJars);
     	
+    	/*** Perform javaClass scan for initial ***/
     	List<String> listPluginClassName = mgr.scanForPluginJavaClassName();
     	
+    	/*** Manual Register Java Class Name that in classpath ***/
     	listPluginClassName.add(
     			Upscale.class.getName());
 	    	
@@ -71,9 +86,7 @@ public class TestPlugins {
     			continue;
     		iPlugID++;
     		
- System.out.println(); 
- System.out.println(" "+iPlugID+". Plugin ClassName : "+sPluginClassName);
-	    	
+ 			/*** Get plugin instance ***/
 	    	IImgDetectorPlugin detector = mgr.getDetectorInstance(sPluginClassName);
 	    	
 	    	
@@ -83,6 +96,7 @@ public class TestPlugins {
 	    		iFileCount++;
 	    		long lStartMs = System.currentTimeMillis();
 	    		
+	    		/*** Perform plugin detection ***/
 	    		Map<String, ?> mapResult = detector.detectImage(fileImg);
 	    		long lDetectionMs = (System.currentTimeMillis()-lStartMs);
 	    		
@@ -107,6 +121,7 @@ System.out.println("       - Result : "+mapResult.size());
 
 	    		if(mapResult.size()>0)
 	    		{
+	    			/*** Saved output from plugin detection  ***/
 		    		Mat matOutput = (Mat) mapResult.get(IImgDetectorPlugin._KEY_MAT_OUTPUT);
 					savedOutputImage(sTestCycle, detector.getPluginName(), fileImg, matOutput);
 	    		}
