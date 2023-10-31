@@ -3,6 +3,7 @@ package hl.objml.opencv.objdetection;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -111,12 +112,27 @@ public class ImgDetectorBasePlugin {
 		InputStream in 		= null;
 		
 		try {
-			in = thisclass.getResourceAsStream(file.getAbsolutePath());
-			if(in==null)
-				in = thisclass.getResourceAsStream("/"+file.getAbsolutePath());
+			String sResPath = file.getAbsolutePath().replace("\\", "//");
 			
-			if(in==null)
+			String[] sResAttempt = new String[]{file.getName(), sResPath, "/"+sResPath};
+			
+			String sResFileName = null;
+			
+			for(String sRes : sResAttempt)
+			{
+				URL urlRes = thisclass.getResource(sRes);
+				if(urlRes!=null)
+				{
+					sResFileName = sRes;
+					break;
+				}
+			}
+			
+			if(sResFileName==null)
+			{
+				System.err.println("sResPath="+sResPath);
 				return null;
+			}
 			
 			List<File> listFiles = new ArrayList<File>();
 			File fileCache = null;
@@ -153,10 +169,15 @@ public class ImgDetectorBasePlugin {
 				
 				if(in!=null)
 					in.close();
-				in = thisclass.getResourceAsStream(f.getAbsolutePath());
+				
+				in = thisclass.getResourceAsStream(sResFileName);
+				/**
+				if(in==null)
+					in = thisclass.getResourceAsStream(f.getAbsolutePath());
+				
 				if(in==null)
 					in = thisclass.getResourceAsStream("/"+f.getAbsolutePath());
-				
+				**/
 				Path pathTmp = Paths.get(fileTmp.getAbsolutePath());
 				lCopiedBytes += Files.copy(in, pathTmp, StandardCopyOption.REPLACE_EXISTING);
 				
