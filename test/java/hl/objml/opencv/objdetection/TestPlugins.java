@@ -10,7 +10,6 @@ import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 
 import hl.common.FileUtil;
-import hl.objml.opencv.objdetection.dnn.plugins.superres.Upscale;
 import hl.opencv.util.OpenCvUtil;
 
 public class TestPlugins {
@@ -56,8 +55,6 @@ public class TestPlugins {
     	System.out.println();
     	System.out.println("plugin bundles discovered : "+fPluginJars.length);
     	
-    	
-    	
     	/*** Custom configuration for properties ***/
     	DetectorPluginConfig customPluginConfig = new DetectorPluginConfig();
     	customPluginConfig.setProp_filename("objml-plugin.properties");
@@ -76,8 +73,7 @@ public class TestPlugins {
     	List<String> listPluginClassName = mgr.scanForPluginJavaClassName();
     	
     	/*** Manual Register Java Class Name that in classpath ***/
-    	listPluginClassName.add(
-    			Upscale.class.getName());
+    	//listPluginClassName.add(Upscale.class.getName());
 	    	
     	int iPlugID = 0;
     	for(String sPluginClassName : listPluginClassName)
