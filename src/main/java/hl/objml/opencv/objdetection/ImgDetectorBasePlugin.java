@@ -114,7 +114,7 @@ public class ImgDetectorBasePlugin {
 		try {
 			String sResPath = file.getAbsolutePath().replace("\\", "//");
 			
-			String[] sResAttempt = new String[]{file.getName(), sResPath, "/"+sResPath};
+			String[] sResAttempt = new String[]{sResPath, "/"+sResPath, file.getName()};
 			
 			String sResFileName = null;
 			
