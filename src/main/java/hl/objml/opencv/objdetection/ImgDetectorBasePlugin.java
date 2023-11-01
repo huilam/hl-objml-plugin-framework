@@ -105,6 +105,23 @@ public class ImgDetectorBasePlugin {
 		return fileMlModel;
 	}
 	
+	private String searchResource(File aResFile)
+	{
+		String sResPath = aResFile.getAbsolutePath().replace("\\", "//");
+		
+		String[] sResAttempt = new String[]{sResPath, "/"+sResPath, aResFile.getName()};
+		
+		for(String sResName : sResAttempt)
+		{
+			URL urlRes = thisclass.getResource(sResName);
+			if(urlRes!=null)
+			{
+				return sResName;
+			}
+		}
+		return null;
+	}
+	
 	private File extractFileFromJarAsTemp(File file)
 	{	
 		//try load from jar
@@ -112,25 +129,12 @@ public class ImgDetectorBasePlugin {
 		InputStream in 		= null;
 		
 		try {
-			String sResPath = file.getAbsolutePath().replace("\\", "//");
 			
-			String[] sResAttempt = new String[]{sResPath, "/"+sResPath, file.getName()};
-			
-			String sResFileName = null;
-			
-			for(String sRes : sResAttempt)
-			{
-				URL urlRes = thisclass.getResource(sRes);
-				if(urlRes!=null)
-				{
-					sResFileName = sRes;
-					break;
-				}
-			}
+			String sResFileName = searchResource(file);;
 			
 			if(sResFileName==null)
 			{
-				System.err.println("sResPath="+sResPath);
+				System.err.println("Failed to locale resource -"+file.getAbsolutePath());
 				return null;
 			}
 			
