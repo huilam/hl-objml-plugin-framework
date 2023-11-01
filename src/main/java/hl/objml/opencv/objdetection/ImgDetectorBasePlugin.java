@@ -124,38 +124,40 @@ public class ImgDetectorBasePlugin {
 	
 	private File extractFileFromJarAsTemp(File file)
 	{	
-		//try load from jar
+		//try load from jar/zip
+		String sResFileName = searchResource(file);;
 		
-		InputStream in 		= null;
+		if(sResFileName==null)
+		{
+			System.err.println("Failed to locale resource -"+file.getAbsolutePath());
+			return null;
+		}
 		
-		try {
-			
-			String sResFileName = searchResource(file);;
-			
-			if(sResFileName==null)
-			{
-				System.err.println("Failed to locale resource -"+file.getAbsolutePath());
-				return null;
-			}
-			
-			List<File> listFiles = new ArrayList<File>();
-			File fileCache = null;
-			
-			if(file.isDirectory())
-			{
-				listFiles.addAll(Arrays.asList(file.listFiles()));
-				
+		List<File> listFiles = new ArrayList<File>();
+		File fileCache = null;
+		
+		if(file.isDirectory())
+		{
+			listFiles.addAll(Arrays.asList(file.listFiles()));
+
+			try {
 				File fileTmp = File.createTempFile(file.getName()+"/empty", ".tmp");
+				
 				//Folder
 				fileCache = fileTmp.getParentFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			else 
-			{
-				//single file
-				listFiles.add(file);
-			}
+		}
+		else 
+		{
+			//single file
+			listFiles.add(file);
+		}
 			
-			
+		InputStream in 		= null;
+		try {
 			long lCopiedBytes = 0;
 			long lTotalCopied = 0;
 			for(File f : listFiles)
@@ -175,13 +177,7 @@ public class ImgDetectorBasePlugin {
 					in.close();
 				
 				in = thisclass.getResourceAsStream(sResFileName);
-				/**
-				if(in==null)
-					in = thisclass.getResourceAsStream(f.getAbsolutePath());
-				
-				if(in==null)
-					in = thisclass.getResourceAsStream("/"+f.getAbsolutePath());
-				**/
+
 				Path pathTmp = Paths.get(fileTmp.getAbsolutePath());
 				lCopiedBytes += Files.copy(in, pathTmp, StandardCopyOption.REPLACE_EXISTING);
 				
