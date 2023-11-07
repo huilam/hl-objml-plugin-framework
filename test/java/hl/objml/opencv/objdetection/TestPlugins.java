@@ -107,13 +107,13 @@ public class TestPlugins {
 	    			if(matImg!=null)
 	    				matImg.release();
 	    		}
-	    		
-System.out.println("    "+iPlugID+"."+iFileCount+" Image File : "+fileImg.getName()+" ("+sizeImg+")");  		
-System.out.println("       - PluginName : "+detector.getPluginName());
-System.out.println("       - isPluginOK : "+detector.isPluginOK());
-System.out.println("       - ModelFile : "+detector.getPluginMLModelFileName());
-System.out.println("       - Detection Elapsed : "+lDetectionMs+" ms");
-System.out.println("       - Result : "+mapResult.size()); 
+System.out.println();		
+System.out.println(iPlugID+"."+iFileCount+" Image File : "+fileImg.getName()+" ("+sizeImg+")");  		
+System.out.println("     - PluginName : "+detector.getPluginName());
+System.out.println("     - isPluginOK : "+detector.isPluginOK());
+System.out.println("     - ModelFile : "+detector.getPluginMLModelFileName());
+System.out.println("     - Detection Elapsed : "+lDetectionMs+" ms");
+System.out.println("     - Result : "+mapResult.size()); 
 
 	    		if(mapResult.size()>0)
 	    		{
