@@ -171,7 +171,7 @@ public class ImgDetectorBasePlugin {
 				}
 				File fileTmp = File.createTempFile(sFileName, sFileExt);
 				
-				System.out.println("Extract - "+sFileName);
+				//System.out.println("Extract - "+sFileName);
 				
 				if(in!=null)
 					in.close();
