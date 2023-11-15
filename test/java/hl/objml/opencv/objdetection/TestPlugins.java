@@ -93,7 +93,8 @@ public class TestPlugins {
 	    		long lStartMs = System.currentTimeMillis();
 	    		
 	    		/*** Perform plugin detection ***/
-	    		Map<String, ?> mapResult = detector.detectImage(fileImg);
+	    		Mat matImage = OpenCvUtil.loadImage(fileImg.getAbsolutePath());
+	    		Map<String, ?> mapResult = detector.detectImage(matImage);
 	    		long lDetectionMs = (System.currentTimeMillis()-lStartMs);
 	    		
 	    		Size sizeImg = new Size();

@@ -1,8 +1,9 @@
 package hl.objml.opencv.objdetection;
 
-import java.io.File;
 import java.util.Map;
 import java.util.Properties;
+
+import org.opencv.core.Mat;
 
 public interface IImgDetectorPlugin {
 	
@@ -16,6 +17,6 @@ public interface IImgDetectorPlugin {
 	abstract public String getPluginName();
 	abstract public String getPluginMLModelFileName();
 	
-	abstract public Map<String,Object> detectImage(File aImageFile);
+	abstract public Map<String,Object> detectImage(Mat aImageFile);
     
 }

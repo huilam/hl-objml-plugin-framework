@@ -48,7 +48,7 @@ public class ImgDetectorBasePlugin {
 		
 		thisclass = aClass;
 		
-		props_model = getPluginProps(aPropFileName);
+		props_model = getPluginPropsByFileName(aPropFileName);
 		if(props_model!=null)
 		{
 			_model_filename = getResPath()+"/"+props_model.getProperty(getPropModelDetectFileName());
@@ -207,12 +207,15 @@ public class ImgDetectorBasePlugin {
 		return file;
 	}
 	
-	protected Properties getPluginProps()
+	public Properties getPluginProps()
 	{
-		return getPluginProps(null);
+		if(props_model==null)
+			props_model = getPluginPropsByFileName(null);
+		
+		return props_model;
 	}
 	
-	protected Properties getPluginProps(String aPropFileName)
+	private Properties getPluginPropsByFileName(String aPropFileName)
 	{
 		if(props_model!=null && props_model.size()>0)
 			return props_model;
@@ -225,6 +228,9 @@ public class ImgDetectorBasePlugin {
 		String sPluginPropPath = getResPath()+"/"+aPropFileName;
 		try {
 			propPlugin = PropUtil.loadProperties(thisclass, sPluginPropPath);
+			
+			if(propPlugin!=null && propPlugin.size()>0)
+				props_model = propPlugin;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -250,12 +256,13 @@ public class ImgDetectorBasePlugin {
 		return "/"+thisclass.getPackageName().replaceAll("\\.", "/");
 	}
 
-	protected Mat getCvMatFromFile(File aImgFile)
+	//
+	public static Mat getCvMatFromFile(File aImgFile)
 	{
 		return getCvMatFromFile(aImgFile, Imgcodecs.IMREAD_UNCHANGED);
 	}
 	
-	protected Mat getCvMatFromFile(File aImgFile,  int aIMREAD_Type)
+	protected static Mat getCvMatFromFile(File aImgFile,  int aIMREAD_Type)
 	{
 		Mat mat = Imgcodecs.imread(aImgFile.getAbsolutePath(), aIMREAD_Type);
 		OpenCvUtil.removeAlphaChannel(mat);
