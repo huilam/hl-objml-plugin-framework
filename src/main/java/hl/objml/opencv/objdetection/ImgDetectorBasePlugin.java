@@ -168,15 +168,32 @@ public class ImgDetectorBasePlugin {
 			long lTotalCopied = 0;
 			for(File f : listFiles)
 			{
-				String sFileExt 	= "";
-				String sFileName 	= f.getName();
-				int iExtPos 		= sFileName.lastIndexOf('.');
-				if(iExtPos>=0)
+				File folderPluginTmp  = new File(".");
+				String sPluginSrcPath = getPluginSource();
+				if(sPluginSrcPath!=null)
 				{
-					sFileExt = sFileName.substring(iExtPos);
-					sFileName = sFileName.substring(0, iExtPos);
+					folderPluginTmp = new File(sPluginSrcPath+".dir");
 				}
-				File fileTmp = File.createTempFile(sFileName, sFileExt);
+				
+				File fileTmp = null;
+				if(folderPluginTmp.exists() && folderPluginTmp.list().length>0)
+				{
+					fileTmp = new File(folderPluginTmp.getAbsolutePath()+"/"+file.getAbsolutePath());
+				}
+				
+				
+				if(fileTmp==null)
+				{
+					String sFileExt 	= "";
+					String sFileName 	= f.getName();
+					int iExtPos 		= sFileName.lastIndexOf('.');
+					if(iExtPos>=0)
+					{
+						sFileExt = sFileName.substring(iExtPos);
+						sFileName = sFileName.substring(0, iExtPos);
+					}
+					fileTmp = File.createTempFile(sFileName, sFileExt);
+				}
 				
 				//System.out.println("Extract - "+sFileName);
 				
