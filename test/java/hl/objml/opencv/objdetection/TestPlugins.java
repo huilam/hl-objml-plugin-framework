@@ -70,13 +70,13 @@ public class TestPlugins {
     	mgr.addPluginPaths(fPluginJars);
     	
     	/*** Perform javaClass scan for initial ***/
-    	List<String> listPluginClassName = mgr.scanForPluginJavaClassName();
+    	Map<String, String> mapPluginClassName = mgr.scanForPluginJavaClassName();
     	
     	/*** Manual Register Java Class Name that in classpath ***/
     	//listPluginClassName.add(Upscale.class.getName());
 	    	
     	int iPlugID = 0;
-    	for(String sPluginClassName : listPluginClassName)
+    	for(String sPluginClassName : mapPluginClassName.keySet())
     	{
     		if(sPluginClassName==null)
     			continue;
@@ -84,7 +84,6 @@ public class TestPlugins {
     		
  			/*** Get plugin instance ***/
 	    	IImgDetectorPlugin detector = mgr.getDetectorInstance(sPluginClassName);
-	    	
 	    	
 	    	int iFileCount = 0;
 	    	for(File fileImg : fileImgs)

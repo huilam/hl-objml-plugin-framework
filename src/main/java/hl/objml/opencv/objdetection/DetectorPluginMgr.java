@@ -5,17 +5,20 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import hl.common.PropUtil;
+import hl.common.ZipUtil;
 import hl.plugin.PluginMgr;
 
 public class DetectorPluginMgr extends PluginMgr {
 
 	//
+	private boolean isUnzipBundle 				= false;
 	private DetectorPluginConfig pluginConfig 	= new DetectorPluginConfig();
 	
 	//
@@ -45,12 +48,12 @@ public class DetectorPluginMgr extends PluginMgr {
 	
 	///////////////
 	
-	public List<String> scanForPluginJavaClassName()
+	public Map<String, String> scanForPluginJavaClassName()
 	{
 		return scanForPluginJavaClassName(this.pluginConfig.getProp_filename());
 	}
 	
-	public List<String> scanForPluginJavaClassName(String aPluginPropFileName)
+	public Map<String, String> scanForPluginJavaClassName(String aPluginPropFileName)
 	{
 		return searchPluginClasses(
 				super.classLoaderPlugin, super.listPluginSources, aPluginPropFileName);
@@ -67,11 +70,11 @@ public class DetectorPluginMgr extends PluginMgr {
 	
 	/////////////////////////////////////////////////////////////////////
 	
-	private List<String> searchPluginClasses(
+	private Map<String, String> searchPluginClasses(
 			URLClassLoader aPluginClassLoader, List<File> aPluginSources, 
 			final String aPluginPropFileName) 
 	{
-		List<String> listPluginClasses = new ArrayList<String>();
+		Map<String, String> mapPluginClasses = new HashMap<String, String>();
 		
 		for(File f : aPluginSources)
     	{
@@ -79,6 +82,8 @@ public class DetectorPluginMgr extends PluginMgr {
 			//zip or jar file
 			if(f.isFile())
 			{
+				boolean isUnzip = false;
+				
 	    		ZipInputStream jar = null;
 	    		
 	    		try {
@@ -88,6 +93,11 @@ public class DetectorPluginMgr extends PluginMgr {
 					{
 						if(entry.getName().toLowerCase().indexOf("/"+aPluginPropFileName)>-1)
 						{
+							if(isUnzipBundle)
+							{
+								isUnzip = true;
+								break;
+							}
 							prop = new Properties();
 							prop.load(aPluginClassLoader.getResourceAsStream(entry.getName()));
 						}
@@ -108,8 +118,31 @@ public class DetectorPluginMgr extends PluginMgr {
 						e.printStackTrace();
 					}
 	    		}
+	    		
+	    		if(isUnzip)
+	    		{
+	    			File unzipFolder = new File(f.getAbsoluteFile()+".dir");
+	    			
+	    			if(!unzipFolder.exists())
+	    			{
+		    			unzipFolder.mkdirs();
+		    			try {
+							ZipUtil.unZip(f.getAbsolutePath(), unzipFolder.getAbsolutePath());
+							f = unzipFolder;
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+	    			}
+	    			else
+	    			{
+	    				f = unzipFolder;
+	    			}
+	    		}
 			}
-			else
+			
+			
+			if(f.isDirectory())
 			{
 	    	    //classpath 
 				File fileProp = searchAllSubFolders(f, aPluginPropFileName);
@@ -129,12 +162,12 @@ public class DetectorPluginMgr extends PluginMgr {
 				String sPlugClassName = getPluginClassNameFromProp(prop);
 				if(sPlugClassName!=null)
 				{
-					listPluginClasses.add(sPlugClassName);
-					System.out.println(" [+] "+sPlugClassName);
+					mapPluginClasses.put(sPlugClassName, f.getAbsolutePath());
+					System.out.println(" [+] "+sPlugClassName+" ("+f.getName()+")");
 				}
 			}
     	}
-		return listPluginClasses;
+		return mapPluginClasses;
 	}
 	
 	private String getPropImplClassNameKey()

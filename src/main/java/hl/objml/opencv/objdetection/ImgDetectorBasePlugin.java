@@ -26,6 +26,7 @@ public class ImgDetectorBasePlugin {
 	protected Class<?> thisclass 		= null;
 	protected Properties props_model 	= null;
 	protected String _model_filename 	= null;
+	protected String _plugin_source 	= null;
 	
 	public void setPluginConfig(DetectorPluginConfig aPluginConfig)
 	{
@@ -93,7 +94,7 @@ public class ImgDetectorBasePlugin {
 		
 		if(!fileMlModel.isFile())
 		{
-			File fileTmp = extractFileFromJarAsTemp(fileMlModel);
+			File fileTmp = extractModelFileFromJarAsTemp(fileMlModel);
 			
 			if(fileTmp!=null && fileTmp.isFile())
 			{
@@ -122,10 +123,10 @@ public class ImgDetectorBasePlugin {
 		return null;
 	}
 	
-	private File extractFileFromJarAsTemp(File file)
+	private File extractModelFileFromJarAsTemp(File file)
 	{	
 		//try load from jar/zip
-		String sResFileName = searchResource(file);;
+		String sResFileName = searchResource(file);
 		
 		if(sResFileName==null)
 		{
@@ -168,6 +169,7 @@ public class ImgDetectorBasePlugin {
 				if(iExtPos>=0)
 				{
 					sFileExt = sFileName.substring(iExtPos);
+					sFileName = sFileName.substring(0, iExtPos);
 				}
 				File fileTmp = File.createTempFile(sFileName, sFileExt);
 				
