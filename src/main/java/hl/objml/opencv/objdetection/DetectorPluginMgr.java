@@ -22,7 +22,7 @@ import hl.plugin.PluginMgr;
 public class DetectorPluginMgr extends PluginMgr {
 
 	//
-	private boolean isUnzipBundle 				= false;
+	private boolean isUnzipBundle 				= true;
 	private DetectorPluginConfig pluginConfig 	= new DetectorPluginConfig();
 	
 	//
