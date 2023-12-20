@@ -3,7 +3,6 @@ package hl.objml.opencv.objdetection;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;

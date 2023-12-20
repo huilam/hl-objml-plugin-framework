@@ -4,7 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLClassLoader;
+import java.net.URLDecoder;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,10 +66,32 @@ public class DetectorPluginMgr extends PluginMgr {
 	public IImgDetectorPlugin getDetectorInstance(String aPluginClassName)
 	{
 		IImgDetectorPlugin plugin = (IImgDetectorPlugin) getPluginInstance(aPluginClassName);
-		plugin.setPluginConfig(pluginConfig);
+		if(plugin!=null)
+		{
+			plugin.setPluginConfig(pluginConfig);
+			plugin.setPluginSource(getJavaClassSourcePath(plugin.getClass()));
+		}
 		return plugin;
-		
-		
+	}
+	
+	private String getJavaClassSourcePath(Class aClass)
+	{
+		String sourcePath = null;
+		ProtectionDomain pd = aClass.getProtectionDomain();
+		if(pd!=null)
+		{
+			CodeSource cs = pd.getCodeSource();
+			if(cs!=null)
+			{
+				try {
+					sourcePath = URLDecoder.decode(cs.getLocation().getPath(), "UTF-8");
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return sourcePath;
 	}
 	
 	/////////////////////////////////////////////////////////////////////

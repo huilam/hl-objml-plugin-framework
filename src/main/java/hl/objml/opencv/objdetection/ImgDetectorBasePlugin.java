@@ -33,6 +33,11 @@ public class ImgDetectorBasePlugin {
 		this.pluginConfig = aPluginConfig;
 	}
 	
+	public void setPluginSource(String aPluginSource)
+	{
+		this._plugin_source = aPluginSource;
+	}
+	
 	protected boolean isPluginOK(Class<?> aClass)
 	{
 		return isPluginOK(aClass, this.pluginConfig.getProp_filename());
@@ -215,6 +220,11 @@ public class ImgDetectorBasePlugin {
 			props_model = getPluginPropsByFileName(null);
 		
 		return props_model;
+	}
+	
+	public String getPluginSource()
+	{
+		return this._plugin_source;
 	}
 	
 	private Properties getPluginPropsByFileName(String aPropFileName)
