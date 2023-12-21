@@ -178,7 +178,7 @@ public class ImgDetectorBasePlugin {
 				File fileTmp = null;
 				if(folderPluginTmp.exists() && folderPluginTmp.list().length>0)
 				{
-					fileTmp = new File(folderPluginTmp.getAbsolutePath()+"/"+file.getAbsolutePath());
+					fileTmp = new File(folderPluginTmp.getAbsolutePath()+"/"+sResFileName);
 				}
 				
 				
