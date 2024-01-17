@@ -59,7 +59,7 @@ public class ImgDetectorBasePlugin {
 		{
 			props_model = updatePluginProps(props_model);
 			
-			_model_filename = getResPath()+"/"+props_model.getProperty(getPropModelDetectFileName());
+			_model_filename = props_model.getProperty(getPropModelDetectFileName());
 			fModelFile = getMLModelFile(_model_filename);
 			if(fModelFile!=null && fModelFile.exists())
 			{
@@ -107,9 +107,15 @@ public class ImgDetectorBasePlugin {
 	protected File getMLModelFile(String aModelFilePath)
 	{
 		File fileMlModel = new File(aModelFilePath);
+		if(!fileMlModel.isFile())
+		{
+			//try to search as file
+			fileMlModel = new File(getResPath()+"/"+aModelFilePath);
+		}
 		
 		if(!fileMlModel.isFile())
 		{
+			//look into resources
 			File fileTmp = extractModelFileFromJarAsTemp(fileMlModel);
 			
 			if(fileTmp!=null && fileTmp.isFile())
@@ -190,6 +196,7 @@ public class ImgDetectorBasePlugin {
 				if(folderPluginTmp.exists() && folderPluginTmp.list().length>0)
 				{
 					fileTmp = new File(folderPluginTmp.getAbsolutePath()+"/"+sResFileName);
+					fileTmp.mkdirs();
 				}
 				
 				
