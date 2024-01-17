@@ -57,6 +57,8 @@ public class ImgDetectorBasePlugin {
 		props_model = getPluginPropsByFileName(aPropFileName);
 		if(props_model!=null)
 		{
+			props_model = updatePluginProps(props_model);
+			
 			_model_filename = getResPath()+"/"+props_model.getProperty(getPropModelDetectFileName());
 			fModelFile = getMLModelFile(_model_filename);
 			if(fModelFile!=null && fModelFile.exists())
@@ -78,6 +80,15 @@ public class ImgDetectorBasePlugin {
 		}
 		return false;
 	}
+	
+	//Override this method to add/remove/update properties
+	protected Properties updatePluginProps(Properties aProperties)
+	{
+		return aProperties;
+	}
+	
+	
+	/////////////////////////////////////////////////////////////////////////////////////
 	
 	protected String getPropModelDetectFileName()
 	{
