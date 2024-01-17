@@ -74,7 +74,7 @@ public class DetectorPluginMgr extends PluginMgr {
 		return plugin;
 	}
 	
-	private String getJavaClassSourcePath(Class aClass)
+	private String getJavaClassSourcePath(Class<?> aClass)
 	{
 		String sourcePath = null;
 		ProtectionDomain pd = aClass.getProtectionDomain();

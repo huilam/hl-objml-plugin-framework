@@ -37,6 +37,20 @@ public class TestPlugins {
         return saved;
 	}
 	
+	private static String removeDotPath(String aPath)
+	{
+		String sTrimPath = aPath;
+		if(aPath!=null)
+		{
+			int iPos = aPath.indexOf(".");
+			if(iPos>0)
+			{
+				sTrimPath = aPath.substring(iPos);
+			}
+		}
+		return sTrimPath;
+	}
+	
     public static void main(String main[]) throws Exception
     {
     	OpenCvUtil.initOpenCV();
@@ -110,7 +124,7 @@ System.out.println();
 System.out.println(iPlugID+"."+iFileCount+" Image File : "+fileImg.getName()+" ("+sizeImg+")");  		
 System.out.println("     - PluginName : "+detector.getPluginName());
 System.out.println("     - isPluginOK : "+detector.isPluginOK());
-System.out.println("     - ModelFile : "+detector.getPluginMLModelFileName());
+System.out.println("     - ModelFile : "+removeDotPath(detector.getPluginMLModelFileName()));
 System.out.println("     - Detection Elapsed : "+lDetectionMs+" ms");
 System.out.println("     - Result : "+mapResult.size()); 
 
