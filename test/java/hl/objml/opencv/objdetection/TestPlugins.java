@@ -10,6 +10,7 @@ import org.opencv.imgcodecs.Imgcodecs;
 
 import hl.common.FileUtil;
 import hl.opencv.util.OpenCvUtil;
+import hl.plugin.image.IImgDetectorPlugin;
 
 public class TestPlugins {
 	
@@ -69,12 +70,12 @@ public class TestPlugins {
     	System.out.println("plugin bundles discovered : "+fPluginJars.length);
     	
     	/*** Custom configuration for properties ***/
-    	DetectorPluginConfig customPluginConfig = new DetectorPluginConfig();
+    	MLPluginConfig customPluginConfig = new MLPluginConfig();
     	customPluginConfig.setProp_filename("objml-plugin.properties");
     	customPluginConfig.setPropkey_prefix("objml.");
     	
     	/*** Init Plugin Mgr  ***/
-    	DetectorPluginMgr mgr = new DetectorPluginMgr();
+    	MLPluginMgr mgr = new MLPluginMgr();
     	
     	/*** Init Custom Plugin Config  ***/
     	mgr.setCustomPluginConfig(customPluginConfig);

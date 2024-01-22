@@ -19,16 +19,16 @@ import org.opencv.imgcodecs.Imgcodecs;
 import hl.common.PropUtil;
 import hl.opencv.util.OpenCvUtil;
 
-public class ImgDetectorBasePlugin {
+public class ImgMLBasePlugin {
 	
 	//
-	protected DetectorPluginConfig pluginConfig = new DetectorPluginConfig();
+	protected MLPluginConfig pluginConfig = new MLPluginConfig();
 	protected Class<?> thisclass 		= null;
 	protected Properties props_model 	= null;
 	protected String _model_filename 	= null;
 	protected String _plugin_source 	= null;
 	
-	public void setPluginConfig(DetectorPluginConfig aPluginConfig)
+	public void setPluginConfig(MLPluginConfig aPluginConfig)
 	{
 		this.pluginConfig = aPluginConfig;
 	}
@@ -43,14 +43,17 @@ public class ImgDetectorBasePlugin {
 		return isPluginOK(aClass, this.pluginConfig.getProp_filename());
 	}
 	
+	public boolean isValidateMLFileLoading()
+	{
+		return true;
+	}
+	
 	protected boolean isPluginOK(Class<?> aClass, String aPropFileName)
 	{
 		if(aClass==null)
 			return false;
 		
 		OpenCvUtil.initOpenCV();
-		
-		File fModelFile = null;
 		
 		thisclass = aClass;
 		
@@ -60,24 +63,33 @@ public class ImgDetectorBasePlugin {
 			props_model = updatePluginProps(props_model);
 			
 			_model_filename = props_model.getProperty(getPropModelDetectFileName());
-			fModelFile = getMLModelFile(_model_filename);
-			if(fModelFile!=null && fModelFile.exists())
-			{
-				String sModelName = getModelName();
-				if(sModelName!=null && sModelName.trim().length()>0)
-				{
-					_model_filename = fModelFile.getAbsolutePath();
-					return true;
-				}
-			}
 			
-			fModelFile = null;
+			if(isValidateMLFileLoading())
+			{
+				//Because OpenCv DNN can only accept extracted file location
+				File fModelFile = null;
+				fModelFile = getMLModelFile(_model_filename);
+				
+				if(fModelFile!=null && fModelFile.exists())
+				{
+					String sModelName = getModelName();
+					if(sModelName!=null && sModelName.trim().length()>0)
+					{
+						_model_filename = fModelFile.getAbsolutePath();
+						return true;
+					}
+				}
+				
+				if(fModelFile==null || !fModelFile.exists())
+				{
+					System.err.println("Failed to load MLModel - "+_model_filename);
+				}
+				
+				fModelFile = null;
+			}
 		}
 		
-		if(fModelFile==null || !fModelFile.exists())
-		{
-			System.err.println("Failed to load MLModel - "+_model_filename);
-		}
+		
 		return false;
 	}
 	

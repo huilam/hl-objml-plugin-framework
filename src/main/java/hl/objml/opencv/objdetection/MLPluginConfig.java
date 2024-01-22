@@ -1,6 +1,6 @@
 package hl.objml.opencv.objdetection;
 
-public class DetectorPluginConfig {
+public class MLPluginConfig {
 	
 	//
 	private static final String DEF_PLUGIN_PROP_FILENAME 		= "objml-plugin.properties";
@@ -17,7 +17,7 @@ public class DetectorPluginConfig {
 	private String propkey_pluginMLModelName 			= DEF_PROPKEY_MLMODEL_NAME;
 	private String propkey_pluginMLModelDetectFileName 	= DEF_PROPKEY_MLMODEL_DETECT_FILENAME;
 	//
-	public DetectorPluginConfig()
+	public MLPluginConfig()
 	{
 	}
 	//

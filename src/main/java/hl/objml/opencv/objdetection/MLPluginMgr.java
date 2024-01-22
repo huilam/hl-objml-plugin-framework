@@ -18,26 +18,28 @@ import java.util.zip.ZipInputStream;
 import hl.common.PropUtil;
 import hl.common.ZipUtil;
 import hl.plugin.PluginMgr;
+import hl.plugin.image.IImgDetectorPlugin;
+import hl.plugin.image.IImgMatcherPlugin;
 
-public class DetectorPluginMgr extends PluginMgr {
+public class MLPluginMgr extends PluginMgr {
 
 	//
-	private boolean isUnzipBundle 				= true;
-	private DetectorPluginConfig pluginConfig 	= new DetectorPluginConfig();
+	private boolean isUnzipBundle 			= true;
+	private MLPluginConfig pluginConfig 	= new MLPluginConfig();
 	
 	//
-	public DetectorPluginMgr()
+	public MLPluginMgr()
 	{
 		super();
-		super.setCustomPluginMgr(DetectorPluginMgr.class);
+		super.setCustomPluginMgr(MLPluginMgr.class);
 	}
 
 	//
-	public void setCustomPluginConfig(DetectorPluginConfig aPluginConfig)
+	public void setCustomPluginConfig(MLPluginConfig aPluginConfig)
 	{
 		if(aPluginConfig==null)
 		{
-			this.pluginConfig = new DetectorPluginConfig();
+			this.pluginConfig = new MLPluginConfig();
 		}
 		else
 		{
@@ -66,6 +68,17 @@ public class DetectorPluginMgr extends PluginMgr {
 	public IImgDetectorPlugin getDetectorInstance(String aPluginClassName)
 	{
 		IImgDetectorPlugin plugin = (IImgDetectorPlugin) getPluginInstance(aPluginClassName);
+		if(plugin!=null)
+		{
+			plugin.setPluginConfig(pluginConfig);
+			plugin.setPluginSource(getJavaClassSourcePath(plugin.getClass()));
+		}
+		return plugin;
+	}
+	
+	public IImgMatcherPlugin getMatcherInstance(String aPluginClassName)
+	{
+		IImgMatcherPlugin plugin = (IImgMatcherPlugin) getPluginInstance(aPluginClassName);
 		if(plugin!=null)
 		{
 			plugin.setPluginConfig(pluginConfig);
