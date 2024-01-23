@@ -298,9 +298,18 @@ public class MLDetectionBasePlugin {
 		return propPlugin;
 	}
 	
+	public String getPluginName() {
+		return getModelName();
+	}
+	
 	protected String getModelName()
 	{
 		return props_model.getProperty(getPropModelName());
+	}
+	
+	public String getPluginMLModelFileName()
+	{
+		return getModelFileName();
 	}
 	
 	protected String getModelFileName()
