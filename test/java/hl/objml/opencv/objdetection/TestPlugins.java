@@ -97,7 +97,7 @@ public class TestPlugins {
     		iPlugID++;
     		
  			/*** Get plugin instance ***/
-	    	IMLDetectionPlugin detector = mgr.getDetectorInstance(sPluginClassName);
+	    	IMLDetectionPlugin detector = mgr.getMLInstance(sPluginClassName);
 	    	
 	    	int iFileCount = 0;
 	    	for(File fileImg : fileImgs)

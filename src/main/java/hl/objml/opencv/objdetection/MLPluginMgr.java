@@ -64,17 +64,6 @@ public class MLPluginMgr extends PluginMgr {
 				super.classLoaderPlugin, super.listPluginSources, aPluginPropFileName);
 	}
 	
-	public IMLDetectionPlugin getDetectorInstance(String aPluginClassName)
-	{
-		IMLDetectionPlugin plugin = (IMLDetectionPlugin) getPluginInstance(aPluginClassName);
-		if(plugin!=null)
-		{
-			plugin.setPluginConfig(pluginConfig);
-			plugin.setPluginSource(getJavaClassSourcePath(plugin.getClass()));
-		}
-		return plugin;
-	}
-	
 	public IMLDetectionPlugin getMLInstance(String aPluginClassName)
 	{
 		IMLDetectionPlugin plugin = (IMLDetectionPlugin) getPluginInstance(aPluginClassName);

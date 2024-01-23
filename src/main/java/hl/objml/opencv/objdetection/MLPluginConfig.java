@@ -9,6 +9,7 @@ public class MLPluginConfig {
 	private static final String DEF_PROPKEY_PLUGIN_IMPL_CLASSNAME 		= "mlmodel.detection.implementation.classname";
 	private static final String DEF_PROPKEY_MLMODEL_NAME 				= "mlmodel.name";
 	private static final String DEF_PROPKEY_MLMODEL_DETECT_FILENAME		= "mlmodel.detection.filename";
+	private static final String DEF_PROPKEY_MLMODEL_DEPENDENCIES		= "mlmodel.detection.dependencies";
 	//
 	private String prop_filename 	= DEF_PLUGIN_PROP_FILENAME;
 	private String propkey_prefix 	= DEF_PLUGIN_PROPKEY_PREFIX;
@@ -16,6 +17,7 @@ public class MLPluginConfig {
 	private String propkey_pluginImplClassName 			= DEF_PROPKEY_PLUGIN_IMPL_CLASSNAME;
 	private String propkey_pluginMLModelName 			= DEF_PROPKEY_MLMODEL_NAME;
 	private String propkey_pluginMLModelDetectFileName 	= DEF_PROPKEY_MLMODEL_DETECT_FILENAME;
+	private String propkey_pluginMLModelDependencies	= DEF_PROPKEY_MLMODEL_DEPENDENCIES;
 	//
 	public MLPluginConfig()
 	{
@@ -28,6 +30,7 @@ public class MLPluginConfig {
 		this.propkey_pluginImplClassName 			= DEF_PROPKEY_PLUGIN_IMPL_CLASSNAME;
 		this.propkey_pluginMLModelName 				= DEF_PROPKEY_MLMODEL_NAME;
 		this.propkey_pluginMLModelDetectFileName 	= DEF_PROPKEY_MLMODEL_DETECT_FILENAME;
+		this.propkey_pluginMLModelDependencies		= DEF_PROPKEY_MLMODEL_DEPENDENCIES;
 	}
 	public String getProp_filename() {
 		return prop_filename;
@@ -58,6 +61,12 @@ public class MLPluginConfig {
 	}
 	public void setPropkey_pluginMLModelDetectFileName(String propkey_pluginMLModelDetectFileName) {
 		this.propkey_pluginMLModelDetectFileName = propkey_pluginMLModelDetectFileName;
+	}
+	public String getPropkey_pluginMLModelDependencies() {
+		return propkey_pluginMLModelDependencies;
+	}
+	public void setPropkey_pluginMLModelDependencies(String propkey_pluginMLModelDependencies) {
+		this.propkey_pluginMLModelDependencies = propkey_pluginMLModelDependencies;
 	}
 	
 	
