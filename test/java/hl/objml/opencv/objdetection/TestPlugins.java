@@ -10,7 +10,7 @@ import org.opencv.imgcodecs.Imgcodecs;
 
 import hl.common.FileUtil;
 import hl.opencv.util.OpenCvUtil;
-import hl.plugin.image.IImgDetectorPlugin;
+import hl.plugin.image.IMLDetectionPlugin;
 
 public class TestPlugins {
 	
@@ -97,7 +97,7 @@ public class TestPlugins {
     		iPlugID++;
     		
  			/*** Get plugin instance ***/
-	    	IImgDetectorPlugin detector = mgr.getDetectorInstance(sPluginClassName);
+	    	IMLDetectionPlugin detector = mgr.getDetectorInstance(sPluginClassName);
 	    	
 	    	int iFileCount = 0;
 	    	for(File fileImg : fileImgs)
@@ -107,7 +107,7 @@ public class TestPlugins {
 	    		
 	    		/*** Perform plugin detection ***/
 	    		Mat matImage = OpenCvUtil.loadImage(fileImg.getAbsolutePath());
-	    		Map<String, ?> mapResult = detector.detectImage(matImage);
+	    		Map<String, ?> mapResult = detector.detect(matImage, null);
 	    		long lDetectionMs = (System.currentTimeMillis()-lStartMs);
 	    		
 	    		Size sizeImg = new Size();
@@ -132,7 +132,7 @@ System.out.println("     - Result : "+mapResult.size());
 	    		if(mapResult.size()>0)
 	    		{
 	    			/*** Saved output from plugin detection  ***/
-		    		Mat matOutput = (Mat) mapResult.get(IImgDetectorPlugin._KEY_MAT_OUTPUT);
+		    		Mat matOutput = (Mat) mapResult.get(IMLDetectionPlugin._KEY_MAT_OUTPUT);
 					savedOutputImage(sTestCycle, detector.getPluginName(), fileImg, matOutput);
 	    		}
 	    	}

@@ -1,4 +1,4 @@
-<project name="hl-objml-plugin-framework" default="war" basedir=".">
+<project name="hl-objml-plugin-framework" default="jar" basedir=".">
 	<property name="test" location="test"/>
 	<property name="src" location="src/main/java"/>
 	<property name="build" location="build"/>

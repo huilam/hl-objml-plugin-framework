@@ -11,15 +11,17 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
+import org.json.JSONObject;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 
 import hl.common.PropUtil;
 import hl.opencv.util.OpenCvUtil;
 
-public class ImgMLBasePlugin {
+public class MLDetectionBasePlugin {
 	
 	//
 	protected MLPluginConfig pluginConfig = new MLPluginConfig();
@@ -326,6 +328,16 @@ public class ImgMLBasePlugin {
 		Mat mat = Imgcodecs.imread(aImgFile.getAbsolutePath(), aIMREAD_Type);
 		OpenCvUtil.removeAlphaChannel(mat);
 		return mat;
+	}
+
+	public Map<String,Object> match(Mat aImageFile, JSONObject aCustomThresholdJson, Map<String,Object> aMatchingTargetList)
+	{
+		return null;
+	}
+	
+	public Map<String,Object> extract(Mat aImageFile, JSONObject aCustomThresholdJson)
+	{
+		return null;
 	}
     
 }

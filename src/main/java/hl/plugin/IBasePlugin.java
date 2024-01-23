@@ -1,13 +1,10 @@
-package hl.plugin.image;
+package hl.plugin;
 
 import java.util.Properties;
-
 import hl.objml.opencv.objdetection.MLPluginConfig;
 
-public interface IImgBasePlugin {
+public interface IBasePlugin {
 	
-	public static final String _KEY_MAT_OUTPUT = "mat_output";
-
 	abstract public void setPluginConfig(MLPluginConfig pluginConfig);
 	abstract public void setPluginSource(String aPluginSource);
 	
@@ -19,5 +16,4 @@ public interface IImgBasePlugin {
 	abstract public String getPluginName();
 	abstract public String getPluginMLModelFileName();
 	
-    
 }

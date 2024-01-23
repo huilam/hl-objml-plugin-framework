@@ -18,8 +18,7 @@ import java.util.zip.ZipInputStream;
 import hl.common.PropUtil;
 import hl.common.ZipUtil;
 import hl.plugin.PluginMgr;
-import hl.plugin.image.IImgDetectorPlugin;
-import hl.plugin.image.IImgMatcherPlugin;
+import hl.plugin.image.IMLDetectionPlugin;
 
 public class MLPluginMgr extends PluginMgr {
 
@@ -65,9 +64,9 @@ public class MLPluginMgr extends PluginMgr {
 				super.classLoaderPlugin, super.listPluginSources, aPluginPropFileName);
 	}
 	
-	public IImgDetectorPlugin getDetectorInstance(String aPluginClassName)
+	public IMLDetectionPlugin getDetectorInstance(String aPluginClassName)
 	{
-		IImgDetectorPlugin plugin = (IImgDetectorPlugin) getPluginInstance(aPluginClassName);
+		IMLDetectionPlugin plugin = (IMLDetectionPlugin) getPluginInstance(aPluginClassName);
 		if(plugin!=null)
 		{
 			plugin.setPluginConfig(pluginConfig);
@@ -76,9 +75,9 @@ public class MLPluginMgr extends PluginMgr {
 		return plugin;
 	}
 	
-	public IImgMatcherPlugin getMatcherInstance(String aPluginClassName)
+	public IMLDetectionPlugin getMLInstance(String aPluginClassName)
 	{
-		IImgMatcherPlugin plugin = (IImgMatcherPlugin) getPluginInstance(aPluginClassName);
+		IMLDetectionPlugin plugin = (IMLDetectionPlugin) getPluginInstance(aPluginClassName);
 		if(plugin!=null)
 		{
 			plugin.setPluginConfig(pluginConfig);
