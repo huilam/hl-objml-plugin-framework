@@ -7,10 +7,11 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/hl-common_jdk11_20230806-2116-57.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/hl-opencv_jdk11_20230906-1607-27.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/json-20220924.jar"/>
-	<classpathentry kind="lib" path="lib/opencv-480.jar"/>
 	<classpathentry kind="lib" path="lib/native"/>
+	<classpathentry kind="lib" path="/opencv-native-binaries/4.9.0/opencv-490.jar"/>
+	<classpathentry kind="lib" path="/opencv-native-binaries/4.9.0/macos/14/arm64"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/hl-common_jdk11_20240411-2339-59.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
