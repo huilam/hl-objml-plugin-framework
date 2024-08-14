@@ -10,7 +10,6 @@
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/hl-common_jdk11_20230806-2116-57.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/hl-opencv_jdk11_20230906-1607-27.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/json-20220924.jar"/>
-	<classpathentry kind="lib" path="lib/opencv-480.jar"/>
 	<classpathentry kind="lib" path="lib/native"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
