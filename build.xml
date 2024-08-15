@@ -4,7 +4,6 @@
 	<property name="build" location="build"/>
 	<property name="lib" location="lib"/>
 	<property name="releases" location="releases"/>
-	<property name="webcontent" location="src/main/webapp"/>
 	
 	<tstamp>
 	    <format property="buildno" pattern="yyyyMMdd-HHmm-ss"/>
@@ -17,23 +16,6 @@
 		</javac>
 	</target>
 	
-	<target name="war" depends="jar">
-		<mkdir dir="${releases}/war/WEB-INF/classes" />
-			
-		<copydir src="${webcontent}" dest="${releases}/war">
-			<exclude name="**/classes/**"/>
-		</copydir>
-		<copydir src="${build}" dest="${releases}/war/WEB-INF/lib">
-			<include name="${ant.project.name}_*.jar"/>
-		</copydir>
-		<jar jarfile="${releases}/${ant.project.name}.war" basedir="${releases}/war">
-		</jar>
-		
-		<copydir src="${releases}/war/WEB-INF/lib" dest="${releases}">
-				<include name="${ant.project.name}_*.jar"/>
-		</copydir>
-
-	</target>
 		
 	<target name="jar" depends="compile">
 		<delete dir="${build}">
@@ -49,13 +31,9 @@
 	
 	<target name="clean">
 		<delete dir="${build}"/>
-		<delete dir="${releases}/war"/>
 	</target>
 	
 	<path id="compile.classpath">
-		<fileset dir="${webcontent}">
-		    <include name="WEB-INF/lib/*.jar" />
-		</fileset>
 		<fileset dir="${lib}">
 			<include name="*.jar" />
 		</fileset>
