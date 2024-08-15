@@ -1,5 +1,6 @@
 package hl.objml.opencv.objdetection;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +19,7 @@ import org.json.JSONObject;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 
+import hl.common.ImgUtil;
 import hl.common.PropUtil;
 import hl.opencv.util.OpenCvUtil;
 
@@ -335,7 +337,26 @@ public class MLDetectionBasePlugin {
 	protected static Mat getCvMatFromFile(File aImgFile,  int aIMREAD_Type)
 	{
 		Mat mat = Imgcodecs.imread(aImgFile.getAbsolutePath(), aIMREAD_Type);
-		OpenCvUtil.removeAlphaChannel(mat);
+		
+		if(mat!=null)
+		{
+			//if opencv loader failed, try java image loader
+			if(mat.width()==0)
+			{
+				System.err.println("OpenCv Imgcodecs loader failed. Switching to Java image loader. "+aImgFile.getName());
+				try {
+					BufferedImage img = ImgUtil.loadImage(aImgFile.getAbsolutePath());
+					if(img!=null)
+					{
+						mat = OpenCvUtil.bufferedImg2Mat(img);
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			OpenCvUtil.removeAlphaChannel(mat);
+		}
 		return mat;
 	}
 

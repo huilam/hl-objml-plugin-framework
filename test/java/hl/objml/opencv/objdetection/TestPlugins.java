@@ -26,7 +26,7 @@ public class TestPlugins {
 		new File(sOutputFolder).mkdirs();
 		
         String sOutputFileName = 
-        		sOutputFolder+"/"+aInputImgFile.getName()+"_"+aModelName+"_"+System.currentTimeMillis()+".jpg";
+        		sOutputFolder+"/"+aInputImgFile.getName()+"_"+aModelName+"_"+System.currentTimeMillis()+".png";
         
         boolean saved = Imgcodecs.imwrite(sOutputFileName, aOutputImage);
         
@@ -106,21 +106,11 @@ public class TestPlugins {
 	    		long lStartMs = System.currentTimeMillis();
 	    		
 	    		/*** Perform plugin detection ***/
-	    		Mat matImage = OpenCvUtil.loadImage(fileImg.getAbsolutePath());
+	    		Mat matImage = MLDetectionBasePlugin.getCvMatFromFile(fileImg);
+	    		Size sizeImg = matImage.size();
 	    		Map<String, ?> mapResult = detector.detect(matImage, null);
 	    		long lDetectionMs = (System.currentTimeMillis()-lStartMs);
 	    		
-	    		Size sizeImg = new Size();
-	    		Mat matImg = null;
-	    		try {
-	    			matImg = OpenCvUtil.loadImage(fileImg.getAbsolutePath());
-	    			sizeImg = matImg.size();
-	    		}
-	    		finally
-	    		{
-	    			if(matImg!=null)
-	    				matImg.release();
-	    		}
 System.out.println();		
 System.out.println(iPlugID+"."+iFileCount+" Image File : "+fileImg.getName()+" ("+sizeImg+")");  		
 System.out.println("     - PluginName : "+detector.getPluginName());
