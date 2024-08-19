@@ -9,6 +9,10 @@ import hl.plugin.IBasePlugin;
 
 public interface IMLDetectionPlugin extends IBasePlugin {
 	
+	public static final String _KEY_INFERENCE_MLMODEL 			= "inference_model_file";
+	public static final String _KEY_INFERENCE_INPUT_IMGSIZE 	= "inference_input_imgsize";
+	public static final String _KEY_INFERENCE_TIME_MS 			= "inference_time_ms";
+	
 	public static final String _KEY_MAT_OUTPUT 			= "mat_output";
 	public static final String _KEY_TOTAL_DETECTION		= "total_detection_count";
 	public static final String _KEY_THRESHOLD_DETECTION = "threshold_detection";
