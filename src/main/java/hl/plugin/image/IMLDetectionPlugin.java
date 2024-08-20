@@ -9,17 +9,15 @@ import hl.plugin.IBasePlugin;
 
 public interface IMLDetectionPlugin extends IBasePlugin {
 	
-	public static final String _KEY_INFERENCE_MLMODEL 			= "inference_model_file";
-	public static final String _KEY_INFERENCE_INPUT_IMGSIZE 	= "inference_input_imgsize";
-	public static final String _KEY_INFERENCE_TIME_MS 			= "inference_time_ms";
+	public static final String _KEY_OUTPUT_ANNOTATED_MAT 	= "output_annotated_mat";
+	public static final String _KEY_OUTPUT_DETECTION_JSON 	= "output_detection_json";
+	public static final String _KEY_OUTPUT_TOTAL_COUNT		= "output_total_count";
 	
-	public static final String _KEY_MAT_OUTPUT 			= "mat_output";
-	public static final String _KEY_TOTAL_DETECTION		= "total_detection_count";
-	public static final String _KEY_THRESHOLD_DETECTION = "threshold_detection";
-	public static final String _KEY_THRESHOLD_NMS 		= "threshold_nms";
+	public static final String _KEY_THRESHOLD_DETECTION 	= "threshold_detection";
+	public static final String _KEY_THRESHOLD_NMS 			= "threshold_nms";
 	//
-	public static final String _KEY_MATCHING_THRESHOLD 	= "threshold_matching";
-
+	//public static final String _KEY_THRESHOLD_MATCHING 		= "threshold_matching";
+	//
 	abstract public Map<String,Object> detect(Mat aImageFile, JSONObject aCustomThresholdJson);
 	abstract public Map<String,Object> match(Mat aImageFile, JSONObject aCustomThresholdJson, Map<String,Object> aMatchingTargetList);
 	abstract public Map<String,Object> extract(Mat aImageFile, JSONObject aCustomThresholdJson);
