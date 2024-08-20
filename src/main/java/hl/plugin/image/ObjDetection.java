@@ -1,5 +1,7 @@
 package hl.plugin.image;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.opencv.core.Rect;
@@ -40,6 +42,17 @@ public class ObjDetection {
 			
 			}
 		}
+	}
+	
+	public String[] getObjClassNames()
+	{
+		List<String> listClassName = new ArrayList<String>();
+		for(String sClassName : jsonDetection.keySet())
+		{
+			listClassName.add(sClassName);
+		}
+		
+		return (String[]) listClassName.toArray(new String[listClassName.size()]);
 	}
 	
 	public void clearDetection()
@@ -113,7 +126,9 @@ public class ObjDetection {
 		ObjDetection objs2 = new ObjDetection();
 		objs2.addAll(objs.toJson());
 		
+		System.out.println("ClassNames="+ String.join(",", objs2.getObjClassNames()));
 		System.out.println("Total="+objs2.getTotalDetectionCount());
+		System.out.println();
 		System.out.println("person="+objs2.getDetectionCount("person"));
 		System.out.println("bicycle="+objs2.getDetectionCount("bicycle"));
 		System.out.println("cat="+objs2.getDetectionCount("cat"));
