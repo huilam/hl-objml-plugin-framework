@@ -2,6 +2,7 @@ package hl.plugin.image;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.opencv.core.Rect;
 import org.opencv.core.Rect2d;
 
 public class ObjDetection {
@@ -14,6 +15,32 @@ public class ObjDetection {
 	
 	private JSONObject jsonDetection = new JSONObject();
 
+	
+	public void addAll(JSONObject aInputJson)
+	{
+		if(aInputJson!=null)
+		{	
+			for(String sObjClassName : aInputJson.keySet())
+			{
+				JSONArray jArrClassName = aInputJson.optJSONArray(sObjClassName);
+				
+				if(jArrClassName!=null && jArrClassName.length()>0)
+				{
+					for(int i=0; i<jArrClassName.length(); i++)
+					{
+						JSONObject jsonObj = jArrClassName.getJSONObject(i);
+						long lObjClassId = jsonObj.optLong(sObjClassName, -1);
+						double dObjClassConfScore = jsonObj.optDouble(OBJCLASS_CONF_SCORE, -1);
+						Rect2d dObjClassRect2d = (Rect2d)jsonObj.opt(OBJCLASS_BOUNDING_BOX);
+						//
+						addDetectedObj(lObjClassId, sObjClassName, dObjClassConfScore, dObjClassRect2d);
+					}
+				}
+				
+			
+			}
+		}
+	}
 	
 	public void clearDetection()
 	{
@@ -42,6 +69,11 @@ public class ObjDetection {
 		return jArrObjClass.length();
 	}
 	
+	public boolean addDetectedObj(long aObjClassId, String aObjClassName, double aConfScore, Rect aRect)
+	{
+		 return addDetectedObj(aObjClassId, aObjClassName, aConfScore, new Rect2d(aRect.x, aRect.y, aRect.width, aRect.height));
+	}
+	
     public boolean addDetectedObj(long aObjClassId, String aObjClassName, double aConfScore, Rect2d aRect2D)
     {
     	JSONArray jArrObjClass = jsonDetection.optJSONArray(aObjClassName);
@@ -67,7 +99,7 @@ public class ObjDetection {
 		return jsonDetection;
 	}
 	
-	/**
+
 	public static void main(String[] args)
 	{
 		ObjDetection objs = new ObjDetection();
@@ -78,12 +110,14 @@ public class ObjDetection {
 		objs.addDetectedObj(33, "bicycle", 0.37, new Rect2d(211,430,300,50));
 		
 		
-		System.out.println("Total="+objs.getTotalDetectionCount());
-		System.out.println("person="+objs.getDetectionCount("person"));
-		System.out.println("bicycle="+objs.getDetectionCount("bicycle"));
-		System.out.println("cat="+objs.getDetectionCount("cat"));
-		System.out.println("dog="+objs.getDetectionCount("dog"));
+		ObjDetection objs2 = new ObjDetection();
+		objs2.addAll(objs.toJson());
+		
+		System.out.println("Total="+objs2.getTotalDetectionCount());
+		System.out.println("person="+objs2.getDetectionCount("person"));
+		System.out.println("bicycle="+objs2.getDetectionCount("bicycle"));
+		System.out.println("cat="+objs2.getDetectionCount("cat"));
+		System.out.println("dog="+objs2.getDetectionCount("dog"));
 		
 	}
-	**/
 }
