@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.core.Rect2d;
 
@@ -13,7 +14,9 @@ public class ObjDetection {
 	protected final static String OBJCLASS_NAME 			= "obj_class_name";
 	protected final static String OBJCLASS_CONF_SCORE 		= "obj_conf_score";
 	protected final static String OBJCLASS_BOUNDING_BOX 	= "obj_bounding_box";
+	//
 	protected final static String OBJCLASS_TRACKING_ID 		= "obj_tracking_id";
+	//protected final static String OBJCLASS_MAT 				= "obj_mat";
 	//protected final static String OBJCLASS_SHAPE 			= "objclass_shape";
 	
 	private JSONObject jsonDetection = new JSONObject();
@@ -22,27 +25,47 @@ public class ObjDetection {
 	///////////////////
 	public static long getObjClassId(JSONObject json)
 	{
-		return json!=null?json.optLong(OBJCLASS_ID):-1;
+		return json!=null?(long)getAttribute(json,OBJCLASS_ID):-1;
 	}
 	
 	public static String getObjClassName(JSONObject json)
 	{
-		return json!=null?json.optString(OBJCLASS_NAME):null;
+		return json!=null?(String)getAttribute(json,OBJCLASS_NAME):null;
 	}
 	
 	public static double getConfidenceScore(JSONObject json)
 	{
-		return json!=null?json.optDouble(OBJCLASS_CONF_SCORE):-1;
+		return json!=null?(double)getAttribute(json,OBJCLASS_CONF_SCORE):-1;
 	}
 	
 	public static Rect2d getBoundingBox(JSONObject json)
 	{
-		return json!=null?(Rect2d)json.opt(OBJCLASS_BOUNDING_BOX):null;
+		return json!=null?(Rect2d)getAttribute(json,OBJCLASS_BOUNDING_BOX):null;
 	}
 	
 	public static String getObjTrackingId(JSONObject json)
 	{
-		return json!=null?json.optString(OBJCLASS_TRACKING_ID):null;
+		return json!=null?(String)getAttribute(json,OBJCLASS_TRACKING_ID):null;
+	}
+	
+	public static void updObjTrackingId(JSONObject json, String aTrackingId)
+	{
+		if(json!=null)
+		{
+			json.put(OBJCLASS_TRACKING_ID, aTrackingId);
+		}
+	}
+	
+	/**
+	public static Mat getObjMat(JSONObject json)
+	{
+		return json!=null?(Mat)getAttribute(json,OBJCLASS_MAT):null;
+	}
+	**/
+	
+	protected static Object getAttribute(JSONObject aJson, String aAttrName)
+	{
+		return aJson!=null?aJson.opt(aAttrName):null;
 	}
 	/////////////////////
 	
@@ -63,9 +86,12 @@ public class ObjDetection {
 						long lObjClassId = jsonObj.optLong(OBJCLASS_ID, -1);
 						double dObjClassConfScore = jsonObj.optDouble(OBJCLASS_CONF_SCORE, -1);
 						Rect2d rObjClassRect2d = (Rect2d)jsonObj.opt(OBJCLASS_BOUNDING_BOX);
+						//
+						//Mat matObj = (Mat)jsonObj.opt(OBJCLASS_MAT);
 						String sObjTrackingId = jsonObj.optString(OBJCLASS_TRACKING_ID, null);
 						//
-						addDetectedObj(lObjClassId, sObjClassName, dObjClassConfScore, rObjClassRect2d, sObjTrackingId);
+						addDetectedObj(lObjClassId, sObjClassName, dObjClassConfScore, rObjClassRect2d, 
+								sObjTrackingId);
 					}
 				}
 				
@@ -137,7 +163,8 @@ public class ObjDetection {
 		return addDetectedObj(aObjClassId, aObjClassName, aConfScore, aRect2D, null);
     }
 	
-    public boolean addDetectedObj(long aObjClassId, String aObjClassName, double aConfScore, Rect2d aRect2D, String aTrackingId)
+    public boolean addDetectedObj(long aObjClassId, String aObjClassName, double aConfScore, Rect2d aRect2D, 
+    		String aTrackingId)
     {
     	JSONArray jArrObjClass = this.jsonDetection.optJSONArray(aObjClassName);
     	if(jArrObjClass==null)
@@ -151,11 +178,20 @@ public class ObjDetection {
     	jsonObj.put(OBJCLASS_NAME, aObjClassName);
     	jsonObj.put(OBJCLASS_CONF_SCORE, aConfScore);
     	jsonObj.put(OBJCLASS_BOUNDING_BOX, aRect2D);
+    	//
     	if(aTrackingId!=null && aTrackingId.trim().length()>0)
     	{
     		jsonObj.put(OBJCLASS_TRACKING_ID, aTrackingId);
     	}
-	
+    	//
+    	/**
+    	if(aObjMat!=null && !aObjMat.empty())
+    	{
+    		jsonObj.put(OBJCLASS_MAT, aObjMat);
+    	}
+    	**/
+    	//
+    	jsonObj = addDetectedObj_Extended(jsonObj);
     	jArrObjClass.put(jsonObj);
     
     	return true;
@@ -170,6 +206,14 @@ public class ObjDetection {
 	{
 		return this.jsonDetection.toString();
 	}
+	
+	//
+	
+	protected JSONObject addDetectedObj_Extended(JSONObject aJson)
+	{
+		return aJson;
+	}
+	
 	
 	/**
 	public static void main(String[] args)
