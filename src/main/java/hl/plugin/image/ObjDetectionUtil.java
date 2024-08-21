@@ -1,5 +1,8 @@
 package hl.plugin.image;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.json.JSONObject;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -9,10 +12,19 @@ import org.opencv.imgproc.Imgproc;
 
 public class ObjDetectionUtil {
 	
+	
 	public static Mat annotateImage(final Mat aMatInput, final ObjDetection aDetectedObjs)
+	{
+		return annotateImage(aMatInput, aDetectedObjs, null);
+	}
+	
+	public static Mat annotateImage(final Mat aMatInput, final ObjDetection aDetectedObjs, Map<String, Scalar> mapObjColors)
 	{
 		// Draw bounding boxes
 		Mat matOutputImg = aMatInput.clone();
+		
+		if(mapObjColors==null)
+			mapObjColors = new HashMap<String, Scalar>();
 
 		for(String sObjClassName : aDetectedObjs.getObjClassNames())
 		{
@@ -23,14 +35,18 @@ public class ObjDetectionUtil {
 				String objTrackingId 	= ObjDetection.getObjTrackingId(json);
 				double objConfScore 	= ObjDetection.getConfidenceScore(json);
 				Rect2d objBox 			= ObjDetection.getBoundingBox(json);
+				
+				Scalar objColor = mapObjColors.get(objClassName);
+				if(objColor==null)
+					objColor = (objTrackingId==null)? new Scalar(0, 255, 0): new Scalar(0, 0, 255);
 						
             	Point ptXY1 	= new Point(objBox.x, objBox.y);
             	Point ptXY2 	= new Point(objBox.x + objBox.width, objBox.y + objBox.height);
-	            Imgproc.rectangle(matOutputImg, ptXY1, ptXY2, new Scalar(0, 255, 0), 2);
+	            Imgproc.rectangle(matOutputImg, ptXY1, ptXY2, objColor, 2);
 
 	            String label 	= (objTrackingId!=null?objTrackingId:objClassName) + ": " + String.format("%.2f", objConfScore);
 	            Imgproc.putText(matOutputImg, label, new Point(ptXY1.x, ptXY1.y - 10), 
-	            		Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
+	            		Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, objColor, 2);
 			}
 		
 		}

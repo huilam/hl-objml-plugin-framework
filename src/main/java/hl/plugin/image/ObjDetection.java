@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.core.Rect2d;
 
