@@ -9,11 +9,12 @@ import org.opencv.core.Rect2d;
 
 public class ObjDetection {
 	
-	public final static String OBJCLASS_ID				= "objclass_id";
-	public final static String OBJCLASS_NAME 			= "objclass_name";
-	public final static String OBJCLASS_CONF_SCORE 		= "objclass_conf_score";
-	public final static String OBJCLASS_BOUNDING_BOX 	= "objclass_bounding_box";
-	//public final static String OBJCLASS_SHAPE 			= "objclass_shape";
+	protected final static String OBJCLASS_ID				= "obj_class_id";
+	protected final static String OBJCLASS_NAME 			= "obj_class_name";
+	protected final static String OBJCLASS_CONF_SCORE 		= "obj_conf_score";
+	protected final static String OBJCLASS_BOUNDING_BOX 	= "obj_bounding_box";
+	protected final static String OBJCLASS_TRACKING_ID 		= "obj_tracking_id";
+	//protected final static String OBJCLASS_SHAPE 			= "objclass_shape";
 	
 	private JSONObject jsonDetection = new JSONObject();
 
@@ -38,6 +39,11 @@ public class ObjDetection {
 	{
 		return json!=null?(Rect2d)json.opt(OBJCLASS_BOUNDING_BOX):null;
 	}
+	
+	public static String getObjTrackingId(JSONObject json)
+	{
+		return json!=null?json.optString(OBJCLASS_TRACKING_ID):null;
+	}
 	/////////////////////
 	
 	
@@ -56,9 +62,10 @@ public class ObjDetection {
 						JSONObject jsonObj = jArrClassName.getJSONObject(i);
 						long lObjClassId = jsonObj.optLong(OBJCLASS_ID, -1);
 						double dObjClassConfScore = jsonObj.optDouble(OBJCLASS_CONF_SCORE, -1);
-						Rect2d dObjClassRect2d = (Rect2d)jsonObj.opt(OBJCLASS_BOUNDING_BOX);
+						Rect2d rObjClassRect2d = (Rect2d)jsonObj.opt(OBJCLASS_BOUNDING_BOX);
+						String sObjTrackingId = jsonObj.optString(OBJCLASS_TRACKING_ID, null);
 						//
-						addDetectedObj(lObjClassId, sObjClassName, dObjClassConfScore, dObjClassRect2d);
+						addDetectedObj(lObjClassId, sObjClassName, dObjClassConfScore, rObjClassRect2d, sObjTrackingId);
 					}
 				}
 				
@@ -125,7 +132,12 @@ public class ObjDetection {
 		 return addDetectedObj(aObjClassId, aObjClassName, aConfScore, new Rect2d(aRect.x, aRect.y, aRect.width, aRect.height));
 	}
 	
-    public boolean addDetectedObj(long aObjClassId, String aObjClassName, double aConfScore, Rect2d aRect2D)
+	public boolean addDetectedObj(long aObjClassId, String aObjClassName, double aConfScore, Rect2d aRect2D)
+    {
+		return addDetectedObj(aObjClassId, aObjClassName, aConfScore, aRect2D, null);
+    }
+	
+    public boolean addDetectedObj(long aObjClassId, String aObjClassName, double aConfScore, Rect2d aRect2D, String aTrackingId)
     {
     	JSONArray jArrObjClass = this.jsonDetection.optJSONArray(aObjClassName);
     	if(jArrObjClass==null)
@@ -139,6 +151,10 @@ public class ObjDetection {
     	jsonObj.put(OBJCLASS_NAME, aObjClassName);
     	jsonObj.put(OBJCLASS_CONF_SCORE, aConfScore);
     	jsonObj.put(OBJCLASS_BOUNDING_BOX, aRect2D);
+    	if(aTrackingId!=null && aTrackingId.trim().length()>0)
+    	{
+    		jsonObj.put(OBJCLASS_TRACKING_ID, aTrackingId);
+    	}
 	
     	jArrObjClass.put(jsonObj);
     
@@ -150,7 +166,12 @@ public class ObjDetection {
 		return this.jsonDetection;
 	}
 	
-
+	public String toString()
+	{
+		return this.jsonDetection.toString();
+	}
+	
+	/**
 	public static void main(String[] args)
 	{
 		ObjDetection objs = new ObjDetection();
@@ -159,7 +180,6 @@ public class ObjDetection {
 		
 		objs.addDetectedObj(2, "cat", 0.77, new Rect2d(100,145,20,30));
 		objs.addDetectedObj(33, "bicycle", 0.37, new Rect2d(211,430,300,50));
-		
 		
 		ObjDetection objs2 = new ObjDetection();
 		objs2.addAll(objs.toJson());
@@ -177,7 +197,6 @@ public class ObjDetection {
 		{
 			System.out.println(json);
 		}
-		
-		
 	}
+	**/
 }
