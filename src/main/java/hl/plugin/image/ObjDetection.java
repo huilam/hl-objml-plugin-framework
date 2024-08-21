@@ -31,7 +31,7 @@ public class ObjDetection {
 					for(int i=0; i<jArrClassName.length(); i++)
 					{
 						JSONObject jsonObj = jArrClassName.getJSONObject(i);
-						long lObjClassId = jsonObj.optLong(sObjClassName, -1);
+						long lObjClassId = jsonObj.optLong(OBJCLASS_ID, -1);
 						double dObjClassConfScore = jsonObj.optDouble(OBJCLASS_CONF_SCORE, -1);
 						Rect2d dObjClassRect2d = (Rect2d)jsonObj.opt(OBJCLASS_BOUNDING_BOX);
 						//
@@ -42,6 +42,44 @@ public class ObjDetection {
 			
 			}
 		}
+	}
+	
+	///////////////////
+	public long getObjClassId(JSONObject json)
+	{
+		return json!=null?json.optLong(OBJCLASS_ID):-1;
+	}
+	
+	public String getObjClassName(JSONObject json)
+	{
+		return json!=null?json.optString(OBJCLASS_NAME):null;
+	}
+	
+	public double getConfidenceScore(JSONObject json)
+	{
+		return json!=null?json.optDouble(OBJCLASS_CONF_SCORE):-1;
+	}
+	
+	public Rect2d getBoundingBox(JSONObject json)
+	{
+		return json!=null?(Rect2d)json.opt(OBJCLASS_BOUNDING_BOX):null;
+	}
+	/////////////////////
+	
+	
+	public JSONObject[] getDetectedObjByObjClassName(String aObjClassName)
+	{
+		JSONArray jArrObjClass = jsonDetection.optJSONArray(aObjClassName);
+		if(jArrObjClass==null)
+			jArrObjClass = new JSONArray();
+		
+		List<JSONObject> listDetectedObj = new ArrayList<JSONObject>();
+		for(int i=0; i<jArrObjClass.length(); i++)
+		{
+			listDetectedObj.add((JSONObject)jArrObjClass.get(i));
+		}
+		
+		return (JSONObject[]) listDetectedObj.toArray(new JSONObject[listDetectedObj.size()]);
 	}
 	
 	public String[] getObjClassNames()
@@ -133,6 +171,13 @@ public class ObjDetection {
 		System.out.println("bicycle="+objs2.getDetectionCount("bicycle"));
 		System.out.println("cat="+objs2.getDetectionCount("cat"));
 		System.out.println("dog="+objs2.getDetectionCount("dog"));
+		
+		JSONObject[] persons = objs2.getDetectedObjByObjClassName("person");
+		for(JSONObject json : persons)
+		{
+			System.out.println(json);
+		}
+		
 		
 	}
 }
