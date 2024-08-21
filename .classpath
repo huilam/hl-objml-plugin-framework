@@ -11,6 +11,6 @@
 	<classpathentry kind="lib" path="lib/opencv-4100.jar"/>
 	<classpathentry kind="lib" path="lib/json-20220924.jar"/>
 	<classpathentry kind="lib" path="lib/hl-common_jdk11_20240815-1518-33.jar"/>
-	<classpathentry kind="lib" path="lib/hl-opencv_jdk11_20240821-2010-11.jar"/>
+	<classpathentry kind="lib" path="lib/hl-opencv_jdk11_20240821-2217-44.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
