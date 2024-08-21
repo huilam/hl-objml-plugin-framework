@@ -1,9 +1,42 @@
 package hl.plugin.image;
 
 import org.json.JSONObject;
+import org.opencv.core.Mat;
+import org.opencv.core.Point;
 import org.opencv.core.Rect2d;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 
-public class ObjTrackingUtil {
+public class ObjDetectionUtil {
+	
+	public static Mat annotateImage(final Mat aMatInput, final ObjDetection aDetectedObjs)
+	{
+		// Draw bounding boxes
+		Mat matOutputImg = aMatInput.clone();
+
+		for(String sObjClassName : aDetectedObjs.getObjClassNames())
+		{
+			JSONObject[] jsonDetectedObjs = aDetectedObjs.getDetectedObjByObjClassName(sObjClassName);
+			for(JSONObject json : jsonDetectedObjs)
+			{
+				String objClassName 	= ObjDetection.getObjClassName(json);
+				String objTrackingId 	= ObjDetection.getObjTrackingId(json);
+				double objConfScore 	= ObjDetection.getConfidenceScore(json);
+				Rect2d objBox 			= ObjDetection.getBoundingBox(json);
+						
+            	Point ptXY1 	= new Point(objBox.x, objBox.y);
+            	Point ptXY2 	= new Point(objBox.x + objBox.width, objBox.y + objBox.height);
+	            Imgproc.rectangle(matOutputImg, ptXY1, ptXY2, new Scalar(0, 255, 0), 2);
+
+	            String label 	= (objTrackingId!=null?objTrackingId:objClassName) + ": " + String.format("%.2f", objConfScore);
+	            Imgproc.putText(matOutputImg, label, new Point(ptXY1.x, ptXY1.y - 10), 
+	            		Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 255, 0), 2);
+			}
+		
+		}
+        //
+		return matOutputImg;
+	}
 	
 	public static boolean updTrackingIdWithPrevDetections(JSONObject aCurObj, final ObjDetection aPrevObjs, double aThreshold)
 	{
