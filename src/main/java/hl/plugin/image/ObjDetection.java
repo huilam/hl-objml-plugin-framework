@@ -15,6 +15,8 @@ public class ObjDetection {
 	protected final static String OBJCLASS_BOUNDING_BOX 	= "obj_bounding_box";
 	//
 	protected final static String OBJCLASS_TRACKING_ID 		= "obj_tracking_id";
+	protected final static String OBJCLASS_PREV_TRACKING_ID = "obj_prev_tracking_id";
+	
 	//protected final static String OBJCLASS_MAT 				= "obj_mat";
 	//protected final static String OBJCLASS_SHAPE 			= "objclass_shape";
 	
@@ -47,10 +49,22 @@ public class ObjDetection {
 		return json!=null?(String)getAttribute(json,OBJCLASS_TRACKING_ID):null;
 	}
 	
+	public static boolean isNewObjTrackingId(JSONObject json)
+	{
+		String sPrevTrackingId = json.optString(OBJCLASS_PREV_TRACKING_ID, null);
+		return (sPrevTrackingId!=null);
+	}
+	
 	public static void updObjTrackingId(JSONObject json, String aTrackingId)
 	{
-		if(json!=null)
+		if(json!=null && aTrackingId!=null && aTrackingId.trim().length()>0)
 		{
+			String sPrevTrackingId = json.optString(OBJCLASS_TRACKING_ID, null);
+			
+			if(aTrackingId.equals(sPrevTrackingId) && sPrevTrackingId!=null)
+			{
+				json.put(OBJCLASS_PREV_TRACKING_ID, sPrevTrackingId);
+			}
 			json.put(OBJCLASS_TRACKING_ID, aTrackingId);
 		}
 	}

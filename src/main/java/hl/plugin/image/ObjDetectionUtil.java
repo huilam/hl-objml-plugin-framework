@@ -35,10 +35,12 @@ public class ObjDetectionUtil {
 				String objTrackingId 	= ObjDetection.getObjTrackingId(json);
 				double objConfScore 	= ObjDetection.getConfidenceScore(json);
 				Rect2d objBox 			= ObjDetection.getBoundingBox(json);
+				//
+				boolean isNewTrackingId = ObjDetection.isNewObjTrackingId(json);
 				
 				Scalar objColor = mapObjColors.get(objClassName);
 				if(objColor==null)
-					objColor = (objTrackingId==null)? new Scalar(0, 255, 0): new Scalar(0, 0, 255);
+					objColor = isNewTrackingId? new Scalar(0, 255, 0): new Scalar(0, 0, 255);
 						
             	Point ptXY1 	= new Point(objBox.x, objBox.y);
             	Point ptXY2 	= new Point(objBox.x + objBox.width, objBox.y + objBox.height);
