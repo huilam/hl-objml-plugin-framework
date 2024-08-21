@@ -18,6 +18,29 @@ public class ObjDetection {
 	private JSONObject jsonDetection = new JSONObject();
 
 	
+	///////////////////
+	public static long getObjClassId(JSONObject json)
+	{
+		return json!=null?json.optLong(OBJCLASS_ID):-1;
+	}
+	
+	public static String getObjClassName(JSONObject json)
+	{
+		return json!=null?json.optString(OBJCLASS_NAME):null;
+	}
+	
+	public static double getConfidenceScore(JSONObject json)
+	{
+		return json!=null?json.optDouble(OBJCLASS_CONF_SCORE):-1;
+	}
+	
+	public static Rect2d getBoundingBox(JSONObject json)
+	{
+		return json!=null?(Rect2d)json.opt(OBJCLASS_BOUNDING_BOX):null;
+	}
+	/////////////////////
+	
+	
 	public void addAll(JSONObject aInputJson)
 	{
 		if(aInputJson!=null)
@@ -43,33 +66,10 @@ public class ObjDetection {
 			}
 		}
 	}
-	
-	///////////////////
-	public long getObjClassId(JSONObject json)
-	{
-		return json!=null?json.optLong(OBJCLASS_ID):-1;
-	}
-	
-	public String getObjClassName(JSONObject json)
-	{
-		return json!=null?json.optString(OBJCLASS_NAME):null;
-	}
-	
-	public double getConfidenceScore(JSONObject json)
-	{
-		return json!=null?json.optDouble(OBJCLASS_CONF_SCORE):-1;
-	}
-	
-	public Rect2d getBoundingBox(JSONObject json)
-	{
-		return json!=null?(Rect2d)json.opt(OBJCLASS_BOUNDING_BOX):null;
-	}
-	/////////////////////
-	
-	
+		
 	public JSONObject[] getDetectedObjByObjClassName(String aObjClassName)
 	{
-		JSONArray jArrObjClass = jsonDetection.optJSONArray(aObjClassName);
+		JSONArray jArrObjClass = this.jsonDetection.optJSONArray(aObjClassName);
 		if(jArrObjClass==null)
 			jArrObjClass = new JSONArray();
 		
@@ -85,7 +85,7 @@ public class ObjDetection {
 	public String[] getObjClassNames()
 	{
 		List<String> listClassName = new ArrayList<String>();
-		for(String sClassName : jsonDetection.keySet())
+		for(String sClassName : this.jsonDetection.keySet())
 		{
 			listClassName.add(sClassName);
 		}
@@ -95,15 +95,15 @@ public class ObjDetection {
 	
 	public void clearDetection()
 	{
-		jsonDetection.clear();
+		this.jsonDetection.clear();
 	}
 	
 	public long getTotalDetectionCount()
 	{
 		long lTotal = 0;
-		for(String sKey : jsonDetection.keySet())
+		for(String sKey : this.jsonDetection.keySet())
 		{
-			JSONArray jsonArray = jsonDetection.getJSONArray(sKey);
+			JSONArray jsonArray = this.jsonDetection.getJSONArray(sKey);
 			lTotal += jsonArray.length();
 			
 		}
@@ -112,7 +112,7 @@ public class ObjDetection {
 	
 	public long getDetectionCount(String aObjClassName)
 	{
-		JSONArray jArrObjClass = jsonDetection.optJSONArray(aObjClassName);
+		JSONArray jArrObjClass = this.jsonDetection.optJSONArray(aObjClassName);
 		if(jArrObjClass==null)
     	{
     		jArrObjClass = new JSONArray();
@@ -127,11 +127,11 @@ public class ObjDetection {
 	
     public boolean addDetectedObj(long aObjClassId, String aObjClassName, double aConfScore, Rect2d aRect2D)
     {
-    	JSONArray jArrObjClass = jsonDetection.optJSONArray(aObjClassName);
+    	JSONArray jArrObjClass = this.jsonDetection.optJSONArray(aObjClassName);
     	if(jArrObjClass==null)
     	{
     		jArrObjClass = new JSONArray();
-    		jsonDetection.put(aObjClassName, jArrObjClass);
+    		this.jsonDetection.put(aObjClassName, jArrObjClass);
     	}
     	
     	JSONObject jsonObj = new JSONObject();
@@ -147,7 +147,7 @@ public class ObjDetection {
 	
 	public JSONObject toJson()
 	{
-		return jsonDetection;
+		return this.jsonDetection;
 	}
 	
 
