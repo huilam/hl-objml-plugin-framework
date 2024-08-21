@@ -112,6 +112,15 @@ public class ObjDetection {
 			}
 		}
 	}
+	
+	public long removeDetectedObjByObjClassName(String aObjClassName)
+	{
+		JSONArray jArrObjClass = (JSONArray) this.jsonDetection.remove(aObjClassName);
+		if(jArrObjClass==null)
+			jArrObjClass = new JSONArray();
+		
+		return jArrObjClass.length();
+	}
 		
 	public JSONObject[] getDetectedObjByObjClassName(String aObjClassName)
 	{
@@ -227,7 +236,6 @@ public class ObjDetection {
 		return aJson;
 	}
 	
-	
 	/**
 	public static void main(String[] args)
 	{
@@ -254,6 +262,12 @@ public class ObjDetection {
 		{
 			System.out.println(json);
 		}
+		
+		long lRemoved =  objs2.removeDetectedObjByObjClassName("person");
+		System.out.println("removed = "+lRemoved);
+		persons = objs2.getDetectedObjByObjClassName("person");
+		System.out.println("person = "+persons.length);
+		
 	}
 	**/
 }
