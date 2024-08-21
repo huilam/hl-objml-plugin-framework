@@ -61,7 +61,7 @@ public class ObjDetection {
 		{
 			String sPrevTrackingId = json.optString(OBJCLASS_TRACKING_ID, null);
 			
-			if(aTrackingId.equals(sPrevTrackingId) && sPrevTrackingId!=null)
+			if(sPrevTrackingId!=null && !aTrackingId.equals(sPrevTrackingId))
 			{
 				json.put(OBJCLASS_PREV_TRACKING_ID, sPrevTrackingId);
 			}
