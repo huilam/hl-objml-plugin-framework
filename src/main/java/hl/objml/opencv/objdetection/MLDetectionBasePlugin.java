@@ -33,9 +33,14 @@ public class MLDetectionBasePlugin {
 	protected String _plugin_source 	= null;
 	protected List<String> obj_classes_of_interest = new ArrayList<String>();
 	
-	public List<String> getObjClassesOfInterest()
+	public String[] getObjClassesOfInterest()
 	{
-		return this.obj_classes_of_interest;
+		return (String[]) this.obj_classes_of_interest.toArray();
+	}
+	
+	public void clearObjClassesOfInterest()
+	{
+		this.obj_classes_of_interest.clear();
 	}
 	
 	public boolean addObjClassOfInterest(String aObjClassName)
