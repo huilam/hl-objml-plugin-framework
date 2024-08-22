@@ -22,8 +22,9 @@ import org.opencv.imgcodecs.Imgcodecs;
 import hl.common.ImgUtil;
 import hl.common.PropUtil;
 import hl.opencv.util.OpenCvUtil;
+import hl.plugin.image.IMLDetectionPlugin;
 
-public class MLDetectionBasePlugin {
+public class MLDetectionBasePlugin implements IMLDetectionPlugin{
 	
 	//
 	protected MLPluginConfig pluginConfig = new MLPluginConfig();
@@ -31,6 +32,8 @@ public class MLDetectionBasePlugin {
 	protected Properties props_model 	= null;
 	protected String _model_filename 	= null;
 	protected String _plugin_source 	= null;
+	
+	private boolean isRegObjsOfInterest = false;
 	protected List<String> obj_classes_of_interest = new ArrayList<String>();
 	
 	public String[] getObjClassesOfInterest()
@@ -41,18 +44,25 @@ public class MLDetectionBasePlugin {
 	public void clearObjClassesOfInterest()
 	{
 		this.obj_classes_of_interest.clear();
+		isRegObjsOfInterest = false;
 	}
 	
 	public boolean addObjClassOfInterest(String aObjClassName)
 	{
 		if(aObjClassName!=null && aObjClassName.trim().length()>0)
+		{
+			isRegObjsOfInterest = true;
 			return this.obj_classes_of_interest.add(aObjClassName.toLowerCase());
-		else
-			return false;
+		}
+		
+		return false;
 	}
 	
 	public boolean isObjClassOfInterest(String aObjClassName)
 	{
+		if(!isRegObjsOfInterest)
+			return true;
+		
 		return this.obj_classes_of_interest.contains(aObjClassName.toLowerCase());
 	}
 	
@@ -391,6 +401,18 @@ public class MLDetectionBasePlugin {
 	
 	public Map<String,Object> extract(Mat aImageFile, JSONObject aCustomThresholdJson)
 	{
+		return null;
+	}
+
+	@Override
+	public boolean isPluginOK() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Map<String, Object> detect(Mat aImageFile, JSONObject aCustomThresholdJson) {
+		// TODO Auto-generated method stub
 		return null;
 	}
     
