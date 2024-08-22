@@ -31,6 +31,25 @@ public class MLDetectionBasePlugin {
 	protected Properties props_model 	= null;
 	protected String _model_filename 	= null;
 	protected String _plugin_source 	= null;
+	protected List<String> obj_classes_of_interest = new ArrayList<String>();
+	
+	public List<String> getObjClassesOfInterest()
+	{
+		return this.obj_classes_of_interest;
+	}
+	
+	public boolean addObjClassOfInterest(String aObjClassName)
+	{
+		if(aObjClassName!=null && aObjClassName.trim().length()>0)
+			return this.obj_classes_of_interest.add(aObjClassName.toLowerCase());
+		else
+			return false;
+	}
+	
+	public boolean isObjClassOfInterest(String aObjClassName)
+	{
+		return this.obj_classes_of_interest.contains(aObjClassName.toLowerCase());
+	}
 	
 	public void setPluginConfig(MLPluginConfig aPluginConfig)
 	{
