@@ -47,12 +47,16 @@ public class MLDetectionBasePlugin implements IMLDetectionPlugin{
 		isRegObjsOfInterest = false;
 	}
 	
-	public boolean addObjClassOfInterest(String aObjClassName)
+	public boolean addObjClassOfInterest(String[] aObjClassNames)
 	{
-		if(aObjClassName!=null && aObjClassName.trim().length()>0)
+		if(aObjClassNames!=null && aObjClassNames.length>0)
 		{
 			isRegObjsOfInterest = true;
-			return this.obj_classes_of_interest.add(aObjClassName.toLowerCase());
+			for(int i=0; i<aObjClassNames.length; i++)
+			{
+				this.obj_classes_of_interest.add(aObjClassNames[i].toLowerCase());
+			}
+			return isRegObjsOfInterest;
 		}
 		
 		return false;
