@@ -15,7 +15,7 @@ public class ObjDetection {
 	protected final static String OBJCLASS_BOUNDING_BOX 	= "obj_bounding_box";
 	//
 	protected final static String OBJCLASS_TRACKING_ID 		= "obj_tracking_id";
-	protected final static String OBJCLASS_PREV_TRACKING_ID = "obj_prev_tracking_id";
+	protected final static String OBJCLASS_PREV_TRACKING_ID = "temp_tracking_id";
 	
 	//protected final static String OBJCLASS_MAT 				= "obj_mat";
 	//protected final static String OBJCLASS_SHAPE 			= "objclass_shape";
