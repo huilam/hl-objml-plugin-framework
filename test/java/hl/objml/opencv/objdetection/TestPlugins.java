@@ -122,7 +122,7 @@ System.out.println("     - Result : "+mapResult.size());
 	    		if(mapResult.size()>0)
 	    		{
 	    			/*** Saved output from plugin detection  ***/
-		    		Mat matOutput = (Mat) mapResult.get(IMLDetectionPlugin._KEY_OUTPUT_ANNOTATED_MAT);
+		    		Mat matOutput = (Mat) mapResult.get(ObjDetectionBasePlugin._KEY_OUTPUT_ANNOTATED_MAT);
 					savedOutputImage(sTestCycle, detector.getPluginName(), fileImg, matOutput);
 	    		}
 	    	}
