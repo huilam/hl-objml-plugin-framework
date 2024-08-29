@@ -10,15 +10,15 @@ import org.opencv.core.Rect2d;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-public class ObjDetectionUtil {
+public class DetectedObjUtil {
 	
 	
-	public static Mat annotateImage(final Mat aMatInput, final ObjDetection aDetectedObjs)
+	public static Mat annotateImage(final Mat aMatInput, final DetectedObj aDetectedObjs)
 	{
 		return annotateImage(aMatInput, aDetectedObjs, null);
 	}
 	
-	public static Mat annotateImage(final Mat aMatInput, final ObjDetection aDetectedObjs, Map<String, Scalar> mapObjColors)
+	public static Mat annotateImage(final Mat aMatInput, final DetectedObj aDetectedObjs, Map<String, Scalar> mapObjColors)
 	{
 		// Draw bounding boxes
 		Mat matOutputImg = aMatInput.clone();
@@ -31,12 +31,12 @@ public class ObjDetectionUtil {
 			JSONObject[] jsonDetectedObjs = aDetectedObjs.getDetectedObjByObjClassName(sObjClassName);
 			for(JSONObject json : jsonDetectedObjs)
 			{
-				String objClassName 	= ObjDetection.getObjClassName(json);
-				String objTrackingId 	= ObjDetection.getObjTrackingId(json);
-				double objConfScore 	= ObjDetection.getConfidenceScore(json);
-				Rect2d objBox 			= ObjDetection.getBoundingBox(json);
+				String objClassName 	= DetectedObj.getObjClassName(json);
+				String objTrackingId 	= DetectedObj.getObjTrackingId(json);
+				double objConfScore 	= DetectedObj.getConfidenceScore(json);
+				Rect2d objBox 			= DetectedObj.getBoundingBox(json);
 				//
-				boolean isNewTrackingId = ObjDetection.isNewObjTrackingId(json);
+				boolean isNewTrackingId = DetectedObj.isNewObjTrackingId(json);
 				
 				Scalar objColor = mapObjColors.get(objClassName);
 				if(objColor==null)
@@ -56,9 +56,9 @@ public class ObjDetectionUtil {
 		return matOutputImg;
 	}
 	
-	public static boolean updTrackingIdWithPrevDetections(JSONObject aCurObj, final ObjDetection aPrevObjs, double aThreshold)
+	public static boolean updTrackingIdWithPrevDetections(JSONObject aCurObj, final DetectedObj aPrevObjs, double aThreshold)
 	{
-		Rect2d rectCurObj = ObjDetection.getBoundingBox(aCurObj);
+		Rect2d rectCurObj = DetectedObj.getBoundingBox(aCurObj);
 		if(rectCurObj!=null && aPrevObjs!=null)
 		{
 			double dMaxScore 			= 0;
@@ -69,7 +69,7 @@ public class ObjDetectionUtil {
 				JSONObject[] jsonPrevObjs = aPrevObjs.getDetectedObjByObjClassName(aClassName);
 				for(JSONObject jsonPrev : jsonPrevObjs)
 				{
-					Rect2d rectPrev = ObjDetection.getBoundingBox(jsonPrev);
+					Rect2d rectPrev = DetectedObj.getBoundingBox(jsonPrev);
 					//
 					double dCurOverlapScore = calcIntersectionScore(rectCurObj, rectPrev);
 					//double dCurRatioScore = calcWHRatioScore(rectCurObj, rectPrev);
@@ -78,7 +78,7 @@ public class ObjDetectionUtil {
 					//
 					if(dCurScore > dMaxScore)
 					{
-						String trackingIdPrev = ObjDetection.getObjTrackingId(jsonPrev);
+						String trackingIdPrev = DetectedObj.getObjTrackingId(jsonPrev);
 						//
 						sMatchedTrackingId = trackingIdPrev;
 						dMaxScore = dCurScore;
@@ -91,7 +91,7 @@ public class ObjDetectionUtil {
 			
 			if(dMaxScore > aThreshold)
 			{
-				ObjDetection.updObjTrackingId(aCurObj, sMatchedTrackingId);
+				DetectedObj.updObjTrackingId(aCurObj, sMatchedTrackingId);
 				return true;
 			}
 		}

@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import org.opencv.core.Rect;
 import org.opencv.core.Rect2d;
 
-public class ObjDetection {
+public class DetectedObj {
 	
 	protected final static String OBJCLASS_ID				= "obj_class_id";
 	protected final static String OBJCLASS_NAME 			= "obj_class_name";
@@ -239,14 +239,14 @@ public class ObjDetection {
 	/**
 	public static void main(String[] args)
 	{
-		ObjDetection objs = new ObjDetection();
+		DetectedObj objs = new ObjDetection();
 		objs.addDetectedObj(0, "person", 0.52, new Rect2d(0,10,20,40));
 		objs.addDetectedObj(0, "person", 0.78, new Rect2d(11,100,60,40));
 		
 		objs.addDetectedObj(2, "cat", 0.77, new Rect2d(100,145,20,30));
 		objs.addDetectedObj(33, "bicycle", 0.37, new Rect2d(211,430,300,50));
 		
-		ObjDetection objs2 = new ObjDetection();
+		DetectedObj objs2 = new ObjDetection();
 		objs2.addAll(objs.toJson());
 		
 		System.out.println("ClassNames="+ String.join(",", objs2.getObjClassNames()));
