@@ -1,6 +1,8 @@
 package hl.objml2.common;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONObject;
@@ -12,6 +14,65 @@ import org.opencv.imgproc.Imgproc;
 
 public class DetectedObjUtil {
 	
+
+	public static DetectedObj toDetectedObj(final ObjDetectionList aObjList)
+	{
+		DetectedObj objs = new DetectedObj();
+		
+		List<Integer> listObjClassId 	= aObjList.getObjClassIdList();
+		List<String> listObjClassName 	= aObjList.getObjClassNameList();
+		List<Float> listConfidence 		= aObjList.getConfidenceScoreList();
+		List<Rect2d> listRect2DBox 		= aObjList.getBoundingBoxList();
+		
+		
+		for(int i=0; i< listRect2DBox.size(); i++)
+		{
+			int iObjClassId = listObjClassId.get(i);
+			String sObjClassLabel = listObjClassName.get(i);
+			
+			objs.addDetectedObj(
+					iObjClassId, 
+					sObjClassLabel,
+					listConfidence.get(i), 
+					listRect2DBox.get(i));
+		}
+		
+		return objs;
+	}
+	
+	public static ObjDetectionList toDetectionList(DetectedObj aDetectedObj)
+	{
+		ObjDetectionList list = new ObjDetectionList();
+		
+		for(String sClassName : aDetectedObj.getObjClassNames())
+		{
+			JSONObject[] jsonObjs = aDetectedObj.getDetectedObjByObjClassName(sClassName);
+			for(JSONObject json : jsonObjs)
+			{
+				int iObjClassId 		= (int) DetectedObj.getObjClassId(json);
+				String sObjClassName 	= DetectedObj.getObjClassName(json);
+				float fObjConfidence 	= (float) DetectedObj.getConfidenceScore(json);
+				Rect2d rec2dBox 		= DetectedObj.getBoundingBox(json);
+				//
+				list.addDetectedObjToList(iObjClassId, sObjClassName, fObjConfidence, rec2dBox);
+			}
+		}
+		
+		return list;
+	}
+	
+	public static DetectedObj mergeDetectedObj(DetectedObj aObj1, DetectedObj aObj2, float aNMSThreshold)
+	{
+
+		ObjDetectionList list1 = toDetectionList(aObj1);
+		ObjDetectionList list2 = toDetectionList(aObj2);
+		
+		list1.addObjDetectionList(list2);
+		
+		ObjDetectionList listMerged = list1.performNMSBoxes(0.6f, aNMSThreshold);
+
+		return toDetectedObj(listMerged);
+	}
 	
 	public static Mat annotateImage(final Mat aMatInput, final DetectedObj aDetectedObjs)
 	{

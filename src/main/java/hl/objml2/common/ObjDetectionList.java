@@ -12,12 +12,17 @@ import org.opencv.dnn.Dnn;
 public class ObjDetectionList {
 	
 	private List<Integer> listObjClassId 	= new ArrayList<>();
+	private List<String> listObjClassName 	= new ArrayList<>();
 	private List<Float> listObjConfidence 	= new ArrayList<>();
 	private List<Rect2d> listBoundingBox 	= new ArrayList<>();
 
-	public void addDetectedObjToList(int aObjClassId, float aObjConfScore, Rect2d aObjRectBox)
+	public void addDetectedObjToList(int aObjClassId, String aObjClassName, float aObjConfScore, Rect2d aObjRectBox)
 	{
+		if(aObjClassName==null)
+			aObjClassName = "undefined";
+		
 		this.listObjClassId.add(aObjClassId);
+		this.listObjClassName.add(aObjClassName);
 		this.listObjConfidence.add(aObjConfScore);
 		this.listBoundingBox.add(aObjRectBox);
 	}
@@ -25,6 +30,7 @@ public class ObjDetectionList {
 	public void addObjDetectionList(ObjDetectionList aObjDetectionList)
 	{
 		this.listObjClassId.addAll(aObjDetectionList.getObjClassIdList());
+		this.listObjClassName.addAll(aObjDetectionList.getObjClassNameList());
 		this.listObjConfidence.addAll(aObjDetectionList.getConfidenceScoreList());
 		this.listBoundingBox.addAll(aObjDetectionList.getBoundingBoxList() );
 	}
@@ -32,6 +38,7 @@ public class ObjDetectionList {
 	public void clear()
 	{
 		this.listObjClassId.clear();
+		this.listObjClassName.clear();
 		this.listObjConfidence.clear();
 		this.listBoundingBox.clear();
 	}
@@ -41,6 +48,11 @@ public class ObjDetectionList {
 		return this.listObjClassId;
 	}
 	
+	public List<String> getObjClassNameList()
+	{
+		return this.listObjClassName;
+	}
+		
 	public List<Float> getConfidenceScoreList()
 	{
 		return this.listObjConfidence;
@@ -72,8 +84,12 @@ public class ObjDetectionList {
 		{
 			for(int i=0; i<iIndexes.length; i++)
 			{
+				int iObjClassId = listObjClassId.get(i);
+				String sObjClassName = listObjClassName.get(iObjClassId);
+				
 				listNMSResult.addDetectedObjToList(
-						listObjClassId.get(i), 
+						iObjClassId, 
+						sObjClassName,
 						listObjConfidence.get(i),
 						listObjRectBoxes.get(i));
 			}

@@ -107,8 +107,6 @@ public class DetectedObj {
 								sObjTrackingId);
 					}
 				}
-				
-			
 			}
 		}
 	}
@@ -144,7 +142,6 @@ public class DetectedObj {
 		{
 			listClassName.add(sClassName);
 		}
-		
 		return (String[]) listClassName.toArray(new String[listClassName.size()]);
 	}
 	
@@ -160,7 +157,6 @@ public class DetectedObj {
 		{
 			JSONArray jsonArray = this.jsonDetection.getJSONArray(sKey);
 			lTotal += jsonArray.length();
-			
 		}
 		return lTotal;
 	}
@@ -188,6 +184,9 @@ public class DetectedObj {
     public boolean addDetectedObj(long aObjClassId, String aObjClassName, double aConfScore, Rect2d aRect2D, 
     		String aTrackingId)
     {
+    	if(aObjClassName==null)
+    		aObjClassName = "undefined";
+    	
     	JSONArray jArrObjClass = this.jsonDetection.optJSONArray(aObjClassName);
     	if(jArrObjClass==null)
     	{
