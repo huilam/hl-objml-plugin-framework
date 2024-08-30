@@ -1,11 +1,10 @@
 package hl.plugin;
 
 import java.util.Properties;
-import hl.objml.opencv.objdetection.MLPluginConfig;
 
 public interface IBasePlugin {
 	
-	abstract public void setPluginConfig(MLPluginConfig pluginConfig);
+	abstract public void setPluginConfig(PluginConfig pluginConfig);
 	abstract public void setPluginSource(String aPluginSource);
 	
 	abstract public boolean isPluginOK();

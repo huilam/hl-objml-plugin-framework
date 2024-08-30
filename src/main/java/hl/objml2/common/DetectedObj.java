@@ -1,4 +1,4 @@
-package hl.plugin.image;
+package hl.objml2.common;
 
 import java.util.ArrayList;
 import java.util.List;

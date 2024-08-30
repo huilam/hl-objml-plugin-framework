@@ -1,4 +1,4 @@
-package hl.plugin.image;
+package hl.objml2.plugin;
 
 import java.util.Map;
 

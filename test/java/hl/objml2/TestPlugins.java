@@ -1,4 +1,4 @@
-package hl.objml.opencv.objdetection;
+package hl.objml2;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -9,8 +9,11 @@ import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 
 import hl.common.FileUtil;
+import hl.objml2.plugin.IObjDetectionPlugin;
+import hl.objml2.plugin.MLPluginConfig;
+import hl.objml2.plugin.MLPluginMgr;
+import hl.objml2.plugin.ObjDetectionBasePlugin;
 import hl.opencv.util.OpenCvUtil;
-import hl.plugin.image.IMLDetectionPlugin;
 
 public class TestPlugins {
 	
@@ -97,7 +100,7 @@ public class TestPlugins {
     		iPlugID++;
     		
  			/*** Get plugin instance ***/
-	    	IMLDetectionPlugin detector = mgr.getMLInstance(sPluginClassName);
+	    	IObjDetectionPlugin detector = mgr.getMLInstance(sPluginClassName);
 	    	
 	    	int iFileCount = 0;
 	    	for(File fileImg : fileImgs)
@@ -106,7 +109,7 @@ public class TestPlugins {
 	    		long lStartMs = System.currentTimeMillis();
 	    		
 	    		/*** Perform plugin detection ***/
-	    		Mat matImage = MLDetectionBasePlugin.getCvMatFromFile(fileImg);
+	    		Mat matImage = ObjDetectionBasePlugin.getCvMatFromFile(fileImg);
 	    		Size sizeImg = matImage.size();
 	    		Map<String, ?> mapResult = detector.detect(matImage, null);
 	    		long lDetectionMs = (System.currentTimeMillis()-lStartMs);

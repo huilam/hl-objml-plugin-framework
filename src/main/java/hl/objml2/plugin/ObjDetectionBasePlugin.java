@@ -1,4 +1,4 @@
-package hl.objml.opencv.objdetection;
+package hl.objml2.plugin;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -22,7 +22,7 @@ import org.opencv.imgcodecs.Imgcodecs;
 import hl.common.ImgUtil;
 import hl.common.PropUtil;
 import hl.opencv.util.OpenCvUtil;
-import hl.plugin.image.IObjDetectionPlugin;
+import hl.plugin.PluginConfig;
 
 public class ObjDetectionBasePlugin implements IObjDetectionPlugin{
 	
@@ -70,9 +70,9 @@ public class ObjDetectionBasePlugin implements IObjDetectionPlugin{
 		return this.obj_classes_of_interest.contains(aObjClassName.toLowerCase());
 	}
 	
-	public void setPluginConfig(MLPluginConfig aPluginConfig)
+	public void setPluginConfig(PluginConfig aPluginConfig)
 	{
-		this.pluginConfig = aPluginConfig;
+		this.pluginConfig = (MLPluginConfig) aPluginConfig;
 	}
 	
 	public void setPluginSource(String aPluginSource)
