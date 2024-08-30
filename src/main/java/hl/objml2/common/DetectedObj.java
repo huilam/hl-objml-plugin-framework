@@ -150,9 +150,9 @@ public class DetectedObj {
 		this.jsonDetection.clear();
 	}
 	
-	public long getTotalDetectionCount()
+	public int getTotalDetectionCount()
 	{
-		long lTotal = 0;
+		int lTotal = 0;
 		for(String sKey : this.jsonDetection.keySet())
 		{
 			JSONArray jsonArray = this.jsonDetection.getJSONArray(sKey);

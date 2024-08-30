@@ -9,6 +9,8 @@ import org.opencv.core.MatOfRect2d;
 import org.opencv.core.Rect2d;
 import org.opencv.dnn.Dnn;
 
+import hl.opencv.util.OpenCvUtil;
+
 public class ObjDetectionList {
 	
 	private List<Integer> listObjClassId 	= new ArrayList<>();
@@ -85,7 +87,7 @@ public class ObjDetectionList {
 			for(int i=0; i<iIndexes.length; i++)
 			{
 				int iObjClassId = listObjClassId.get(i);
-				String sObjClassName = listObjClassName.get(iObjClassId);
+				String sObjClassName = listObjClassName.get(i);
 				
 				listNMSResult.addDetectedObjToList(
 						iObjClassId, 
@@ -114,7 +116,11 @@ public class ObjDetectionList {
 	        
 	        Dnn.NMSBoxes(boxesMat, confidencesMat, aConfidenceThreshold, aNmsThreshold, indices);
         }
-        return indices.toArray();
+        
+        if(!indices.empty())
+        	return indices.toArray();
+        else
+        	return new int[]{};
 	}
 	
 	public static void main(String[] args)
