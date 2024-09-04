@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -34,8 +35,30 @@ public class ObjDetectionBasePlugin implements IObjDetectionPlugin{
 	protected String _plugin_source 	= null;
 	
 	private boolean isRegObjsOfInterest = false;
-	protected List<String> obj_classes_of_interest = new ArrayList<String>();
+	protected List<String> obj_classes_of_interest 		= new ArrayList<String>();
+	//
+	protected Map<String, String> mapObjClassMapping 	= new HashMap<String, String>();
 	
+	/////
+	public void addObjClassMapping(String aOrgObjClassName, String aNewObjClassName)
+	{
+		this.mapObjClassMapping.put(aOrgObjClassName, aNewObjClassName);
+	}
+	
+	public void clearObjClassesMapping()
+	{
+		this.mapObjClassMapping.clear();
+	}
+	
+	public String getMappedObjClass(String aOrgObjClassName)
+	{
+		String sMappedClassName = this.mapObjClassMapping.get(aOrgObjClassName);
+		if(sMappedClassName==null)
+			sMappedClassName = aOrgObjClassName;
+		return sMappedClassName;
+	}
+	/////
+
 	public String[] getObjClassesOfInterest()
 	{
 		return (String[]) this.obj_classes_of_interest.toArray();
