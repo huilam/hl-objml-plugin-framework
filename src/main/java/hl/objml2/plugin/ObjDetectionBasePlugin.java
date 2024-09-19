@@ -18,8 +18,9 @@ import java.util.Properties;
 
 import org.json.JSONObject;
 import org.opencv.core.Mat;
+import org.opencv.dnn.Dnn;
+import org.opencv.dnn.Net;
 import org.opencv.imgcodecs.Imgcodecs;
-
 import hl.common.ImgUtil;
 import hl.common.PropUtil;
 import hl.opencv.util.OpenCvUtil;
@@ -28,7 +29,8 @@ import hl.plugin.PluginConfig;
 public class ObjDetectionBasePlugin implements IObjDetectionPlugin{
 	
 	//
-	protected MLPluginConfig pluginConfig = new MLPluginConfig();
+	protected Net NET_DNN 					= null;
+	protected MLPluginConfig pluginConfig 	= new MLPluginConfig();
 	protected Class<?> thisclass 		= null;
 	protected Properties props_model 	= null;
 	protected String _model_filename 	= null;
@@ -111,6 +113,12 @@ public class ObjDetectionBasePlugin implements IObjDetectionPlugin{
 	public boolean isValidateMLFileLoading()
 	{
 		return true;
+	}
+	
+	
+	protected void initDnnNet()
+	{
+		NET_DNN = Dnn.readNetFromONNX( getModelFileName());
 	}
 	
 	protected boolean isPluginOK(Class<?> aClass, String aPropFileName)
@@ -421,13 +429,13 @@ public class ObjDetectionBasePlugin implements IObjDetectionPlugin{
 		return mat;
 	}
 
-	public Map<String,Object> match(Mat aImageFile, JSONObject aCustomThresholdJson, Map<String,Object> aMatchingTargetList)
-	{
-		return null;
-	}
-	
-	public Map<String,Object> extract(Mat aImageFile, JSONObject aCustomThresholdJson)
-	{
+	public Map<String, Object> detect(Mat aImageFile, JSONObject aCustomThresholdJson) 
+	{	
+		if(isPluginOK())
+		{	
+			List<Mat> listOutput = doInference(aImageFile, aCustomThresholdJson);		
+			return parseDetections(listOutput, aImageFile, aCustomThresholdJson);
+		}
 		return null;
 	}
 
@@ -438,9 +446,17 @@ public class ObjDetectionBasePlugin implements IObjDetectionPlugin{
 	}
 
 	@Override
-	public Map<String, Object> detect(Mat aImageFile, JSONObject aCustomThresholdJson) {
+	public List<Mat> doInference(Mat aImageFile, JSONObject aCustomThresholdJson) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public Map<String, Object> parseDetections(List<Mat> aInferenceOutputMat, 
+			Mat aImageFile, JSONObject aCustomThresholdJson) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
     
 }

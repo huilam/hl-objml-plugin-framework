@@ -3,6 +3,7 @@ package hl.objml2;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
@@ -111,7 +112,9 @@ public class TestPlugins {
 	    		/*** Perform plugin detection ***/
 	    		Mat matImage = ObjDetectionBasePlugin.getCvMatFromFile(fileImg);
 	    		Size sizeImg = matImage.size();
-	    		Map<String, ?> mapResult = detector.detect(matImage, null);
+	    		
+	    		List<Mat> listOutput = detector.doInference(matImage, null);
+	    		Map<String, ?> mapResult = detector.parseDetections(listOutput, matImage, null);
 	    		long lDetectionMs = (System.currentTimeMillis()-lStartMs);
 	    		
 System.out.println();		

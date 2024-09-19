@@ -1,5 +1,6 @@
 package hl.objml2.plugin;
 
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONObject;
@@ -15,7 +16,11 @@ public interface IObjDetectionPlugin extends IBasePlugin {
 	
 	public static final String _KEY_THRESHOLD_DETECTION 	= "threshold_detection";
 	public static final String _KEY_THRESHOLD_NMS 			= "threshold_nms";
-
-	abstract public Map<String,Object> detect(Mat aImageFile, JSONObject aCustomThresholdJson);
+	
+	abstract public List<Mat> doInference(Mat aMatInput, JSONObject aCustomThresholdJson);
+	
+	abstract public Map<String,Object> parseDetections(
+			List<Mat> aInferenceOutputMat, 
+			Mat aMatInput, JSONObject aCustomThresholdJson);
 	
 }
