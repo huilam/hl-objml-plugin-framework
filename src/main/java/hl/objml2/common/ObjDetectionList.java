@@ -9,8 +9,6 @@ import org.opencv.core.MatOfRect2d;
 import org.opencv.core.Rect2d;
 import org.opencv.dnn.Dnn;
 
-import hl.opencv.util.OpenCvUtil;
-
 public class ObjDetectionList {
 	
 	private List<Integer> listObjClassId 	= new ArrayList<>();
