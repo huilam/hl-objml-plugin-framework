@@ -20,6 +20,11 @@ public class DetectedObjUtil {
 	
 	public static Mat annotateImage(final Mat aMatInput, final FrameDetectedObj aDetectedObjs, Map<String, Scalar> mapObjColors)
 	{
+		return annotateImage(aMatInput, aDetectedObjs, mapObjColors, true);
+	}
+	
+	public static Mat annotateImage(final Mat aMatInput, final FrameDetectedObj aDetectedObjs, Map<String, Scalar> mapObjColors, boolean withLabel)
+	{
 		// Draw bounding boxes
 		Mat matOutputImg = aMatInput.clone();
 		
@@ -46,9 +51,12 @@ public class DetectedObjUtil {
             	Point ptXY2 	= new Point(objBox.x + objBox.width, objBox.y + objBox.height);
 	            Imgproc.rectangle(matOutputImg, ptXY1, ptXY2, objColor, 2);
 
-	            String label 	= (objTrackingId!=null?objTrackingId:objClassName) + ": " + String.format("%.2f", objConfScore);
-	            Imgproc.putText(matOutputImg, label, new Point(ptXY1.x, ptXY1.y - 10), 
-	            		Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, objColor, 2);
+	            if(withLabel)
+	            {
+		            String label 	= (objTrackingId!=null?objTrackingId:objClassName) + ": " + String.format("%.2f", objConfScore);
+		            Imgproc.putText(matOutputImg, label, new Point(ptXY1.x, ptXY1.y - 10), 
+		            		Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, objColor, 2);
+	            }
 			}
 		
 		}
