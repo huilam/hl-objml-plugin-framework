@@ -35,6 +35,15 @@ public class DetectedObj {
 	private String obj_tmp_trackingid 	= null;
 	///////////////////
 	
+	public DetectedObj(int aObjClassId, String aObjClassName, Point aPoint, double aConfScore)
+	{
+		MatOfPoint matPoints = new MatOfPoint();
+		if(aPoint!=null)
+		{
+			matPoints.fromArray(new Point[] {aPoint});
+		}
+		init(aObjClassId, aObjClassName, matPoints, aConfScore);
+	}
 	
 	public DetectedObj(int aObjClassId, String aObjClassName, Rect2d aBoundingRect, double aConfScore)
 	{
@@ -125,6 +134,19 @@ public class DetectedObj {
 			MatOfPoint mp = new MatOfPoint();
 			mp.fromArray(new Point[] {pt1, pt2, pt3, pt4});
 			setObj_shape_points(mp);
+		}
+	}
+	
+	public void addObjPoint(Point aPoint)
+	{
+		if(aPoint!=null)
+		{
+			if(this.obj_shape_points==null)
+				this.obj_shape_points = new MatOfPoint();
+			
+			List<Point> listPoints = this.obj_shape_points.toList();
+			listPoints.add(aPoint);
+			this.obj_shape_points.fromList(listPoints);
 		}
 	}
 	
