@@ -2,271 +2,226 @@ package hl.objml2.common;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Rect2d;
+import org.opencv.imgproc.Imgproc;
 
 public class DetectedObj {
 	
+	////
 	protected final static String OBJCLASS_ID				= "obj_class_id";
 	protected final static String OBJCLASS_NAME 			= "obj_class_name";
 	protected final static String OBJCLASS_CONF_SCORE 		= "obj_conf_score";
-	protected final static String OBJCLASS_BOUNDING_BOX 	= "obj_bounding_box";
-	//
+	protected final static String OBJCLASS_SHAPE_POINTS 	= "obj_shape_points";
 	protected final static String OBJCLASS_TRACKING_ID 		= "obj_tracking_id";
-	protected final static String OBJCLASS_PREV_TRACKING_ID = "temp_tracking_id";
-	
-	//protected final static String OBJCLASS_MAT 				= "obj_mat";
-	//protected final static String OBJCLASS_SHAPE 			= "objclass_shape";
-	
-	private JSONObject jsonDetection = new JSONObject();
-
+	////
+	protected final static String OBJSHAPE_X				= "x";
+	protected final static String OBJSHAPE_Y				= "y";
 	
 	///////////////////
-	public static long getObjClassId(JSONObject json)
-	{
-		return json!=null?(long)getAttribute(json,OBJCLASS_ID):-1;
-	}
+	private int obj_classid 		= -1;
+	private String obj_classname 	= null;
+	private double obj_conf_score 	= 0;
 	
-	public static String getObjClassName(JSONObject json)
-	{
-		return json!=null?(String)getAttribute(json,OBJCLASS_NAME):null;
-	}
+	private Rect2d obj_bounding_box 	= null;
+	private MatOfPoint obj_shape_points = null;
+	//
+	private String obj_trackingid 		= null;
+	private String obj_tmp_trackingid 	= null;
+	///////////////////
 	
-	public static double getConfidenceScore(JSONObject json)
-	{
-		return json!=null?(double)getAttribute(json,OBJCLASS_CONF_SCORE):-1;
-	}
 	
-	public static Rect2d getBoundingBox(JSONObject json)
+	public DetectedObj(int aObjClassId, String aObjClassName, Rect2d aBoundingRect, double aConfScore)
 	{
-		return json!=null?(Rect2d)getAttribute(json,OBJCLASS_BOUNDING_BOX):null;
-	}
-	
-	public static String getObjTrackingId(JSONObject json)
-	{
-		return json!=null?(String)getAttribute(json,OBJCLASS_TRACKING_ID):null;
-	}
-	
-	public static boolean isNewObjTrackingId(JSONObject json)
-	{
-		String sPrevTrackingId = json.optString(OBJCLASS_PREV_TRACKING_ID, null);
-		return (sPrevTrackingId!=null);
-	}
-	
-	public static void updObjTrackingId(JSONObject json, String aTrackingId)
-	{
-		if(json!=null && aTrackingId!=null && aTrackingId.trim().length()>0)
+		MatOfPoint matPoints = new MatOfPoint();
+		if(aBoundingRect!=null)
 		{
-			String sPrevTrackingId = json.optString(OBJCLASS_TRACKING_ID, null);
-			
-			if(sPrevTrackingId!=null && !aTrackingId.equals(sPrevTrackingId))
-			{
-				json.put(OBJCLASS_PREV_TRACKING_ID, sPrevTrackingId);
-			}
-			json.put(OBJCLASS_TRACKING_ID, aTrackingId);
+			Point[] points = new Point[4];
+			points[0] = new Point(aBoundingRect.x, aBoundingRect.y);
+			points[1] = new Point(aBoundingRect.x + aBoundingRect.width, aBoundingRect.y);
+			points[2] = new Point(aBoundingRect.x + aBoundingRect.width, aBoundingRect.y + aBoundingRect.height);
+			points[3] = new Point(aBoundingRect.x,  aBoundingRect.y + aBoundingRect.height);
+			matPoints.fromArray(points);
+		}
+		
+		init(aObjClassId, aObjClassName, matPoints, aConfScore);
+	}
+	
+	public DetectedObj(int aObjClassId, String aObjClassName, List<Point> aShapePointList, double aConfScore)
+	{
+		MatOfPoint matPoints = new MatOfPoint();
+		if(aShapePointList!=null)
+		{
+			matPoints.fromList(aShapePointList);
+		}
+		init(aObjClassId, aObjClassName, matPoints, aConfScore);
+	}
+	
+	public DetectedObj(int aObjClassId, String aObjClassName, MatOfPoint aMatShapePoint, double aConfScore)
+	{
+		init(aObjClassId, aObjClassName, aMatShapePoint, aConfScore);
+	}
+	
+	private void init(int aObjClassId, String aObjClassName, MatOfPoint aMatShapePoint, double aConfScore)
+	{
+		setObj_classid(aObjClassId);
+		setObj_classname(aObjClassName);
+		setObj_conf_score(aConfScore);
+		setObj_shape_points(aMatShapePoint);
+	}
+	
+	///////////////////
+	
+	public int getObj_classid() {
+		return obj_classid;
+	}
+	public void setObj_classid(int obj_classid) {
+		this.obj_classid = obj_classid;
+	}
+	public String getObj_classname() {
+		return obj_classname;
+	}
+	public void setObj_classname(String obj_classname) {
+		this.obj_classname = obj_classname;
+	}
+	public double getObj_conf_score() {
+		return obj_conf_score;
+	}
+	public void setObj_conf_score(double obj_conf_score) {
+		this.obj_conf_score = obj_conf_score;
+	}
+	public MatOfPoint getObj_shape_points() {
+		return obj_shape_points;
+	}
+	public void setObj_shape_points(MatOfPoint obj_shapepoints) {
+		this.obj_shape_points = obj_shapepoints;
+		
+		//calc bounding box
+		if(this.obj_shape_points!=null)
+		{
+			Rect rect = Imgproc.boundingRect(getObj_shape_points());
+			this.obj_bounding_box = new Rect2d(rect.x, rect.y, rect.width, rect.height);
+		}
+		else
+		{
+			this.obj_bounding_box = null;
 		}
 	}
 	
-	/**
-	public static Mat getObjMat(JSONObject json)
-	{
-		return json!=null?(Mat)getAttribute(json,OBJCLASS_MAT):null;
+	public void setObj_bounding_box(Rect2d r) {
+		
+		if(r!=null)
+		{
+			Point pt1 = new Point(r.x, r.y);
+			Point pt2 = new Point(r.x+r.width, r.y);
+			Point pt3 = new Point(r.x+r.width, r.y+r.height);
+			Point pt4 = new Point(r.x, r.y+r.height);
+			//
+			MatOfPoint mp = new MatOfPoint();
+			mp.fromArray(new Point[] {pt1, pt2, pt3, pt4});
+			setObj_shape_points(mp);
+		}
 	}
-	**/
 	
-	protected static Object getAttribute(JSONObject aJson, String aAttrName)
-	{
-		return aJson!=null?aJson.opt(aAttrName):null;
+	public Rect2d getObj_bounding_box() {
+		
+		return this.obj_bounding_box;
 	}
-	/////////////////////
+	//
+	public String getObj_trackingid() {
+		return obj_trackingid;
+	}
+	public void setObj_trackingid(String obj_trackingid) {
+		this.obj_trackingid = obj_trackingid;
+	}
+	public String getObj_tmp_trackingid() {
+		return obj_tmp_trackingid;
+	}
+	public void setObj_tmp_trackingid(String obj_tmp_trackingid) {
+		this.obj_tmp_trackingid = obj_tmp_trackingid;
+	}
 	
+
+	////////////////////////////////////////////////
+	////////////////////////////////////////////////
 	
-	public void addAll(JSONObject aInputJson)
+	public DetectedObj fromJson(JSONObject aJson)
 	{
-		if(aInputJson!=null)
-		{	
-			for(String sObjClassName : aInputJson.keySet())
+		if(aJson==null || aJson.isEmpty())
+			return null;
+		//
+		setObj_classid(aJson.optInt(OBJCLASS_ID, -1));
+		setObj_classname(aJson.optString(OBJCLASS_NAME, null));
+		setObj_conf_score(aJson.optDouble(OBJCLASS_CONF_SCORE, 0));
+		//
+		JSONArray jArrShape = aJson.optJSONArray(OBJCLASS_SHAPE_POINTS);
+		if(jArrShape!=null && !jArrShape.isEmpty())
+		{
+			List<Point> listPoints = new ArrayList<>();
+			for(int p=0 ; p<jArrShape.length(); p++)
 			{
-				JSONArray jArrClassName = aInputJson.optJSONArray(sObjClassName);
-				
-				if(jArrClassName!=null && jArrClassName.length()>0)
+				JSONObject jsonPt = jArrShape.optJSONObject(p);
+				if(jsonPt!=null)
 				{
-					for(int i=0; i<jArrClassName.length(); i++)
+					double x 	= jsonPt.optLong(OBJSHAPE_X, -1);
+					double y 	= jsonPt.optLong(OBJSHAPE_Y, -1);
+					//
+					if(x>-1 && y>-1)
 					{
-						JSONObject jsonObj = jArrClassName.getJSONObject(i);
-						long lObjClassId = jsonObj.optLong(OBJCLASS_ID, -1);
-						double dObjClassConfScore = jsonObj.optDouble(OBJCLASS_CONF_SCORE, -1);
-						Rect2d rObjClassRect2d = (Rect2d)jsonObj.opt(OBJCLASS_BOUNDING_BOX);
-						//
-						//Mat matObj = (Mat)jsonObj.opt(OBJCLASS_MAT);
-						String sObjTrackingId = jsonObj.optString(OBJCLASS_TRACKING_ID, null);
-						//
-						addDetectedObj(lObjClassId, sObjClassName, dObjClassConfScore, rObjClassRect2d, 
-								sObjTrackingId);
+						listPoints.add(new Point(x,y));
 					}
+					
 				}
 			}
+			if(listPoints.size()>0)
+			{
+				MatOfPoint mp = new MatOfPoint();
+				mp.fromList(listPoints);
+				setObj_shape_points(mp);
+			}
 		}
+		//
+		return this;
 	}
-	
-	public long removeDetectedObjByObjClassName(String aObjClassName)
-	{
-		JSONArray jArrObjClass = (JSONArray) this.jsonDetection.remove(aObjClassName);
-		if(jArrObjClass==null)
-			jArrObjClass = new JSONArray();
-		
-		return jArrObjClass.length();
-	}
-		
-	public JSONObject[] getDetectedObjByObjClassName(String aObjClassName)
-	{
-		JSONArray jArrObjClass = this.jsonDetection.optJSONArray(aObjClassName);
-		if(jArrObjClass==null)
-			jArrObjClass = new JSONArray();
-		
-		List<JSONObject> listDetectedObj = new ArrayList<JSONObject>();
-		for(int i=0; i<jArrObjClass.length(); i++)
-		{
-			listDetectedObj.add((JSONObject)jArrObjClass.get(i));
-		}
-		
-		return (JSONObject[]) listDetectedObj.toArray(new JSONObject[listDetectedObj.size()]);
-	}
-	
-	public String[] getObjClassNames()
-	{
-		List<String> listClassName = new ArrayList<String>();
-		for(String sClassName : this.jsonDetection.keySet())
-		{
-			listClassName.add(sClassName);
-		}
-		return (String[]) listClassName.toArray(new String[listClassName.size()]);
-	}
-	
-	public void clearDetection()
-	{
-		this.jsonDetection.clear();
-	}
-	
-	public int getTotalDetectionCount()
-	{
-		int lTotal = 0;
-		for(String sKey : this.jsonDetection.keySet())
-		{
-			JSONArray jsonArray = this.jsonDetection.getJSONArray(sKey);
-			lTotal += jsonArray.length();
-		}
-		return lTotal;
-	}
-	
-	public long getDetectionCount(String aObjClassName)
-	{
-		JSONArray jArrObjClass = this.jsonDetection.optJSONArray(aObjClassName);
-		if(jArrObjClass==null)
-    	{
-    		jArrObjClass = new JSONArray();
-    	}
-		return jArrObjClass.length();
-	}
-	
-	public boolean addDetectedObj(long aObjClassId, String aObjClassName, double aConfScore, Rect aRect)
-	{
-		 return addDetectedObj(aObjClassId, aObjClassName, aConfScore, new Rect2d(aRect.x, aRect.y, aRect.width, aRect.height));
-	}
-	
-	public boolean addDetectedObj(long aObjClassId, String aObjClassName, double aConfScore, Rect2d aRect2D)
-    {
-		return addDetectedObj(aObjClassId, aObjClassName, aConfScore, aRect2D, null);
-    }
-	
-    public boolean addDetectedObj(long aObjClassId, String aObjClassName, double aConfScore, Rect2d aRect2D, 
-    		String aTrackingId)
-    {
-    	if(aObjClassName==null)
-    		aObjClassName = "undefined";
-    	
-    	JSONArray jArrObjClass = this.jsonDetection.optJSONArray(aObjClassName);
-    	if(jArrObjClass==null)
-    	{
-    		jArrObjClass = new JSONArray();
-    		this.jsonDetection.put(aObjClassName, jArrObjClass);
-    	}
-    	
-    	JSONObject jsonObj = new JSONObject();
-    	jsonObj.put(OBJCLASS_ID, aObjClassId);
-    	jsonObj.put(OBJCLASS_NAME, aObjClassName);
-    	jsonObj.put(OBJCLASS_CONF_SCORE, aConfScore);
-    	jsonObj.put(OBJCLASS_BOUNDING_BOX, aRect2D);
-    	//
-    	if(aTrackingId!=null && aTrackingId.trim().length()>0)
-    	{
-    		jsonObj.put(OBJCLASS_TRACKING_ID, aTrackingId);
-    	}
-    	//
-    	/**
-    	if(aObjMat!=null && !aObjMat.empty())
-    	{
-    		jsonObj.put(OBJCLASS_MAT, aObjMat);
-    	}
-    	**/
-    	//
-    	jsonObj = addDetectedObj_Extended(jsonObj);
-    	jArrObjClass.put(jsonObj);
-    
-    	return true;
-    }
 	
 	public JSONObject toJson()
 	{
-		return this.jsonDetection;
-	}
-	
-	public String toString()
-	{
-		return this.jsonDetection.toString();
-	}
-	
-	//
-	
-	protected JSONObject addDetectedObj_Extended(JSONObject aJson)
-	{
-		return aJson;
-	}
-	
-	/**
-	public static void main(String[] args)
-	{
-		DetectedObj objs = new ObjDetection();
-		objs.addDetectedObj(0, "person", 0.52, new Rect2d(0,10,20,40));
-		objs.addDetectedObj(0, "person", 0.78, new Rect2d(11,100,60,40));
+		JSONObject json = new JSONObject();
+		json.put(OBJCLASS_ID, getObj_classid());
+		json.put(OBJCLASS_NAME, getObj_classname());
+		json.put(OBJCLASS_CONF_SCORE, getObj_conf_score());
 		
-		objs.addDetectedObj(2, "cat", 0.77, new Rect2d(100,145,20,30));
-		objs.addDetectedObj(33, "bicycle", 0.37, new Rect2d(211,430,300,50));
-		
-		DetectedObj objs2 = new ObjDetection();
-		objs2.addAll(objs.toJson());
-		
-		System.out.println("ClassNames="+ String.join(",", objs2.getObjClassNames()));
-		System.out.println("Total="+objs2.getTotalDetectionCount());
-		System.out.println();
-		System.out.println("person="+objs2.getDetectionCount("person"));
-		System.out.println("bicycle="+objs2.getDetectionCount("bicycle"));
-		System.out.println("cat="+objs2.getDetectionCount("cat"));
-		System.out.println("dog="+objs2.getDetectionCount("dog"));
-		
-		JSONObject[] persons = objs2.getDetectedObjByObjClassName("person");
-		for(JSONObject json : persons)
+		MatOfPoint mp = getObj_shape_points();
+		if(mp!=null && !mp.empty())
 		{
-			System.out.println(json);
+			JSONArray jArrPoints = new JSONArray();
+			List<Point> listPoints = mp.toList();
+			for(Point p : listPoints)
+			{
+				JSONObject jsonPt = new JSONObject();
+				jsonPt.put(OBJSHAPE_X, p.x);
+				jsonPt.put(OBJSHAPE_Y, p.y);
+				jArrPoints.put(jsonPt);
+			}
+			json.put(OBJCLASS_SHAPE_POINTS, jArrPoints);
+		}
+		//
+		if(getObj_trackingid()!=null)
+		{
+			json.put(OBJCLASS_TRACKING_ID, getObj_trackingid());
 		}
 		
-		long lRemoved =  objs2.removeDetectedObjByObjClassName("person");
-		System.out.println("removed = "+lRemoved);
-		persons = objs2.getDetectedObjByObjClassName("person");
-		System.out.println("person = "+persons.length);
-		
+		return json;
 	}
-	**/
+
+	////////////////////////////////////////////////
+	public String toString()
+	{
+		return toJson().toString();
+	}
 }
