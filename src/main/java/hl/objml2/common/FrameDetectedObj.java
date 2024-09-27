@@ -2,6 +2,7 @@ package hl.objml2.common;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -65,7 +66,40 @@ public class FrameDetectedObj {
 		return this.mapDetectedObjs.get(aObjClassName);
 	}
 	
+	public void clearDetection()
+	{
+		this.mapDetectedObjs.clear();
+	}
 	
+	public void addAll(Map<String, List<DetectedObj>> mapDetectedObjs)
+	{
+		if(mapDetectedObjs!=null)
+		{
+			Iterator<String> iterObjListName = mapDetectedObjs.keySet().iterator();
+			while(iterObjListName.hasNext())
+			{
+				String sObjListName = iterObjListName.next();
+				List<DetectedObj> listObjs = mapDetectedObjs.get(sObjListName);
+				for(DetectedObj obj : listObjs)
+				{
+					addDetectedObj(obj);
+				}
+			}
+		}
+	}
+	
+	public long getTotalDetectionCount()
+	{
+		long lTotal = 0;
+		for(String sObjClassName : getObjClassNames())
+		{
+			List<DetectedObj> listObj = getDetectedObjByObjClassName(sObjClassName);
+			lTotal += listObj.size();
+		}
+		return lTotal;
+	}
+	
+	////
 	public JSONObject toJson()
 	{
 		JSONObject json = new JSONObject();
@@ -90,25 +124,6 @@ public class FrameDetectedObj {
 		json.put(FRAME_DETECTED_OBJS, jArrDetectedObjs);
 		
 		return json;
-	}
-	
-	public void fromJson(JSONObject aJson)
-	{
-		setFrame_id(aJson.optLong(FRAME_ID, -1));
-		setFrame_timestamp(aJson.optLong(FRAME_TIMESTAMP, -1));
-		setFrame_source(aJson.optString(FRAME_SOURCE, ""));
-		
-		JSONArray jArrDetectedObj = aJson.optJSONArray(FRAME_DETECTED_OBJS);
-		if(jArrDetectedObj!=null)
-		{
-			for(int i=0; i<jArrDetectedObj.length(); i++)
-			{
-				JSONObject jsonClassObjs = jArrDetectedObj.getJSONObject(i);
-				JSONArray jArrObjs = jsonClassObjs.optJSONArray(FRAME_DETECTED_OBJS);
-				
-				
-			}
-		}
 	}
 	
 	//////////////////////////
