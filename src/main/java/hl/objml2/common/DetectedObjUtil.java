@@ -1,12 +1,11 @@
 package hl.objml2.common;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect2d;
 import org.opencv.core.Scalar;
@@ -35,26 +34,32 @@ public class DetectedObjUtil {
 
 		for(String sObjClassName : aDetectedObjs.getObjClassNames())
 		{
+			List<MatOfPoint> listShapes = new ArrayList<>();
 			List<DetectedObj> listDetectedObjs = aDetectedObjs.getDetectedObjByObjClassName(sObjClassName);
 			for(DetectedObj o : listDetectedObjs)
 			{
 				String objClassName 	= o.getObj_classname();
 				String objTrackingId 	= o.getObj_trackingid();
 				double objConfScore 	= o.getObj_conf_score();
-				Rect2d objBox 			= o.getObj_bounding_box();
+				MatOfPoint objShape 	= o.getObj_shape_points();
 				//
 				boolean isNewTrackingId = o.getObj_tmp_trackingid()==null;
 				
 				Scalar objColor = mapObjColors.get(objClassName);
 				if(objColor==null)
 					objColor = isNewTrackingId? new Scalar(0, 255, 0): new Scalar(0, 0, 255);
-						
-            	Point ptXY1 	= new Point(objBox.x, objBox.y);
-            	Point ptXY2 	= new Point(objBox.x + objBox.width, objBox.y + objBox.height);
-	            Imgproc.rectangle(matOutputImg, ptXY1, ptXY2, objColor, 2);
+
+				listShapes.clear();
+				listShapes.add(objShape);
+				
+	            Imgproc.polylines(matOutputImg, listShapes, true, objColor);
 
 	            if(withLabel)
 	            {
+	            	Rect2d objBox = o.getObj_bounding_box();
+	            	Point ptXY1 	= new Point(objBox.x, objBox.y);
+	            	Point ptXY2 	= new Point(objBox.x + objBox.width, objBox.y + objBox.height);
+	            	
 		            String label 	= (objTrackingId!=null?objTrackingId:objClassName) + ": " + String.format("%.2f", objConfScore);
 		            Imgproc.putText(matOutputImg, label, new Point(ptXY1.x, ptXY1.y - 10), 
 		            		Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, objColor, 2);
@@ -64,26 +69,6 @@ public class DetectedObjUtil {
 		}
         //
 		return matOutputImg;
-	}
-	
-	
-	public FrameDetectedObj fromJson(JSONObject aJson)
-	{
-		FrameDetectedObj frame = null;
-		
-		long lFrameId = (aJson.optLong(FrameDetectedObj.FRAME_ID, -1));
-		long lFrameTimestamp = (aJson.optLong(FrameDetectedObj.FRAME_TIMESTAMP, -1));
-		String sFrameSource = (aJson.optString(FrameDetectedObj.FRAME_SOURCE, ""));
-		
-		frame = new FrameDetectedObj();
-		frame.setFrame_id(lFrameId);
-		frame.setFrame_timestamp(lFrameTimestamp);
-		frame.setFrame_source(sFrameSource);
-		
-		JSONArray jArrDetectedObj = aJson.optJSONArray(FrameDetectedObj.FRAME_DETECTED_OBJS);
-		// TODO
-		
-		return frame;
 	}
 	
 	public static boolean updTrackingIdWithPrevDetections(DetectedObj aCurObj, final FrameDetectedObj aPrevObjs, double aThreshold)

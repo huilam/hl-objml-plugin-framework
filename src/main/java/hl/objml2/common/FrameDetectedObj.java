@@ -126,6 +126,27 @@ public class FrameDetectedObj {
 		return json;
 	}
 	
+
+	protected FrameDetectedObj fromJson(JSONObject aJson)
+	{
+		FrameDetectedObj frame = null;
+		
+		long lFrameId = (aJson.optLong(FrameDetectedObj.FRAME_ID, -1));
+		long lFrameTimestamp = (aJson.optLong(FrameDetectedObj.FRAME_TIMESTAMP, -1));
+		String sFrameSource = (aJson.optString(FrameDetectedObj.FRAME_SOURCE, ""));
+		
+		frame = this;
+		frame.setFrame_id(lFrameId);
+		frame.setFrame_timestamp(lFrameTimestamp);
+		frame.setFrame_source(sFrameSource);
+		
+		JSONArray jArrDetectedObj = aJson.optJSONArray(FrameDetectedObj.FRAME_DETECTED_OBJS);
+		// TODO
+		
+		return frame;
+	}
+
+	
 	//////////////////////////
 	//////////////////////////
 	//////////////////////////

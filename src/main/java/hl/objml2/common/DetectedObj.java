@@ -45,6 +45,16 @@ public class DetectedObj {
 		init(aObjClassId, aObjClassName, matPoints, aConfScore);
 	}
 	
+	public DetectedObj(int aObjClassId, String aObjClassName, Point aPoint1, Point aPoint2, double aConfScore)
+	{
+		MatOfPoint matPoints = new MatOfPoint();
+		if(aPoint1!=null && aPoint2!=null)
+		{
+			matPoints.fromArray(new Point[] {aPoint1 , aPoint2});
+		}
+		init(aObjClassId, aObjClassName, matPoints, aConfScore);
+	}
+	
 	public DetectedObj(int aObjClassId, String aObjClassName, Rect2d aBoundingRect, double aConfScore)
 	{
 		MatOfPoint matPoints = new MatOfPoint();
