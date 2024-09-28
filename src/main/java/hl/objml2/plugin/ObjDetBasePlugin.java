@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -37,6 +38,10 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 	protected Properties props_model 	= null;
 	protected String _model_filename 	= null;
 	protected String _plugin_source 	= null;
+	/////////////////////
+	private boolean isRegObjsOfInterest 				= false;
+	protected List<String> obj_classes_of_interest 		= new ArrayList<String>();
+	protected Map<String, String> mapObjClassMapping 	= new HashMap<String, String>();
 	
 	
 	public void setPluginConfig(PluginConfig aPluginConfig)
@@ -438,6 +443,62 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 		}
 		return true;
 	}
+	
+
+	public String[] getObjClassesOfInterest()
+	{
+		return (String[]) this.obj_classes_of_interest.toArray();
+	}
+	
+	public void clearObjClassesOfInterest()
+	{
+		this.obj_classes_of_interest.clear();
+		isRegObjsOfInterest = false;
+	}
+	
+	public boolean addObjClassOfInterest(String[] aObjClassNames)
+	{
+		if(aObjClassNames!=null && aObjClassNames.length>0)
+		{
+			isRegObjsOfInterest = true;
+			for(int i=0; i<aObjClassNames.length; i++)
+			{
+				this.obj_classes_of_interest.add(aObjClassNames[i].toLowerCase());
+			}
+			return isRegObjsOfInterest;
+		}
+		
+		return false;
+	}
+	
+	public boolean isObjClassOfInterest(String aObjClassName)
+	{
+		if(!isRegObjsOfInterest)
+			return true;
+		
+		return this.obj_classes_of_interest.contains(aObjClassName.toLowerCase());
+	}
+	
+	/////
+	public void addObjClassMapping(String aOrgObjClassName, String aNewObjClassName)
+	{
+		this.mapObjClassMapping.put(aOrgObjClassName, aNewObjClassName);
+	}
+	
+	public void clearObjClassesMapping()
+	{
+		this.mapObjClassMapping.clear();
+	}
+	
+	public String getMappedObjClass(String aOrgObjClassName)
+	{
+		String sMappedClassName = this.mapObjClassMapping.get(aOrgObjClassName);
+		if(sMappedClassName==null)
+			sMappedClassName = aOrgObjClassName;
+		return sMappedClassName;
+	}
+	/////
+	///////////
 
 	@Override
 	public boolean isPluginOK() {
@@ -456,6 +517,9 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 		}
 		return isOK;
 	}
+	
+	/////
+	
 	
 	@Override
 	public List<Mat> doInference(Mat aImageFile, JSONObject aCustomThresholdJson) {
