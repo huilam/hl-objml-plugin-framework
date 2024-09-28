@@ -13,7 +13,7 @@ import hl.common.FileUtil;
 import hl.objml2.plugin.IObjDetectionPlugin;
 import hl.objml2.plugin.MLPluginConfig;
 import hl.objml2.plugin.MLPluginMgr;
-import hl.objml2.plugin.ObjDetectionBasePlugin;
+import hl.objml2.plugin.ObjDetBasePlugin;
 import hl.opencv.util.OpenCvUtil;
 
 public class TestPlugins {
@@ -110,7 +110,7 @@ public class TestPlugins {
 	    		long lStartMs = System.currentTimeMillis();
 	    		
 	    		/*** Perform plugin detection ***/
-	    		Mat matImage = ObjDetectionBasePlugin.getCvMatFromFile(fileImg);
+	    		Mat matImage = ObjDetBasePlugin.getCvMatFromFile(fileImg);
 	    		Size sizeImg = matImage.size();
 	    		
 	    		List<Mat> listOutput = detector.doInference(matImage, null);
@@ -128,7 +128,7 @@ System.out.println("     - Result : "+mapResult.size());
 	    		if(mapResult.size()>0)
 	    		{
 	    			/*** Saved output from plugin detection  ***/
-		    		Mat matOutput = (Mat) mapResult.get(ObjDetectionBasePlugin._KEY_OUTPUT_ANNOTATED_MAT);
+		    		Mat matOutput = (Mat) mapResult.get(ObjDetBasePlugin._KEY_OUTPUT_ANNOTATED_MAT);
 					savedOutputImage(sTestCycle, detector.getPluginName(), fileImg, matOutput);
 	    		}
 	    	}

@@ -11,89 +11,33 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.json.JSONObject;
 import org.opencv.core.Mat;
-import org.opencv.dnn.Dnn;
-import org.opencv.dnn.Net;
+import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import hl.common.ImgUtil;
 import hl.common.PropUtil;
 import hl.opencv.util.OpenCvUtil;
 import hl.plugin.PluginConfig;
 
-public class ObjDetectionBasePlugin implements IObjDetectionPlugin{
+public class ObjDetBasePlugin implements IObjDetectionPlugin{
 	
-	//
-	protected Net NET_DNN 					= null;
+	////////////////////
+	protected double DEF_CONFIDENCE_THRESHOLD	= 0;
+	protected double DEF_NMS_THRESHOLD			= 0;
+	protected Size DEF_INPUT_SIZE				= new Size(0,0);
+	protected List<String>OBJ_CLASSESS			= new ArrayList<>();
+	////////////////////
 	protected MLPluginConfig pluginConfig 	= new MLPluginConfig();
 	protected Class<?> thisclass 		= null;
 	protected Properties props_model 	= null;
 	protected String _model_filename 	= null;
 	protected String _plugin_source 	= null;
 	
-	private boolean isRegObjsOfInterest = false;
-	protected List<String> obj_classes_of_interest 		= new ArrayList<String>();
-	//
-	protected Map<String, String> mapObjClassMapping 	= new HashMap<String, String>();
-	
-	/////
-	public void addObjClassMapping(String aOrgObjClassName, String aNewObjClassName)
-	{
-		this.mapObjClassMapping.put(aOrgObjClassName, aNewObjClassName);
-	}
-	
-	public void clearObjClassesMapping()
-	{
-		this.mapObjClassMapping.clear();
-	}
-	
-	public String getMappedObjClass(String aOrgObjClassName)
-	{
-		String sMappedClassName = this.mapObjClassMapping.get(aOrgObjClassName);
-		if(sMappedClassName==null)
-			sMappedClassName = aOrgObjClassName;
-		return sMappedClassName;
-	}
-	/////
-
-	public String[] getObjClassesOfInterest()
-	{
-		return (String[]) this.obj_classes_of_interest.toArray();
-	}
-	
-	public void clearObjClassesOfInterest()
-	{
-		this.obj_classes_of_interest.clear();
-		isRegObjsOfInterest = false;
-	}
-	
-	public boolean addObjClassOfInterest(String[] aObjClassNames)
-	{
-		if(aObjClassNames!=null && aObjClassNames.length>0)
-		{
-			isRegObjsOfInterest = true;
-			for(int i=0; i<aObjClassNames.length; i++)
-			{
-				this.obj_classes_of_interest.add(aObjClassNames[i].toLowerCase());
-			}
-			return isRegObjsOfInterest;
-		}
-		
-		return false;
-	}
-	
-	public boolean isObjClassOfInterest(String aObjClassName)
-	{
-		if(!isRegObjsOfInterest)
-			return true;
-		
-		return this.obj_classes_of_interest.contains(aObjClassName.toLowerCase());
-	}
 	
 	public void setPluginConfig(PluginConfig aPluginConfig)
 	{
@@ -113,12 +57,6 @@ public class ObjDetectionBasePlugin implements IObjDetectionPlugin{
 	public boolean isValidateMLFileLoading()
 	{
 		return true;
-	}
-	
-	
-	protected void initDnnNet()
-	{
-		NET_DNN = Dnn.readNetFromONNX( getModelFileName());
 	}
 	
 	protected boolean isPluginOK(Class<?> aClass, String aPropFileName)
@@ -438,11 +376,72 @@ public class ObjDetectionBasePlugin implements IObjDetectionPlugin{
 		}
 		return null;
 	}
+	
+	protected boolean init()
+	{
+		String sSupporedLabels = (String) getPluginProps().get("objml.mlmodel.detection.support-labels");
+		if(sSupporedLabels!=null && sSupporedLabels.trim().length()>0)
+		{
+			String[] objs = sSupporedLabels.split("\n");
+			OBJ_CLASSESS = new ArrayList<>(Arrays.asList(objs));
+		}
+		//
+		String sConfThreshold = (String) getPluginProps().get("objml.mlmodel.detection.confidence-threshold");
+		if(sConfThreshold!=null && sConfThreshold.trim().length()>0)
+		{
+			try {
+				DEF_CONFIDENCE_THRESHOLD = Float.parseFloat(sConfThreshold);
+			}catch(NumberFormatException ex)
+			{
+				ex.printStackTrace();
+			}
+		}
+		//
+		String sNMSThreshold = (String) getPluginProps().get("objml.mlmodel.detection.nms-threshold");
+		if(sNMSThreshold!=null && sNMSThreshold.trim().length()>0)
+		{
+			try {
+				DEF_NMS_THRESHOLD = Float.parseFloat(sNMSThreshold);
+			}catch(NumberFormatException ex)
+			{
+				ex.printStackTrace();
+			}
+		}
+		//
+		String sInputImageSize = (String) getPluginProps().get("objml.mlmodel.detection.input-size");
+		if(sInputImageSize!=null && sInputImageSize.trim().length()>0)
+		{
+
+			String sSeparator = "x";
+			if(sInputImageSize.indexOf(sSeparator)==-1)
+				sSeparator = ",";
+			
+			double dWidth = 0;
+			double dHeight = 0;
+			String[] sSize = sInputImageSize.split(sSeparator);
+			if(sSize.length>0)
+			{
+				try {
+					dWidth 	= Double.parseDouble(sSize[0]);
+					dHeight = dWidth;
+					if(sSize.length>1)
+					{
+						dHeight = Double.parseDouble(sSize[1]);
+					}
+				}
+				catch(NumberFormatException ex)
+				{
+					ex.printStackTrace();
+				}
+				DEF_INPUT_SIZE = new Size(dWidth,dHeight);
+			}
+		}
+		return true;
+	}
 
 	@Override
 	public boolean isPluginOK() {
-		// TODO Auto-generated method stub
-		return false;
+		return isPluginOK(getClass()) && init();
 	}
 
 	@Override
