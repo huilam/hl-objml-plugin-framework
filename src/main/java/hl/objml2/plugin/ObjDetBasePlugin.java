@@ -456,7 +456,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 		}
 		return isOK;
 	}
-
+	
 	@Override
 	public List<Mat> doInference(Mat aImageFile, JSONObject aCustomThresholdJson) {
 		// TODO Auto-generated method stub

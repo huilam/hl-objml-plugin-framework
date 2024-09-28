@@ -35,6 +35,11 @@ public class DetectedObj {
 	private String obj_tmp_trackingid 	= null;
 	///////////////////
 	
+	public DetectedObj(JSONObject jsonDetectedObj)
+	{
+		fromJson(jsonDetectedObj);
+	}
+	
 	public DetectedObj(int aObjClassId, String aObjClassName, Point aPoint, double aConfScore)
 	{
 		MatOfPoint matPoints = new MatOfPoint();
@@ -182,7 +187,7 @@ public class DetectedObj {
 	////////////////////////////////////////////////
 	////////////////////////////////////////////////
 	
-	public DetectedObj fromJson(JSONObject aJson)
+	private DetectedObj fromJson(JSONObject aJson)
 	{
 		if(aJson==null || aJson.isEmpty())
 			return null;

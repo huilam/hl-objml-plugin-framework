@@ -10,12 +10,9 @@ import hl.plugin.IBasePlugin;
 
 public interface IObjDetectionPlugin extends IBasePlugin {
 	
-	public static final String _KEY_OUTPUT_ANNOTATED_MAT 	= "output_annotated_mat";
-	public static final String _KEY_OUTPUT_DETECTION_JSON 	= "output_detection_json";
-	public static final String _KEY_OUTPUT_TOTAL_COUNT		= "output_total_count";
-	
-	public static final String _KEY_THRESHOLD_DETECTION 	= "threshold_detection";
-	public static final String _KEY_THRESHOLD_NMS 			= "threshold_nms";
+	public static final String _KEY_OUTPUT_FRAME_DETECTIONS 	= "output_frame_detections";
+	public static final String _KEY_OUTPUT_FRAME_DETECTION_META = "output_frame_detection_meta";
+	public static final String _KEY_OUTPUT_FRAME_ANNOTATED_IMG 	= "output_frame_annotated_image";
 	
 	abstract public List<Mat> doInference(Mat aMatInput, JSONObject aCustomThresholdJson);
 	
