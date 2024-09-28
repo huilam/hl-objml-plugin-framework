@@ -441,7 +441,20 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 
 	@Override
 	public boolean isPluginOK() {
-		return isPluginOK(getClass()) && init();
+		boolean isOK = isPluginOK(getClass());
+		if(!isOK)
+		{
+			System.err.println("Failed to load/init properties file ! "+this.pluginConfig.getProp_filename());
+			return false;
+		}
+		
+		isOK = init();
+		if(!isOK)
+		{
+			System.err.println("Failed to DNN ! "+getModelFileName());
+			return false;
+		}
+		return isOK;
 	}
 
 	@Override
