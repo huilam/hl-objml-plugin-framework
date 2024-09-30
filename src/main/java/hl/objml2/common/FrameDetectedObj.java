@@ -13,12 +13,12 @@ import org.opencv.core.Mat;
 
 public class FrameDetectedObj {
 	
-	protected final static String JSON_FRAME_ID				= "frame_id";
-	protected final static String JSON_FRAME_TIMESTAMP 		= "frame_timestamp";
-	protected final static String JSON_FRAME_SOURCE 		= "frame_source";
+	public final static String JSON_FRAME_ID				= "frame_id";
+	public final static String JSON_FRAME_TIMESTAMP 		= "frame_timestamp";
+	public final static String JSON_FRAME_SOURCE 			= "frame_source";
 	//
-	protected final static String JSON_FRAME_DETECTIONS 	= "frame_detections";
-	protected final static String JSON_FRAME_DETECTION_META = "frame_detection_meta";
+	public final static String JSON_FRAME_DETECTIONS 		= "frame_detections";
+	public final static String JSON_FRAME_DETECTION_META 	= "frame_detection_meta";
 	//
 	private long frame_id 			= -1;
 	private long frame_timestamp 	= -1;

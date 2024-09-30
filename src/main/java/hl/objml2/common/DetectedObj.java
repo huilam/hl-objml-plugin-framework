@@ -14,14 +14,14 @@ import org.opencv.imgproc.Imgproc;
 public class DetectedObj {
 	
 	////
-	protected final static String JSON_OBJCLASS_ID				= "obj_classid";
-	protected final static String JSON_OBJCLASS_NAME 			= "obj_classname";
-	protected final static String JSON_OBJCLASS_CONF_SCORE 		= "obj_conf_score";
-	protected final static String JSON_OBJCLASS_SHAPE_POINTS 	= "obj_shapepoints";
-	protected final static String JSON_OBJCLASS_TRACKING_ID 	= "obj_trackingid";
+	public final static String JSON_OBJCLASS_ID				= "obj_classid";
+	public final static String JSON_OBJCLASS_NAME 			= "obj_classname";
+	public final static String JSON_OBJCLASS_CONF_SCORE 		= "obj_conf_score";
+	public final static String JSON_OBJCLASS_SHAPE_POINTS 	= "obj_shapepoints";
+	public final static String JSON_OBJCLASS_TRACKING_ID 	= "obj_trackingid";
 	////
-	protected final static String JSON_OBJSHAPE_X				= "x";
-	protected final static String JSON_OBJSHAPE_Y				= "y";
+	public final static String JSON_OBJSHAPE_X				= "x";
+	public final static String JSON_OBJSHAPE_Y				= "y";
 	
 	///////////////////
 	private int obj_classid 		= -1;
