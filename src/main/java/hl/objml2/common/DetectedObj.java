@@ -14,14 +14,14 @@ import org.opencv.imgproc.Imgproc;
 public class DetectedObj {
 	
 	////
-	protected final static String OBJCLASS_ID				= "obj_class_id";
-	protected final static String OBJCLASS_NAME 			= "obj_class_name";
-	protected final static String OBJCLASS_CONF_SCORE 		= "obj_conf_score";
-	protected final static String OBJCLASS_SHAPE_POINTS 	= "obj_shape_points";
-	protected final static String OBJCLASS_TRACKING_ID 		= "obj_tracking_id";
+	protected final static String JSON_OBJCLASS_ID				= "obj_classid";
+	protected final static String JSON_OBJCLASS_NAME 			= "obj_classname";
+	protected final static String JSON_OBJCLASS_CONF_SCORE 		= "obj_conf_score";
+	protected final static String JSON_OBJCLASS_SHAPE_POINTS 	= "obj_shapepoints";
+	protected final static String JSON_OBJCLASS_TRACKING_ID 	= "obj_trackingid";
 	////
-	protected final static String OBJSHAPE_X				= "x";
-	protected final static String OBJSHAPE_Y				= "y";
+	protected final static String JSON_OBJSHAPE_X				= "x";
+	protected final static String JSON_OBJSHAPE_Y				= "y";
 	
 	///////////////////
 	private int obj_classid 		= -1;
@@ -192,11 +192,11 @@ public class DetectedObj {
 		if(aJson==null || aJson.isEmpty())
 			return null;
 		//
-		setObj_classid(aJson.optInt(OBJCLASS_ID, -1));
-		setObj_classname(aJson.optString(OBJCLASS_NAME, null));
-		setObj_conf_score(aJson.optDouble(OBJCLASS_CONF_SCORE, 0));
+		setObj_classid(aJson.optInt(JSON_OBJCLASS_ID, -1));
+		setObj_classname(aJson.optString(JSON_OBJCLASS_NAME, null));
+		setObj_conf_score(aJson.optDouble(JSON_OBJCLASS_CONF_SCORE, 0));
 		//
-		JSONArray jArrShape = aJson.optJSONArray(OBJCLASS_SHAPE_POINTS);
+		JSONArray jArrShape = aJson.optJSONArray(JSON_OBJCLASS_SHAPE_POINTS);
 		if(jArrShape!=null && !jArrShape.isEmpty())
 		{
 			List<Point> listPoints = new ArrayList<>();
@@ -205,8 +205,8 @@ public class DetectedObj {
 				JSONObject jsonPt = jArrShape.optJSONObject(p);
 				if(jsonPt!=null)
 				{
-					double x 	= jsonPt.optLong(OBJSHAPE_X, -1);
-					double y 	= jsonPt.optLong(OBJSHAPE_Y, -1);
+					double x 	= jsonPt.optLong(JSON_OBJSHAPE_X, -1);
+					double y 	= jsonPt.optLong(JSON_OBJSHAPE_Y, -1);
 					//
 					if(x>-1 && y>-1)
 					{
@@ -229,9 +229,21 @@ public class DetectedObj {
 	public JSONObject toJson()
 	{
 		JSONObject json = new JSONObject();
-		json.put(OBJCLASS_ID, getObj_classid());
-		json.put(OBJCLASS_NAME, getObj_classname());
-		json.put(OBJCLASS_CONF_SCORE, getObj_conf_score());
+		
+		if(getObj_classid()!=-1)
+		{
+			json.put(JSON_OBJCLASS_ID, getObj_classid());
+		}
+		
+		if(getObj_classname()!=null)
+		{
+			json.put(JSON_OBJCLASS_NAME, getObj_classname());
+		}
+		
+		if(getObj_conf_score()!=-1)
+		{
+			json.put(JSON_OBJCLASS_CONF_SCORE, getObj_conf_score());
+		}
 		
 		MatOfPoint mp = getObj_shape_points();
 		if(mp!=null && !mp.empty())
@@ -241,16 +253,16 @@ public class DetectedObj {
 			for(Point p : listPoints)
 			{
 				JSONObject jsonPt = new JSONObject();
-				jsonPt.put(OBJSHAPE_X, p.x);
-				jsonPt.put(OBJSHAPE_Y, p.y);
+				jsonPt.put(JSON_OBJSHAPE_X, p.x);
+				jsonPt.put(JSON_OBJSHAPE_Y, p.y);
 				jArrPoints.put(jsonPt);
 			}
-			json.put(OBJCLASS_SHAPE_POINTS, jArrPoints);
+			json.put(JSON_OBJCLASS_SHAPE_POINTS, jArrPoints);
 		}
 		//
 		if(getObj_trackingid()!=null)
 		{
-			json.put(OBJCLASS_TRACKING_ID, getObj_trackingid());
+			json.put(JSON_OBJCLASS_TRACKING_ID, getObj_trackingid());
 		}
 		
 		return json;

@@ -58,7 +58,7 @@ public class DetectedObjUtil {
 	            {
 	            	Rect2d objBox = o.getObj_bounding_box();
 	            	Point ptXY1 	= new Point(objBox.x, objBox.y);
-	            	Point ptXY2 	= new Point(objBox.x + objBox.width, objBox.y + objBox.height);
+	            	//Point ptXY2 	= new Point(objBox.x + objBox.width, objBox.y + objBox.height);
 	            	
 		            String label 	= (objTrackingId!=null?objTrackingId:objClassName) + ": " + String.format("%.2f", objConfScore);
 		            Imgproc.putText(matOutputImg, label, new Point(ptXY1.x, ptXY1.y - 10), 
