@@ -54,7 +54,7 @@ public class DetectedObjUtil {
 				if(objShape.toArray().length==1)
 				{
 					Point pt = objShape.toArray()[0];
-					Imgproc.circle(matOutputImg, pt, iThickness, objColor);
+					Imgproc.circle(matOutputImg, pt, 2, objColor, Imgproc.FILLED, Imgproc.LINE_AA, 0);
 				}
 				else
 				{
