@@ -32,6 +32,8 @@ public class DetectedObjUtil {
 		if(mapObjColors==null)
 			mapObjColors = new HashMap<String, Scalar>();
 
+		int iThickness = 2;
+		
 		for(String sObjClassName : aDetectedObjs.getObjClassNames())
 		{
 			List<MatOfPoint> listShapes = new ArrayList<>();
@@ -49,14 +51,21 @@ public class DetectedObjUtil {
 				if(objColor==null)
 					objColor = isNewTrackingId? new Scalar(0, 255, 0): new Scalar(0, 0, 255);
 
-				listShapes.clear();
-				listShapes.add(objShape);
-				
-	            Imgproc.polylines(matOutputImg, listShapes, true, objColor);
+				if(objShape.toArray().length==1)
+				{
+					Point pt = objShape.toArray()[0];
+					Imgproc.circle(matOutputImg, pt, iThickness, objColor);
+				}
+				else
+				{
+					listShapes.clear();
+					listShapes.add(objShape);
+		            Imgproc.polylines(matOutputImg, listShapes, true, objColor, iThickness);
+				}
 
 	            if(withLabel)
 	            {
-	            	Rect2d objBox = o.getObj_bounding_box();
+	            	Rect2d objBox 	= o.getObj_bounding_box();
 	            	Point ptXY1 	= new Point(objBox.x, objBox.y);
 	            	//Point ptXY2 	= new Point(objBox.x + objBox.width, objBox.y + objBox.height);
 	            	
