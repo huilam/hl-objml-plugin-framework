@@ -11,6 +11,7 @@ public class ObjDetDnnBasePlugin extends ObjDetBasePlugin{
 		
 	protected boolean init()
 	{
+		NET_DNN = preDnnInit(NET_DNN);
 		NET_DNN = Dnn.readNet( getModelFileName());
 		
 		if(NET_DNN!=null)
@@ -24,6 +25,12 @@ public class ObjDetDnnBasePlugin extends ObjDetBasePlugin{
 	protected Net getDnn()
 	{
 		return this.NET_DNN;
+	}
+	
+
+	public Net preDnnInit(Net aDnnNet) 
+	{
+		return aDnnNet;
 	}
 
 }

@@ -7,7 +7,7 @@ public class PluginConfig {
 	protected String DEF_PLUGIN_PROPKEY_PREFIX 	= "plugin.";
 	//
 	protected String prop_filename 				= DEF_PLUGIN_PROP_FILENAME;
-	protected String propkey_prefix 				= DEF_PLUGIN_PROPKEY_PREFIX;	
+	protected String propkey_prefix 			= DEF_PLUGIN_PROPKEY_PREFIX;	
 	//
 	public PluginConfig()
 	{

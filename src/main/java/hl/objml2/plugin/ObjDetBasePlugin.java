@@ -384,6 +384,8 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 	
 	protected boolean init()
 	{
+		prePropInit();
+		
 		String sSupporedLabels = (String) getPluginProps().get("objml.mlmodel.detection.support-labels");
 		if(sSupporedLabels!=null && sSupporedLabels.trim().length()>0)
 		{
@@ -532,6 +534,10 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 			Mat aImageFile, JSONObject aCustomThresholdJson) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void prePropInit() {
 	}
 
     

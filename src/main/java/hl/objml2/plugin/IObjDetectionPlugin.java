@@ -20,4 +20,6 @@ public interface IObjDetectionPlugin extends IBasePlugin {
 			List<Mat> aInferenceOutputMat, 
 			Mat aMatInput, JSONObject aCustomThresholdJson);
 	
+	abstract public void prePropInit();
+	
 }
