@@ -66,6 +66,9 @@ public class ObjDetDnnBasePlugin extends ObjDetBasePlugin{
 		sbDnnBackEnd.append(this.dnn_preferred_backend);
 		switch(this.dnn_preferred_backend)
 		{
+			case Dnn.DNN_BACKEND_DEFAULT :
+				sbDnnBackEnd.append(" (DNN_BACKEND_DEFAULT)");
+				break;
 			case Dnn.DNN_BACKEND_OPENCV :
 				sbDnnBackEnd.append(" (DNN_BACKEND_OPENCV)");
 				break;
