@@ -19,6 +19,7 @@ import java.util.Properties;
 import org.json.JSONObject;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
+import org.opencv.dnn.Net;
 import org.opencv.imgcodecs.Imgcodecs;
 import hl.common.ImgUtil;
 import hl.common.PropUtil;
@@ -376,8 +377,8 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 	{	
 		if(isPluginOK())
 		{	
-			List<Mat> listOutput = doInference(aImageFile, aCustomThresholdJson);		
-			return parseDetections(listOutput, aImageFile, aCustomThresholdJson);
+			List<Mat> listOutput = doInference(aImageFile, null);		
+			return parseDetections(aImageFile, listOutput);
 		}
 		return null;
 	}
@@ -524,14 +525,13 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 	
 	
 	@Override
-	public List<Mat> doInference(Mat aImageFile, JSONObject aCustomThresholdJson) {
+	public List<Mat> doInference(Mat aImageFile, Net aDnnNet) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Map<String, Object> parseDetections(List<Mat> aInferenceOutputMat, 
-			Mat aImageFile, JSONObject aCustomThresholdJson) {
+	public Map<String, Object> parseDetections(Mat aMatInput, List<Mat> aInferenceOutputMat) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -541,6 +541,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 		
 		return aProps;
 	}
+
 
     
 }

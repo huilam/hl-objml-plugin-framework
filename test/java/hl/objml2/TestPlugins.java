@@ -114,7 +114,7 @@ public class TestPlugins {
 	    		Size sizeImg = matImage.size();
 	    		
 	    		List<Mat> listOutput = detector.doInference(matImage, null);
-	    		Map<String, ?> mapResult = detector.parseDetections(listOutput, matImage, null);
+	    		Map<String, ?> mapResult = detector.parseDetections(matImage, listOutput);
 	    		long lDetectionMs = (System.currentTimeMillis()-lStartMs);
 	    		
 System.out.println();		
