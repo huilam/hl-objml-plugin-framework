@@ -62,12 +62,66 @@ public class ObjDetDnnBasePlugin extends ObjDetBasePlugin{
 	
 	public String getDnnBackend()
 	{
-		return ""+this.dnn_preferred_backend;
+		StringBuffer sbDnnBackEnd = new StringBuffer();
+		sbDnnBackEnd.append(this.dnn_preferred_backend);
+		switch(this.dnn_preferred_backend)
+		{
+			case Dnn.DNN_BACKEND_OPENCV :
+				sbDnnBackEnd.append(" (DNN_BACKEND_OPENCV)");
+				break;
+			case Dnn.DNN_BACKEND_CUDA :
+				sbDnnBackEnd.append(" (DNN_BACKEND_CUDA)");
+				break;
+			case Dnn.DNN_BACKEND_INFERENCE_ENGINE :
+				sbDnnBackEnd.append(" (DNN_BACKEND_INFERENCE_ENGINE)");
+				break;
+			case Dnn.DNN_BACKEND_HALIDE :
+				sbDnnBackEnd.append(" (DNN_BACKEND_HALIDE)");
+				break;
+			case Dnn.DNN_BACKEND_CANN :
+				sbDnnBackEnd.append(" (DNN_BACKEND_CANN)");
+				break;
+			case Dnn.DNN_BACKEND_TIMVX :
+				sbDnnBackEnd.append(" (DNN_BACKEND_TIMVX)");
+				break;
+			case Dnn.DNN_BACKEND_VKCOM :
+				sbDnnBackEnd.append(" (DNN_BACKEND_VKCOM)");
+				break;
+			case Dnn.DNN_BACKEND_WEBNN :
+				sbDnnBackEnd.append(" (DNN_BACKEND_WEBNN)");
+				break;
+			default:
+		}
+		return sbDnnBackEnd.toString();
 	}
 	
 	public String getDnnTarget()
 	{
-		return ""+this.dnn_preferred_target;
+		StringBuffer sbDnnTarget = new StringBuffer();
+		sbDnnTarget.append(this.dnn_preferred_target);
+		switch(this.dnn_preferred_target)
+		{
+			case Dnn.DNN_TARGET_CPU :
+				sbDnnTarget.append(" (DNN_TARGET_CPU)");
+				break;
+			case Dnn.DNN_TARGET_OPENCL :
+				sbDnnTarget.append(" (DNN_TARGET_OPENCL)");
+				break;
+			case Dnn.DNN_TARGET_CUDA :
+				sbDnnTarget.append(" (DNN_TARGET_CUDA)");
+				break;
+			case Dnn.DNN_TARGET_NPU :
+				sbDnnTarget.append(" (DNN_TARGET_NPU)");
+				break;
+			case Dnn.DNN_TARGET_VULKAN :
+				sbDnnTarget.append(" (DNN_TARGET_VULKAN)");
+				break;
+			case Dnn.DNN_TARGET_FPGA :
+				sbDnnTarget.append(" (DNN_TARGET_FPGA)");
+				break;
+			default:
+		}
+		return sbDnnTarget.toString();
 	}
 
 }
