@@ -13,12 +13,12 @@ public class ObjDetDnnBasePlugin extends ObjDetBasePlugin{
 		{
 			if(super.init())
 			{
-				if(this.dnn_preferred_target>-1)
-					NET_DNN.setPreferableTarget(this.dnn_preferred_target);
-				
 				if(this.dnn_preferred_backend>-1)
 					NET_DNN.setPreferableBackend(this.dnn_preferred_backend);
 
+				if(this.dnn_preferred_target>-1)
+					NET_DNN.setPreferableTarget(this.dnn_preferred_target);
+				
 				return true;
 			}
 		}

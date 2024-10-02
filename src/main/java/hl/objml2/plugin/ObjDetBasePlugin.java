@@ -396,14 +396,14 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 		Properties prop = prePropInit(getPluginProps());
 		
 		//
-		String sDnnBackend = prop.getProperty(PROPKEY_DNN_BACKEND, "-1");
+		String sDnnBackend = prop.getProperty(PROPKEY_DNN_BACKEND, String.valueOf(Dnn.DNN_BACKEND_DEFAULT));
 		if(isNumeric(sDnnBackend))
 		{
 			if(this.dnn_preferred_backend>-1)
 				this.dnn_preferred_backend = Integer.parseInt(sDnnBackend);
 		}
 		//
-		String sDnnTarget = prop.getProperty(PROPKEY_DNN_TARGET, "-1");
+		String sDnnTarget = prop.getProperty(PROPKEY_DNN_TARGET, String.valueOf(Dnn.DNN_TARGET_CPU));
 		if(isNumeric(sDnnTarget))
 		{
 			if(this.dnn_preferred_target>-1)
