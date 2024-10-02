@@ -2,6 +2,7 @@ package hl.objml2.plugin;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.json.JSONObject;
 import org.opencv.core.Mat;
@@ -20,6 +21,6 @@ public interface IObjDetectionPlugin extends IBasePlugin {
 			List<Mat> aInferenceOutputMat, 
 			Mat aMatInput, JSONObject aCustomThresholdJson);
 	
-	abstract public void prePropInit();
+	abstract public Properties prePropInit(Properties aProps);
 	
 }

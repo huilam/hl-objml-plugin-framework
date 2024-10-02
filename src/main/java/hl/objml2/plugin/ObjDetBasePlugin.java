@@ -27,6 +27,12 @@ import hl.plugin.PluginConfig;
 
 public class ObjDetBasePlugin implements IObjDetectionPlugin{
 	
+	
+	protected static String PROPKEY_NMS_THRESHOLD 			= "objml.mlmodel.detection.nms-threshold";
+	protected static String PROPKEY_CONFIDENCE_THRESHOLD 	= "objml.mlmodel.detection.confidence-threshold";
+	protected static String PROPKEY_INPUT_IMGSIZE 			= "objml.mlmodel.detection.input-size";
+	protected static String PROPKEY_SUPPORTED_LABELS 		= "objml.mlmodel.detection.support-labels";
+	
 	////////////////////
 	protected double DEF_CONFIDENCE_THRESHOLD	= 0;
 	protected double DEF_NMS_THRESHOLD			= 0;
@@ -76,7 +82,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 		props_model = getPluginPropsByFileName(aPropFileName);
 		if(props_model!=null)
 		{
-			props_model = updatePluginProps(props_model);
+			props_model = prePropInit(props_model);
 			
 			_model_filename = props_model.getProperty(getPropModelDetectFileName());
 			
@@ -107,12 +113,6 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 		
 		
 		return false;
-	}
-	
-	//Override this method to add/remove/update properties
-	protected Properties updatePluginProps(Properties aProperties)
-	{
-		return aProperties;
 	}
 	
 	
@@ -384,16 +384,16 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 	
 	protected boolean init()
 	{
-		prePropInit();
+		Properties prop = prePropInit(getPluginProps());
 		
-		String sSupporedLabels = (String) getPluginProps().get("objml.mlmodel.detection.support-labels");
+		String sSupporedLabels = (String) prop.get(PROPKEY_SUPPORTED_LABELS);
 		if(sSupporedLabels!=null && sSupporedLabels.trim().length()>0)
 		{
 			String[] objs = sSupporedLabels.split("\n");
 			OBJ_CLASSESS = new ArrayList<>(Arrays.asList(objs));
 		}
 		//
-		String sConfThreshold = (String) getPluginProps().get("objml.mlmodel.detection.confidence-threshold");
+		String sConfThreshold = (String) prop.get(PROPKEY_CONFIDENCE_THRESHOLD);
 		if(sConfThreshold!=null && sConfThreshold.trim().length()>0)
 		{
 			try {
@@ -404,7 +404,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 			}
 		}
 		//
-		String sNMSThreshold = (String) getPluginProps().get("objml.mlmodel.detection.nms-threshold");
+		String sNMSThreshold = (String) prop.get(PROPKEY_NMS_THRESHOLD);
 		if(sNMSThreshold!=null && sNMSThreshold.trim().length()>0)
 		{
 			try {
@@ -415,7 +415,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 			}
 		}
 		//
-		String sInputImageSize = (String) getPluginProps().get("objml.mlmodel.detection.input-size");
+		String sInputImageSize = (String) prop.get(PROPKEY_INPUT_IMGSIZE);
 		if(sInputImageSize!=null && sInputImageSize.trim().length()>0)
 		{
 
@@ -537,7 +537,9 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 	}
 
 	@Override
-	public void prePropInit() {
+	public Properties prePropInit(Properties aProps) {
+		
+		return aProps;
 	}
 
     
