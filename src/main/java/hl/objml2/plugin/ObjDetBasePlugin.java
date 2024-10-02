@@ -19,6 +19,7 @@ import java.util.Properties;
 import org.json.JSONObject;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
+import org.opencv.dnn.Dnn;
 import org.opencv.dnn.Net;
 import org.opencv.imgcodecs.Imgcodecs;
 import hl.common.ImgUtil;
@@ -28,11 +29,13 @@ import hl.plugin.PluginConfig;
 
 public class ObjDetBasePlugin implements IObjDetectionPlugin{
 	
-	
 	protected static String PROPKEY_NMS_THRESHOLD 			= "objml.mlmodel.detection.nms-threshold";
 	protected static String PROPKEY_CONFIDENCE_THRESHOLD 	= "objml.mlmodel.detection.confidence-threshold";
 	protected static String PROPKEY_INPUT_IMGSIZE 			= "objml.mlmodel.detection.input-size";
 	protected static String PROPKEY_SUPPORTED_LABELS 		= "objml.mlmodel.detection.support-labels";
+	
+	protected static String PROPKEY_DNN_BACKEND 			= "objml.mlmodel.net.dnn.backend";
+	protected static String PROPKEY_DNN_TARGET 				= "objml.mlmodel.net.dnn.target";
 	
 	////////////////////
 	protected double DEF_CONFIDENCE_THRESHOLD	= 0;
@@ -47,6 +50,9 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 	protected String _plugin_source 	= null;
 	/////////////////////
 	protected Net NET_DNN 				= null;
+	protected int dnn_preferred_backend	= Dnn.DNN_BACKEND_DEFAULT;
+	protected int dnn_preferred_target	= Dnn.DNN_TARGET_CPU;	
+	
 	////////////////////
 	private boolean isRegObjsOfInterest 				= false;
 	protected List<String> obj_classes_of_interest 		= new ArrayList<String>();
@@ -389,6 +395,21 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 	{
 		Properties prop = prePropInit(getPluginProps());
 		
+		//
+		String sDnnBackend = prop.getProperty(PROPKEY_DNN_BACKEND, "-1");
+		if(isNumeric(sDnnBackend))
+		{
+			if(this.dnn_preferred_backend>-1)
+				this.dnn_preferred_backend = Integer.parseInt(sDnnBackend);
+		}
+		//
+		String sDnnTarget = prop.getProperty(PROPKEY_DNN_TARGET, "-1");
+		if(isNumeric(sDnnTarget))
+		{
+			if(this.dnn_preferred_target>-1)
+				this.dnn_preferred_target = Integer.parseInt(sDnnTarget);
+		}
+		//
 		String sSupporedLabels = (String) prop.get(PROPKEY_SUPPORTED_LABELS);
 		if(sSupporedLabels!=null && sSupporedLabels.trim().length()>0)
 		{
@@ -400,7 +421,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 		if(sConfThreshold!=null && sConfThreshold.trim().length()>0)
 		{
 			try {
-				DEF_CONFIDENCE_THRESHOLD = Float.parseFloat(sConfThreshold);
+				DEF_CONFIDENCE_THRESHOLD = Double.parseDouble(sConfThreshold);
 			}catch(NumberFormatException ex)
 			{
 				ex.printStackTrace();
@@ -411,7 +432,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 		if(sNMSThreshold!=null && sNMSThreshold.trim().length()>0)
 		{
 			try {
-				DEF_NMS_THRESHOLD = Float.parseFloat(sNMSThreshold);
+				DEF_NMS_THRESHOLD = Double.parseDouble(sNMSThreshold);
 			}catch(NumberFormatException ex)
 			{
 				ex.printStackTrace();
@@ -449,6 +470,14 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 		return true;
 	}
 	
+	private static boolean isNumeric(String str) {
+	    try {
+	        Double.parseDouble(str);
+	        return true;
+	    } catch (NumberFormatException e) {
+	        return false;
+	    }
+	}
 
 	public String[] getObjClassesOfInterest()
 	{
@@ -502,7 +531,104 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 			sMappedClassName = aOrgObjClassName;
 		return sMappedClassName;
 	}
-	/////
+	///////////
+	public double getConfidenceThreshold()
+	{
+		return DEF_CONFIDENCE_THRESHOLD;
+	}
+	
+	public double getNMSThreshold()
+	{
+		return DEF_NMS_THRESHOLD;
+	}
+	
+	public Size getImageInputSize()
+	{
+		return DEF_INPUT_SIZE;
+	}
+	
+	public String[] getSupportedObjectLabels()
+	{
+		return OBJ_CLASSESS.toArray(new String[OBJ_CLASSESS.size()]);
+	}
+	
+	public int getDnnBackend()
+	{
+		return this.dnn_preferred_backend;
+	}
+
+	public String getDnnBackendDesc()
+	{
+		StringBuffer sbDnnBackEnd = new StringBuffer();
+		sbDnnBackEnd.append(this.dnn_preferred_backend);
+		switch(this.dnn_preferred_backend)
+		{
+			case Dnn.DNN_BACKEND_DEFAULT :
+				sbDnnBackEnd.append(" (DNN_BACKEND_DEFAULT)");
+				break;
+			case Dnn.DNN_BACKEND_OPENCV :
+				sbDnnBackEnd.append(" (DNN_BACKEND_OPENCV)");
+				break;
+			case Dnn.DNN_BACKEND_CUDA :
+				sbDnnBackEnd.append(" (DNN_BACKEND_CUDA)");
+				break;
+			case Dnn.DNN_BACKEND_INFERENCE_ENGINE :
+				sbDnnBackEnd.append(" (DNN_BACKEND_INFERENCE_ENGINE)");
+				break;
+			case Dnn.DNN_BACKEND_HALIDE :
+				sbDnnBackEnd.append(" (DNN_BACKEND_HALIDE)");
+				break;
+			case Dnn.DNN_BACKEND_CANN :
+				sbDnnBackEnd.append(" (DNN_BACKEND_CANN)");
+				break;
+			case Dnn.DNN_BACKEND_TIMVX :
+				sbDnnBackEnd.append(" (DNN_BACKEND_TIMVX)");
+				break;
+			case Dnn.DNN_BACKEND_VKCOM :
+				sbDnnBackEnd.append(" (DNN_BACKEND_VKCOM)");
+				break;
+			case Dnn.DNN_BACKEND_WEBNN :
+				sbDnnBackEnd.append(" (DNN_BACKEND_WEBNN)");
+				break;
+			default:
+		}
+		return sbDnnBackEnd.toString();
+	}
+	
+	public int getDnnTarget()
+	{
+		return this.dnn_preferred_target;
+	}
+	
+	public String getDnnTargetDesc()
+	{
+		StringBuffer sbDnnTarget = new StringBuffer();
+		sbDnnTarget.append(this.dnn_preferred_target);
+		switch(this.dnn_preferred_target)
+		{
+			case Dnn.DNN_TARGET_CPU :
+				sbDnnTarget.append(" (DNN_TARGET_CPU)");
+				break;
+			case Dnn.DNN_TARGET_OPENCL :
+				sbDnnTarget.append(" (DNN_TARGET_OPENCL)");
+				break;
+			case Dnn.DNN_TARGET_CUDA :
+				sbDnnTarget.append(" (DNN_TARGET_CUDA)");
+				break;
+			case Dnn.DNN_TARGET_NPU :
+				sbDnnTarget.append(" (DNN_TARGET_NPU)");
+				break;
+			case Dnn.DNN_TARGET_VULKAN :
+				sbDnnTarget.append(" (DNN_TARGET_VULKAN)");
+				break;
+			case Dnn.DNN_TARGET_FPGA :
+				sbDnnTarget.append(" (DNN_TARGET_FPGA)");
+				break;
+			default:
+		}
+		return sbDnnTarget.toString();
+	}
+	
 	///////////
 
 	@Override
