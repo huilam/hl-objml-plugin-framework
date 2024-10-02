@@ -46,6 +46,8 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 	protected String _model_filename 	= null;
 	protected String _plugin_source 	= null;
 	/////////////////////
+	protected Net NET_DNN 				= null;
+	////////////////////
 	private boolean isRegObjsOfInterest 				= false;
 	protected List<String> obj_classes_of_interest 		= new ArrayList<String>();
 	protected Map<String, String> mapObjClassMapping 	= new HashMap<String, String>();
@@ -377,7 +379,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 	{	
 		if(isPluginOK())
 		{	
-			List<Mat> listOutput = doInference(aImageFile, null);		
+			List<Mat> listOutput = doInference(aImageFile, this.NET_DNN);		
 			return parseDetections(aImageFile, listOutput);
 		}
 		return null;

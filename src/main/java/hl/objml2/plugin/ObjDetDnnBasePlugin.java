@@ -10,40 +10,40 @@ public class ObjDetDnnBasePlugin extends ObjDetBasePlugin{
 	protected static String PROPKEY_DNN_BACKEND 	= "objml.mlmodel.net.dnn.backend";
 	protected static String PROPKEY_DNN_TARGET 		= "objml.mlmodel.net.dnn.target";
 	//
-	protected Net NET_DNN 				= null;
 	private int dnn_preferred_backend	= Dnn.DNN_BACKEND_DEFAULT;
 	private int dnn_preferred_target	= Dnn.DNN_TARGET_CPU;
 	//
 		
+	@Override
 	protected boolean init()
 	{
-		
 		NET_DNN = Dnn.readNet( getModelFileName());
-		
 		if(NET_DNN!=null)
 		{
-			super.init();
-			
-			Properties prop = getPluginProps();
-			//
-			String sDnnBackend = prop.getProperty(PROPKEY_DNN_BACKEND, "-1");
-			if(isNumeric(sDnnBackend))
+			if(super.init())
 			{
-				this.dnn_preferred_backend = Integer.parseInt(sDnnBackend);
+				Properties prop = getPluginProps();
+				//
+				String sDnnBackend = prop.getProperty(PROPKEY_DNN_BACKEND, "-1");
+				if(isNumeric(sDnnBackend))
+				{
+					this.dnn_preferred_backend = Integer.parseInt(sDnnBackend);
+					if(this.dnn_preferred_backend>-1)
+						NET_DNN.setPreferableBackend(this.dnn_preferred_backend);
+				}
+				//
+				String sDnnTarget = prop.getProperty(PROPKEY_DNN_TARGET, "-1");
+				if(isNumeric(sDnnTarget))
+				{
+					this.dnn_preferred_target = Integer.parseInt(sDnnTarget);
+					if(this.dnn_preferred_target>-1)
+						NET_DNN.setPreferableTarget(this.dnn_preferred_target);
+				}
+				//
+				return true;
 			}
-			//
-			String sDnnTarget = prop.getProperty(PROPKEY_DNN_TARGET, "-1");
-			if(isNumeric(sDnnTarget))
-			{
-				this.dnn_preferred_target = Integer.parseInt(sDnnTarget);
-			}
-			//
-			NET_DNN.setPreferableBackend(this.dnn_preferred_backend);
-			NET_DNN.setPreferableTarget(this.dnn_preferred_target);
-			
 		}
-		
-		return (NET_DNN!=null);
+		return false;
 	}
 	
 	private static boolean isNumeric(String str) {
