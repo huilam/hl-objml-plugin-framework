@@ -552,6 +552,45 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 		return OBJ_CLASSESS.toArray(new String[OBJ_CLASSESS.size()]);
 	}
 	
+	public int setDnnBackendByText(String aDnnTargetText)
+	{
+		int iDnnBackendId = -1;
+		switch (aDnnTargetText)
+		{
+			case "DNN_BACKEND_DEFAULT":
+				iDnnBackendId = Dnn.DNN_BACKEND_DEFAULT;
+				break;
+			case "DNN_BACKEND_OPENCV":
+				iDnnBackendId = Dnn.DNN_BACKEND_OPENCV;
+				break;
+			case "DNN_BACKEND_CUDA":
+				iDnnBackendId = Dnn.DNN_BACKEND_CUDA;
+				break;
+			case "DNN_BACKEND_INFERENCE_ENGINE":
+				iDnnBackendId = Dnn.DNN_BACKEND_INFERENCE_ENGINE;
+				break;
+			case "DNN_BACKEND_VKCOM":
+				iDnnBackendId = Dnn.DNN_BACKEND_VKCOM;
+				break;
+			case "DNN_BACKEND_WEBNN":
+				iDnnBackendId = Dnn.DNN_BACKEND_WEBNN;
+				break;
+			case "DNN_BACKEND_CANN":
+				iDnnBackendId = Dnn.DNN_BACKEND_CANN;
+				break;
+			case "DNN_BACKEND_TIMVX":
+				iDnnBackendId = Dnn.DNN_BACKEND_TIMVX;
+				break;
+			default:
+				iDnnBackendId = -1;
+		}
+		
+		
+		if(iDnnBackendId>-1)
+			this.dnn_preferred_backend = iDnnBackendId;
+		
+		return iDnnBackendId;
+	}
 	public int getDnnBackend()
 	{
 		return this.dnn_preferred_backend;
@@ -594,6 +633,62 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 		}
 		return sbDnnBackEnd.toString();
 	}
+	
+	
+	public int setDnnTargetByText(String aDnnTargetText)
+	{
+		int iDnnTargetId = -1;
+		switch (aDnnTargetText)
+		{
+			case "DNN_TARGET_CPU":
+				iDnnTargetId = Dnn.DNN_TARGET_CPU;
+				break;
+			case "DNN_TARGET_CPU_FP16":
+				iDnnTargetId = Dnn.DNN_TARGET_CPU_FP16;
+				break;
+				
+			case "DNN_TARGET_CUDA":
+				iDnnTargetId = Dnn.DNN_TARGET_CUDA;
+				break;
+				
+			case "DNN_TARGET_CUDA_FP16":
+				iDnnTargetId = Dnn.DNN_TARGET_CUDA_FP16;
+				break;
+				
+			case "DNN_TARGET_OPENCL":
+				iDnnTargetId = Dnn.DNN_TARGET_OPENCL;
+				break;
+				
+			case "DNN_TARGET_OPENCL_FP16":
+				iDnnTargetId = Dnn.DNN_TARGET_OPENCL_FP16;
+				break;
+				
+			case "DNN_TARGET_VULKAN":
+				iDnnTargetId = Dnn.DNN_TARGET_VULKAN;
+				break;
+				
+			case "DNN_TARGET_FPGA":
+				iDnnTargetId = Dnn.DNN_TARGET_FPGA;
+				break;
+				
+			case "DNN_TARGET_NPU":
+				iDnnTargetId = Dnn.DNN_TARGET_NPU;
+				break;
+				
+			case "DNN_TARGET_MYRIAD":
+				iDnnTargetId = Dnn.DNN_TARGET_MYRIAD;
+				break;
+				
+			default:
+				iDnnTargetId = -1;
+		}
+		
+		if(iDnnTargetId>-1)
+			this.dnn_preferred_target = iDnnTargetId;
+		
+		return iDnnTargetId;
+	}
+	
 	
 	public int getDnnTarget()
 	{
