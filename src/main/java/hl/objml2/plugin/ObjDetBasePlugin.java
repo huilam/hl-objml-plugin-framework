@@ -679,6 +679,10 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 				iDnnTargetId = Dnn.DNN_TARGET_MYRIAD;
 				break;
 				
+			case "DNN_TARGET_HDDL":
+				iDnnTargetId = Dnn.DNN_TARGET_HDDL;
+				break;
+				
 			default:
 				iDnnTargetId = -1;
 		}
@@ -704,20 +708,35 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 			case Dnn.DNN_TARGET_CPU :
 				sbDnnTarget.append(" (DNN_TARGET_CPU)");
 				break;
+			case Dnn.DNN_TARGET_CPU_FP16 :
+				sbDnnTarget.append(" (DNN_TARGET_CPU_FP16)");
+				break;
 			case Dnn.DNN_TARGET_OPENCL :
 				sbDnnTarget.append(" (DNN_TARGET_OPENCL)");
+				break;
+			case Dnn.DNN_TARGET_OPENCL_FP16 :
+				sbDnnTarget.append(" (DNN_TARGET_OPENCL_FP16)");
 				break;
 			case Dnn.DNN_TARGET_CUDA :
 				sbDnnTarget.append(" (DNN_TARGET_CUDA)");
 				break;
+			case Dnn.DNN_TARGET_CUDA_FP16 :
+				sbDnnTarget.append(" (DNN_TARGET_CUDA_FP16)");
+				break;
 			case Dnn.DNN_TARGET_NPU :
 				sbDnnTarget.append(" (DNN_TARGET_NPU)");
+				break;
+			case Dnn.DNN_TARGET_MYRIAD :
+				sbDnnTarget.append(" (DNN_TARGET_MYRIAD)");
 				break;
 			case Dnn.DNN_TARGET_VULKAN :
 				sbDnnTarget.append(" (DNN_TARGET_VULKAN)");
 				break;
 			case Dnn.DNN_TARGET_FPGA :
 				sbDnnTarget.append(" (DNN_TARGET_FPGA)");
+				break;
+			case Dnn.DNN_TARGET_HDDL :
+				sbDnnTarget.append(" (DNN_TARGET_HDDL)");
 				break;
 			default:
 		}
