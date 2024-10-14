@@ -752,6 +752,10 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 
 	@Override
 	public boolean isPluginOK() {
+		
+		if(isInited)
+			return true;
+		
 		boolean isOK = isPluginOK(getClass());
 		if(!isOK)
 		{
