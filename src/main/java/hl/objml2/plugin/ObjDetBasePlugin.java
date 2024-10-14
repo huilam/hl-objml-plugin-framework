@@ -57,7 +57,8 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 	private boolean isRegObjsOfInterest 				= false;
 	protected List<String> obj_classes_of_interest 		= new ArrayList<String>();
 	protected Map<String, String> mapObjClassMapping 	= new HashMap<String, String>();
-	
+	//
+	private boolean isInited = false;
 	
 	public void setPluginConfig(PluginConfig aPluginConfig)
 	{
@@ -81,6 +82,9 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 	
 	protected boolean isPluginOK(Class<?> aClass, String aPropFileName)
 	{
+		if(isInited)
+			return true;
+		
 		if(aClass==null)
 			return false;
 		
@@ -107,6 +111,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 					if(sModelName!=null && sModelName.trim().length()>0)
 					{
 						_model_filename = fModelFile.getAbsolutePath();
+						isInited = true;
 						return true;
 					}
 				}
