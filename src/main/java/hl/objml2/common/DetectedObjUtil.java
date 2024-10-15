@@ -26,6 +26,11 @@ public class DetectedObjUtil {
 	
 	public static Mat annotateImage(final Mat aMatInput, final FrameDetectedObj aDetectedObjs, Map<String, Scalar> mapObjColors, boolean withLabel)
 	{
+		return annotateImage(aMatInput, aDetectedObjs, mapObjColors, withLabel, true);
+	}
+	
+	public static Mat annotateImage(final Mat aMatInput, final FrameDetectedObj aDetectedObjs, Map<String, Scalar> mapObjColors, boolean withLabel, boolean isPointsConnected)
+	{
 		// Draw bounding boxes
 		Mat matOutputImg = aMatInput.clone();
 		
@@ -60,7 +65,7 @@ public class DetectedObjUtil {
 				{
 					listShapes.clear();
 					listShapes.add(objShape);
-		            Imgproc.polylines(matOutputImg, listShapes, true, objColor, iThickness);
+		            Imgproc.polylines(matOutputImg, listShapes, isPointsConnected, objColor, iThickness);
 				}
 
 	            if(withLabel)
