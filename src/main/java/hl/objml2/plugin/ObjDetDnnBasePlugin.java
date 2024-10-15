@@ -1,10 +1,13 @@
 package hl.objml2.plugin;
 
+import java.io.File;
+
 import org.opencv.dnn.Dnn;
-import org.opencv.dnn.Net;
 
 public class ObjDetDnnBasePlugin extends ObjDetBasePlugin{
-		
+	
+	protected static String ENVKEY_OCL4DNN_CFG = "OPENCV_OCL4DNN_CONFIG_PATH";
+	
 	@Override
 	protected boolean init()
 	{
@@ -25,9 +28,16 @@ public class ObjDetDnnBasePlugin extends ObjDetBasePlugin{
 		return false;
 	}
 	
-	public Net getDnnNet()
+	//
+	protected void checkOcl4DnnConfig()
 	{
-		return this.NET_DNN;
+		String sOCL4DNN = System.getenv(ENVKEY_OCL4DNN_CFG);
+		
+		if(sOCL4DNN==null || sOCL4DNN.trim().length()==0)
+		{
+			System.setProperty(ENVKEY_OCL4DNN_CFG, new File(".").getAbsolutePath());
+		}
+		
 	}
 
 }

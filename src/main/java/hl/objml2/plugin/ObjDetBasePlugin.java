@@ -772,6 +772,11 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin{
 		return isOK;
 	}
 	
+	public Net getDnnNet()
+	{
+		return this.NET_DNN;
+	}
+	
 	/////
 	
 	
