@@ -1,12 +1,7 @@
 package hl.objml2;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Map;
-import org.opencv.core.Mat;
-import org.opencv.imgcodecs.Imgcodecs;
-
 import hl.common.FileUtil;
 import hl.objml2.plugin.MLPluginConfig;
 import hl.objml2.plugin.MLPluginMgr;
@@ -20,7 +15,7 @@ public class TestPlugins {
     {
     	OpenCvUtil.initOpenCV();
     	
-    	File pluginsFolder =  new File("./test/resources/plugins");
+    	File pluginsFolder =  new File("./test/plugins");
     	File[] fPluginJars =  FileUtil.getFilesWithExtensions(pluginsFolder, new String[]{".jar",".zip"});
     	
     	System.out.println();
@@ -47,7 +42,7 @@ public class TestPlugins {
     	//listPluginClassName.add(Upscale.class.getName());
 	    
     	//////
-    	File imgFolder = new File("./test/resources/images"); 
+    	File imgFolder = new File("./test/images"); 
     	
 		BaseTester test = new BaseTester();
 		test.setTestImageFolder(imgFolder.getAbsolutePath());
