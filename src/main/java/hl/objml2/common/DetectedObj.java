@@ -16,7 +16,7 @@ public class DetectedObj {
 	////
 	public final static String JSON_OBJCLASS_ID				= "obj_classid";
 	public final static String JSON_OBJCLASS_NAME 			= "obj_classname";
-	public final static String JSON_OBJCLASS_CONF_SCORE 		= "obj_conf_score";
+	public final static String JSON_OBJCLASS_CONF_SCORE 	= "obj_conf_score";
 	public final static String JSON_OBJCLASS_SHAPE_POINTS 	= "obj_shapepoints";
 	public final static String JSON_OBJCLASS_TRACKING_ID 	= "obj_trackingid";
 	////

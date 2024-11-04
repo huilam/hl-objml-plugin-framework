@@ -17,7 +17,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import hl.common.PropUtil;
 import hl.common.ZipUtil;
-import hl.plugin.PluginMgr;
+import hl.objml2.plugin.base.PluginMgr;
 
 public class MLPluginMgr extends PluginMgr {
 

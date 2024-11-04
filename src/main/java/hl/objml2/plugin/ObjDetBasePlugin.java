@@ -24,10 +24,10 @@ import org.opencv.dnn.Net;
 import org.opencv.imgcodecs.Imgcodecs;
 import hl.common.ImgUtil;
 import hl.common.PropUtil;
+import hl.objml2.plugin.base.PluginConfig;
 import hl.opencv.util.OpenCvUtil;
-import hl.plugin.PluginConfig;
 
-public class ObjDetBasePlugin implements IObjDetectionPlugin{
+public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	
 	protected static String PROPKEY_NMS_THRESHOLD 			= "objml.mlmodel.detection.nms-threshold";
 	protected static String PROPKEY_CONFIDENCE_THRESHOLD 	= "objml.mlmodel.detection.confidence-threshold";

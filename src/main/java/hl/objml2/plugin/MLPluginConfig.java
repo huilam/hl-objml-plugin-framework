@@ -1,6 +1,6 @@
 package hl.objml2.plugin;
 
-import hl.plugin.PluginConfig;
+import hl.objml2.plugin.base.PluginConfig;
 
 public class MLPluginConfig extends PluginConfig{
 	//

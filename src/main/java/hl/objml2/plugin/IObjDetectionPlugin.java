@@ -7,7 +7,7 @@ import java.util.Properties;
 import org.opencv.core.Mat;
 import org.opencv.dnn.Net;
 
-import hl.plugin.IBasePlugin;
+import hl.objml2.plugin.base.IBasePlugin;
 
 public interface IObjDetectionPlugin extends IBasePlugin {
 	

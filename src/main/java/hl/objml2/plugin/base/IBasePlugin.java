@@ -1,8 +1,7 @@
-package hl.plugin;
+package hl.objml2.plugin.base;
 
 import java.util.Properties;
 
-@Deprecated
 public interface IBasePlugin {
 	
 	abstract public void setPluginConfig(PluginConfig pluginConfig);

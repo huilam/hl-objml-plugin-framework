@@ -1,4 +1,4 @@
-package hl.plugin;
+package hl.objml2.plugin.base;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -9,7 +9,6 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
-@Deprecated
 public class PluginMgr {
 
 	//

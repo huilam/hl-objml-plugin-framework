@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.opencv.dnn.Dnn;
 
-public class ObjDetDnnBasePlugin extends ObjDetBasePlugin{
+public class ObjDetDnnBasePlugin extends ObjDetBasePlugin {
 	
 	protected static String ENVKEY_OCL4DNN_CFG = "OPENCV_OCL4DNN_CONFIG_PATH";
 	
