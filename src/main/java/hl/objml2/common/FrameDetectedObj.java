@@ -24,7 +24,6 @@ public class FrameDetectedObj {
 	private long frame_id 				= -1;
 	private long frame_timestamp_ms 	= -1;
 	private String frame_source 		= null;
-	private long frame_total_detection 	= 0;
 	private Mat mat_output_frameimg		= null;
 	//
 	private Map<String, List<DetectedObj>> mapDetectedObjs = new HashMap<>();
@@ -57,11 +56,9 @@ public class FrameDetectedObj {
 		return mat_output_frameimg;
 	}
 	public long getFrame_total_detection() {
-		return frame_total_detection;
+		return getTotalDetectionCount();
 	}
-	public void setFrame_total_detection(long frame_total_detection) {
-		this.frame_total_detection = frame_total_detection;
-	}
+
 	public void setMat_output_frameimg(Mat mat_output_frameimg) {
 		this.mat_output_frameimg = mat_output_frameimg;
 	}
@@ -111,7 +108,7 @@ public class FrameDetectedObj {
 		}
 	}
 	
-	public long getTotalDetectionCount()
+	private long getTotalDetectionCount()
 	{
 		long lTotal = 0;
 		for(String sObjClassName : getObjClassNames())
@@ -163,13 +160,11 @@ public class FrameDetectedObj {
 		long lFrameId = (aJson.optLong(FrameDetectedObj.JSON_FRAME_ID, -1));
 		long lFrameTimestamp = (aJson.optLong(FrameDetectedObj.JSON_FRAME_TIMESTAMP, -1));
 		String sFrameSource = (aJson.optString(FrameDetectedObj.JSON_FRAME_SOURCE, ""));
-		long lFrameTotalDetection = (aJson.optLong(FrameDetectedObj.JSON_FRAME_TOTAL_DETECTION, 0));
 		
 		frame = this;
 		frame.setFrame_id(lFrameId);
 		frame.setFrame_timestamp_ms(lFrameTimestamp);
 		frame.setFrame_source(sFrameSource);
-		frame.setFrame_total_detection(lFrameTotalDetection);
 		
 		JSONObject jsonDetections = aJson.optJSONObject(FrameDetectedObj.JSON_FRAME_DETECTIONS);
 		if(jsonDetections!=null)

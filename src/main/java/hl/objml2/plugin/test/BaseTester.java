@@ -168,7 +168,7 @@ public class BaseTester {
 					{
 						//
 						System.out.println("     - ObjClass Names : "+String.join(",", frameObjs.getObjClassNames()));
-						System.out.println("     - Total Detection : "+frameObjs.getTotalDetectionCount());
+						System.out.println("     - Total Detection : "+frameObjs.getFrame_total_detection());
 					}
 					else
 					{
