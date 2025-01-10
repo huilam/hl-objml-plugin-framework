@@ -146,7 +146,7 @@ public class BaseTester {
 					System.out.println("     - Inference NMS Threshold : "+pluginDetector.getNMSThreshold());
 					System.out.println("     - Inference Backend    : "+pluginDetector.getDnnBackendDesc());
 					System.out.println("     - Inference Target     : "+pluginDetector.getDnnTargetDesc());
-					System.out.println("     - Inference Time (Ms)  : "+lInferenceMs);
+					System.out.println("     - Inference Time       : "+lInferenceMs+ " ms");
 					
 					System.out.println("     - Inference Outputs    : ");
 					int outputIdx=0;
