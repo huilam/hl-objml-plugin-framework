@@ -187,7 +187,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 		return null;
 	}
 	
-	private File extractModelFileFromJarAsTemp(File file)
+	protected File extractModelFileFromJarAsTemp(File file)
 	{	
 		//try load from jar/zip
 		String sResFileName = searchResource(file);

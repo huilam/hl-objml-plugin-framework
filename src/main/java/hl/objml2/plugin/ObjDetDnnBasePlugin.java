@@ -7,11 +7,36 @@ import org.opencv.dnn.Dnn;
 public class ObjDetDnnBasePlugin extends ObjDetBasePlugin {
 	
 	protected static String ENVKEY_OCL4DNN_CFG = "OPENCV_OCL4DNN_CONFIG_PATH";
+	private static String MLMODEL_CAFFE_FILEEXT = ".caffemodel";
 	
 	@Override
 	protected boolean init()
 	{
-		NET_DNN = Dnn.readNet( getModelFileName());
+		String sMLModelFile = getModelFileName();
+		
+		if(sMLModelFile.endsWith(MLMODEL_CAFFE_FILEEXT))
+		{
+			String sCaffeConfig = props_model.getProperty(
+					pluginConfig.getPropkey_prefix()
+					+"mlmodel.caffe.config.filename","");
+			
+			if(sCaffeConfig.trim().length()==0)
+			{
+				System.err.println("[CAFFE ML] mlmodel.caffe.config.filename is empty");
+			}
+			else
+			{
+				File fileCaffeConfig = getMLModelFile(sCaffeConfig);
+				
+				NET_DNN = Dnn.readNetFromCaffe(fileCaffeConfig.getAbsolutePath(), sMLModelFile);
+			}
+		}
+		else
+		{
+			NET_DNN = Dnn.readNet(sMLModelFile);
+		}
+		
+		
 		if(NET_DNN!=null)
 		{
 			if(super.init())
@@ -24,6 +49,10 @@ public class ObjDetDnnBasePlugin extends ObjDetBasePlugin {
 				
 				return true;
 			}
+		}
+		else
+		{
+			System.err.println("NET_DNN failed to load.");
 		}
 		return false;
 	}
