@@ -28,7 +28,15 @@ public class ObjDetDnnBasePlugin extends ObjDetBasePlugin {
 			{
 				File fileCaffeConfig = getMLModelFile(sCaffeConfig);
 				
-				NET_DNN = Dnn.readNetFromCaffe(fileCaffeConfig.getAbsolutePath(), sMLModelFile);
+				if(fileCaffeConfig.isFile())
+				{
+					NET_DNN = Dnn.readNetFromCaffe(fileCaffeConfig.getAbsolutePath(), sMLModelFile);
+				}
+				else
+				{
+					System.err.println("[CAFFE ML] mlmodel.caffe.config.filename NOT Found - "+fileCaffeConfig.getAbsolutePath());
+				}
+				
 			}
 		}
 		else
