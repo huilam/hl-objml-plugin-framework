@@ -6,8 +6,9 @@ import org.opencv.dnn.Dnn;
 
 public class ObjDetDnnBasePlugin extends ObjDetBasePlugin {
 	
-	protected static String ENVKEY_OCL4DNN_CFG = "OPENCV_OCL4DNN_CONFIG_PATH";
-	private static String MLMODEL_CAFFE_FILEEXT = ".caffemodel";
+	protected static String ENVKEY_OCL4DNN_CFG 			= "OPENCV_OCL4DNN_CONFIG_PATH";
+	private static String MLMODEL_CAFFE_FILEEXT 		= ".caffemodel";
+	private static String MLMODEL_CAFFE_CONFIG_FILENAME = "mlmodel.caffe.config.filename";
 	
 	@Override
 	protected boolean init()
@@ -17,8 +18,7 @@ public class ObjDetDnnBasePlugin extends ObjDetBasePlugin {
 		if(sMLModelFile.endsWith(MLMODEL_CAFFE_FILEEXT))
 		{
 			String sCaffeConfig = props_model.getProperty(
-					pluginConfig.getPropkey_prefix()
-					+"mlmodel.caffe.config.filename","");
+					pluginConfig.getPropkey_prefix()+MLMODEL_CAFFE_CONFIG_FILENAME,"");
 			
 			if(sCaffeConfig.trim().length()==0)
 			{
