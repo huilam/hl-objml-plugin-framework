@@ -7,43 +7,24 @@ import org.opencv.dnn.Dnn;
 public class ObjDetDnnBasePlugin extends ObjDetBasePlugin {
 	
 	protected static String ENVKEY_OCL4DNN_CFG 			= "OPENCV_OCL4DNN_CONFIG_PATH";
-	private static String MLMODEL_CAFFE_FILEEXT 		= ".caffemodel";
-	private static String MLMODEL_CAFFE_CONFIG_FILENAME = "mlmodel.caffe.config.filename";
+	private static String MLMODEL_CONFIG_FILENAME 		= "mlmodel.detection.mlconfig.filename";
 	
 	@Override
 	protected boolean init()
 	{
 		String sMLModelFile = getModelFileName();
 		
-		if(sMLModelFile.endsWith(MLMODEL_CAFFE_FILEEXT))
+		String sMLModelConfig = getMLModelConfigFilePath();
+		
+		if(sMLModelConfig!=null)
 		{
-			String sCaffeConfig = props_model.getProperty(
-					pluginConfig.getPropkey_prefix()+MLMODEL_CAFFE_CONFIG_FILENAME,"");
-			
-			if(sCaffeConfig.trim().length()==0)
-			{
-				System.err.println("[CAFFE ML] mlmodel.caffe.config.filename is empty");
-			}
-			else
-			{
-				File fileCaffeConfig = getMLModelFile(sCaffeConfig);
-				
-				if(fileCaffeConfig.isFile())
-				{
-					NET_DNN = Dnn.readNetFromCaffe(fileCaffeConfig.getAbsolutePath(), sMLModelFile);
-				}
-				else
-				{
-					System.err.println("[CAFFE ML] mlmodel.caffe.config.filename NOT Found - "+fileCaffeConfig.getAbsolutePath());
-				}
-				
-			}
+			//with config
+			NET_DNN = Dnn.readNet(sMLModelFile, sMLModelConfig);
 		}
 		else
 		{
 			NET_DNN = Dnn.readNet(sMLModelFile);
 		}
-		
 		
 		if(NET_DNN!=null)
 		{
@@ -64,6 +45,22 @@ public class ObjDetDnnBasePlugin extends ObjDetBasePlugin {
 		}
 		return false;
 	}
+	
+	protected String getMLModelConfigFilePath()
+	{
+		String sMlModelConfig = props_model.getProperty(
+				pluginConfig.getPropkey_prefix()+MLMODEL_CONFIG_FILENAME, null);
+		
+		if(sMlModelConfig!=null && sMlModelConfig.trim().length()>0)
+		{
+			File fileCaffeConfig = getMLModelFile(sMlModelConfig);
+			
+			if(fileCaffeConfig.isFile())
+				return fileCaffeConfig.getAbsolutePath();
+		}
+		return null;
+	}
+	
 	
 	//
 	protected void checkOcl4DnnConfig()
