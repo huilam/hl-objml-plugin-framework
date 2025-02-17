@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
@@ -127,6 +129,51 @@ public class DetectedObjUtil {
 		return false;
 	}
 	
+	public static Map<Integer, Float> getTopDetectionsFor2DMat(
+	    		int iTopN, final Mat matOutput,final double aConfidenceThreshold)
+    {
+    	if (matOutput.empty() || matOutput.channels() != 1) 
+    	{
+    	    System.err.println("Error: matOutput must be a single-channel matrix!");
+    	    return null;
+    	}
+		
+		Map<Integer, Float> mapTopNDetections = new HashMap<Integer, Float> ();
+		
+		if(iTopN<=0)
+			iTopN = Integer.MAX_VALUE;
+		
+		Mat matTmpOutput = null;
+		
+		try {
+	    	matTmpOutput = matOutput.clone();
+	    	
+	    	for(int n=0; n<iTopN; n++)
+	    	{
+	    		// Use OpenCV's minMaxLoc() to find highest confidence
+	            Core.MinMaxLocResult mmr = Core.minMaxLoc(matTmpOutput);
+	            float confidence = (float) normalizeConfidenceScore(mmr.maxVal);
+	            
+	            if(confidence>aConfidenceThreshold)
+	            {
+	                int idx = (int) mmr.maxLoc.y; // Get best detection index   
+	                mapTopNDetections.put(Integer.valueOf(idx), Float.valueOf(confidence));
+	                matTmpOutput.put(idx, 0, -1);
+	            }
+	            else
+	            {
+	            	break;
+	            }
+	    	}
+		}
+		finally
+		{
+			if(matTmpOutput!=null) 
+				matTmpOutput.release();
+		}
+		return mapTopNDetections;
+	}
+		
 	
 	
 	///////////////////////////////////////////////////////////////////////////
@@ -162,6 +209,11 @@ public class DetectedObjUtil {
         return 1.0-Math.abs(dRatio1-dRatio2);
     }
     
+    protected static double normalizeConfidenceScore(double rawConfidence)
+    {
+    	return rawConfidence > 1.0 ? (1.0 / (1.0 + Math.exp(-rawConfidence))) : rawConfidence;
+    }
+
 	
 	public static void main(String[] args)
 	{
