@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.json.JSONObject;
 import org.opencv.core.Mat;
@@ -33,6 +35,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	protected static String PROPKEY_CONFIDENCE_THRESHOLD 	= "objml.mlmodel.detection.confidence-threshold";
 	protected static String PROPKEY_INPUT_IMGSIZE 			= "objml.mlmodel.detection.input-size";
 	protected static String PROPKEY_SUPPORTED_LABELS 		= "objml.mlmodel.detection.support-labels";
+	protected static String PROPKEY_SUPPORTED_LABEL_PAFS 	= "objml.mlmodel.detection.support-labels.pafs";
 	
 	protected static String PROPKEY_DNN_BACKEND 			= "objml.mlmodel.net.dnn.backend";
 	protected static String PROPKEY_DNN_TARGET 				= "objml.mlmodel.net.dnn.target";
@@ -42,6 +45,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	protected double DEF_NMS_THRESHOLD			= 0;
 	protected Size DEF_INPUT_SIZE				= new Size(0,0);
 	protected List<String>OBJ_CLASSESS			= new ArrayList<>();
+	protected List<int[]> OBJ_PAF_LIST			= new ArrayList<int[]>();
 	////////////////////
 	protected MLPluginConfig pluginConfig 	= new MLPluginConfig();
 	protected Class<?> thisclass 		= null;
@@ -52,6 +56,9 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	protected Net NET_DNN 				= null;
 	protected int dnn_preferred_backend	= Dnn.DNN_BACKEND_DEFAULT;
 	protected int dnn_preferred_target	= Dnn.DNN_TARGET_CPU;	
+	
+	
+	private static Pattern patt_paf 	= Pattern.compile("\\s*([0-9]+)\\-([0-9]+)\\s*"); 
 	
 	////////////////////
 	private boolean isRegObjsOfInterest 				= false;
@@ -420,6 +427,28 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 		{
 			String[] objs = sSupporedLabels.split("\n");
 			OBJ_CLASSESS = new ArrayList<>(Arrays.asList(objs));
+			
+			//
+			String sLabelPAFs = (String) prop.get(PROPKEY_SUPPORTED_LABEL_PAFS);
+			if(sLabelPAFs!=null && sLabelPAFs.trim().length()>0)
+			{
+				String[] sPAFList = sLabelPAFs.split("\n");
+				
+				OBJ_PAF_LIST =  new ArrayList<int[]>();
+				
+				for(String sPAF : sPAFList)
+				{
+					Matcher m = patt_paf.matcher(sPAF);
+					if(m.find())
+					{
+						int iP1 = Integer.valueOf(m.group(1));
+						int iP2 = Integer.valueOf(m.group(2));
+						//
+						OBJ_PAF_LIST.add(new int[] {iP1, iP2});
+					}
+				}
+			}
+			
 		}
 		//
 		String sConfThreshold = (String) prop.get(PROPKEY_CONFIDENCE_THRESHOLD);
