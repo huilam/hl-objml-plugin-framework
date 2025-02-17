@@ -129,7 +129,7 @@ public class DetectedObjUtil {
 		return false;
 	}
 	
-	public static Map<Integer, Float> getTopDetectionsFor2DMat(
+	public static Map<Point, Float> getTopDetectionsFor2DMat(
 	    		int iTopN, final Mat matOutput,final double aConfidenceThreshold)
     {
     	if (matOutput.empty() || matOutput.channels() != 1) 
@@ -138,7 +138,7 @@ public class DetectedObjUtil {
     	    return null;
     	}
 		
-		Map<Integer, Float> mapTopNDetections = new HashMap<Integer, Float> ();
+		Map<Point, Float> mapTopNDetections = new HashMap<Point, Float> ();
 		
 		if(iTopN<=0)
 			iTopN = Integer.MAX_VALUE;
@@ -156,9 +156,11 @@ public class DetectedObjUtil {
 	            
 	            if(confidence>aConfidenceThreshold)
 	            {
-	                int idx = (int) mmr.maxLoc.y; // Get best detection index   
-	                mapTopNDetections.put(Integer.valueOf(idx), Float.valueOf(confidence));
-	                matTmpOutput.put(idx, 0, -1);
+	                int x = (int) mmr.maxLoc.x; 
+	                int y = (int) mmr.maxLoc.y;
+	                
+	                mapTopNDetections.put(new Point(x,y), Float.valueOf(confidence));
+	                matTmpOutput.put(y, x, -1);
 	            }
 	            else
 	            {
