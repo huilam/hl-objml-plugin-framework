@@ -155,6 +155,19 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	
 	protected File getMLModelFile(String aModelFilePath)
 	{
+		File fileMlModel = getMLFile(aModelFilePath);
+				
+		
+		if(fileMlModel!=null && fileMlModel.isFile())
+		{
+			_model_filename = fileMlModel.getAbsolutePath();
+		}
+		
+		return fileMlModel;
+	}
+	
+	protected File getMLFile(String aModelFilePath)
+	{
 		File fileMlModel = new File(aModelFilePath);
 		if(!fileMlModel.isFile())
 		{
@@ -169,7 +182,6 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 			
 			if(fileTmp!=null && fileTmp.isFile())
 			{
-				_model_filename = fileTmp.getAbsolutePath();
 				return fileTmp;
 			}
 		}

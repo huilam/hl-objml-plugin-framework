@@ -53,7 +53,7 @@ public class ObjDetDnnBasePlugin extends ObjDetBasePlugin {
 		
 		if(sMlModelConfig!=null && sMlModelConfig.trim().length()>0)
 		{
-			File fileCaffeConfig = getMLModelFile(sMlModelConfig);
+			File fileCaffeConfig = getMLFile(sMlModelConfig);
 			
 			if(fileCaffeConfig.isFile())
 				return fileCaffeConfig.getAbsolutePath();
