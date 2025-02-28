@@ -109,7 +109,7 @@ public class BaseTester {
 					if(sVal.length()>60) sVal = sVal.substring(0, 60)+" ... (truncated)";
 					
 					String sKey = oKey.toString().substring(iKeyPrefix);
-					System.out.println("     - "+sKey+" : "+sVal);
+					System.out.println("     - prop:"+sKey+" : "+sVal);
 				}
 			}
 			

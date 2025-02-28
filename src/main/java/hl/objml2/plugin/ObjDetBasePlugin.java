@@ -41,8 +41,6 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	protected static String PROPKEY_DNN_TARGET 				= "objml.mlmodel.net.dnn.target";
 	
 	////////////////////
-	protected double DEF_NMS_THRESHOLD			= 0;
-	protected Size DEF_INPUT_SIZE				= new Size(0,0);
 	protected List<String>OBJ_CLASSESS			= new ArrayList<>();
 	protected List<int[]> OBJ_PAF_LIST			= new ArrayList<int[]>();
 	////////////////////
@@ -56,6 +54,8 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	protected int dnn_preferred_backend	= Dnn.DNN_BACKEND_DEFAULT;
 	protected int dnn_preferred_target	= Dnn.DNN_TARGET_CPU;	
 	protected double dnn_confidence_threshold = 0;
+	protected double dnn_nms_threshold 	= 0;
+	protected Size dnn_input_size 		= new Size(0,0);
 	
 	protected int override_dnn_preferred_backend		= -1;
 	protected int override_dnn_preferred_target			= -1;	
@@ -498,7 +498,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 		if(sNMSThreshold!=null && sNMSThreshold.trim().length()>0)
 		{
 			try {
-				DEF_NMS_THRESHOLD = Double.parseDouble(sNMSThreshold);
+				this.dnn_nms_threshold = Double.parseDouble(sNMSThreshold);
 			}catch(NumberFormatException ex)
 			{
 				ex.printStackTrace();
@@ -530,7 +530,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 				{
 					ex.printStackTrace();
 				}
-				DEF_INPUT_SIZE = new Size(dWidth,dHeight);
+				this.dnn_input_size = new Size(dWidth,dHeight);
 			}
 		}
 		
@@ -614,12 +614,12 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	
 	public double getNMSThreshold()
 	{
-		return DEF_NMS_THRESHOLD;
+		return this.dnn_nms_threshold;
 	}
 	
 	public Size getImageInputSize()
 	{
-		return DEF_INPUT_SIZE;
+		return this.dnn_input_size;
 	}
 	
 	public String[] getSupportedObjectLabels()
@@ -678,8 +678,8 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	public String getDnnBackendDesc()
 	{
 		StringBuffer sbDnnBackEnd = new StringBuffer();
-		sbDnnBackEnd.append(this.dnn_preferred_backend);
-		switch(this.dnn_preferred_backend)
+		sbDnnBackEnd.append(getDnnBackend());
+		switch(getDnnBackend())
 		{
 			case Dnn.DNN_BACKEND_DEFAULT :
 				sbDnnBackEnd.append(" (DNN_BACKEND_DEFAULT)");
@@ -783,8 +783,8 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	public String getDnnTargetDesc()
 	{
 		StringBuffer sbDnnTarget = new StringBuffer();
-		sbDnnTarget.append(this.dnn_preferred_target);
-		switch(this.dnn_preferred_target)
+		sbDnnTarget.append(getDnnTarget());
+		switch(getDnnTarget())
 		{
 			case Dnn.DNN_TARGET_CPU :
 				sbDnnTarget.append(" (DNN_TARGET_CPU)");
