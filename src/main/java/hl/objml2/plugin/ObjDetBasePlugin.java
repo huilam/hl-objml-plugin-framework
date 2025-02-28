@@ -41,7 +41,6 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	protected static String PROPKEY_DNN_TARGET 				= "objml.mlmodel.net.dnn.target";
 	
 	////////////////////
-	protected double DEF_CONFIDENCE_THRESHOLD	= 0;
 	protected double DEF_NMS_THRESHOLD			= 0;
 	protected Size DEF_INPUT_SIZE				= new Size(0,0);
 	protected List<String>OBJ_CLASSESS			= new ArrayList<>();
@@ -56,7 +55,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	protected Net NET_DNN 				= null;
 	protected int dnn_preferred_backend	= Dnn.DNN_BACKEND_DEFAULT;
 	protected int dnn_preferred_target	= Dnn.DNN_TARGET_CPU;	
-	protected double dnn_confidence_threshold = DEF_CONFIDENCE_THRESHOLD;
+	protected double dnn_confidence_threshold = 0;
 	
 	protected int override_dnn_preferred_backend		= -1;
 	protected int override_dnn_preferred_target			= -1;	
@@ -441,18 +440,29 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 		Properties prop = prePropInit(getPluginProps());
 		
 		//
-		String sDnnBackend = prop.getProperty(PROPKEY_DNN_BACKEND, String.valueOf(Dnn.DNN_BACKEND_DEFAULT));
+		String sDnnBackend = prop.getProperty(PROPKEY_DNN_BACKEND);
 		if(isNumeric(sDnnBackend))
 		{
 			if(this.dnn_preferred_backend>-1)
 				this.dnn_preferred_backend = Integer.parseInt(sDnnBackend);
 		}
 		//
-		String sDnnTarget = prop.getProperty(PROPKEY_DNN_TARGET, String.valueOf(Dnn.DNN_TARGET_CPU));
+		String sDnnTarget = prop.getProperty(PROPKEY_DNN_TARGET);
 		if(isNumeric(sDnnTarget))
 		{
 			if(this.dnn_preferred_target>-1)
 				this.dnn_preferred_target = Integer.parseInt(sDnnTarget);
+		}
+		//
+		String sConfThreshold = (String) prop.get(PROPKEY_CONFIDENCE_THRESHOLD);
+		if(sConfThreshold!=null && sConfThreshold.trim().length()>0)
+		{
+			try {
+				this.dnn_confidence_threshold = Double.parseDouble(sConfThreshold);
+			}catch(NumberFormatException ex)
+			{
+				ex.printStackTrace();
+			}
 		}
 		//
 		String sSupporedLabels = (String) prop.get(PROPKEY_SUPPORTED_LABELS);
@@ -482,17 +492,6 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 				}
 			}
 			
-		}
-		//
-		String sConfThreshold = (String) prop.get(PROPKEY_CONFIDENCE_THRESHOLD);
-		if(sConfThreshold!=null && sConfThreshold.trim().length()>0)
-		{
-			try {
-				DEF_CONFIDENCE_THRESHOLD = Double.parseDouble(sConfThreshold);
-			}catch(NumberFormatException ex)
-			{
-				ex.printStackTrace();
-			}
 		}
 		//
 		String sNMSThreshold = (String) prop.get(PROPKEY_NMS_THRESHOLD);
@@ -604,7 +603,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	///////////
 	public double getConfidenceThreshold()
 	{
-		return DEF_CONFIDENCE_THRESHOLD;
+		return this.dnn_confidence_threshold;
 	}
 	
 	public double setConfidenceThreshold_Override(double aConfidenceThreshold)
