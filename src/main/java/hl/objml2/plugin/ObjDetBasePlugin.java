@@ -771,8 +771,8 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	
 	public int setDnnTarget_Override(int iDnnTargetId)
 	{
-		this.dnn_preferred_target = iDnnTargetId;
-		return this.dnn_preferred_target;
+		this.override_dnn_preferred_target = iDnnTargetId;
+		return this.override_dnn_preferred_target;
 	}
 	
 	public int getDnnTarget()
