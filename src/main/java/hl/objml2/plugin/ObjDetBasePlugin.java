@@ -632,11 +632,15 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 		}
 		
 		
-		if(iDnnBackendId>-1)
-			this.dnn_preferred_backend = iDnnBackendId;
-		
-		return iDnnBackendId;
+		return setDnnBackend(iDnnBackendId);
 	}
+	
+	public int setDnnBackend(int iDnnBackendId)
+	{
+		this.dnn_preferred_backend = iDnnBackendId;
+		return this.dnn_preferred_backend;
+	}
+	
 	public int getDnnBackend()
 	{
 		return this.dnn_preferred_backend;
@@ -733,10 +737,13 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 				iDnnTargetId = -1;
 		}
 		
-		if(iDnnTargetId>-1)
-			this.dnn_preferred_target = iDnnTargetId;
-		
-		return iDnnTargetId;
+		return setDnnTarget(iDnnTargetId);
+	}
+	
+	public int setDnnTarget(int iDnnTargetId)
+	{
+		this.dnn_preferred_target = iDnnTargetId;
+		return this.dnn_preferred_target;
 	}
 	
 	
