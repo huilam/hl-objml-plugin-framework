@@ -56,7 +56,11 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	protected Net NET_DNN 				= null;
 	protected int dnn_preferred_backend	= Dnn.DNN_BACKEND_DEFAULT;
 	protected int dnn_preferred_target	= Dnn.DNN_TARGET_CPU;	
+	protected double dnn_confidence_threshold = DEF_CONFIDENCE_THRESHOLD;
 	
+	protected int override_dnn_preferred_backend		= -1;
+	protected int override_dnn_preferred_target			= -1;	
+	protected double override_dnn_confidence_threshold 	= -1;
 	
 	private static Pattern patt_paf 	= Pattern.compile("\\s*([0-9]+)\\-([0-9]+)\\s*"); 
 	
@@ -66,6 +70,24 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	protected Map<String, String> mapObjClassMapping 	= new HashMap<String, String>();
 	//
 	private boolean isInited = false;
+	
+	private void setDnnConfigOverride()
+	{
+		if(this.override_dnn_preferred_backend>-1)
+		{
+			this.dnn_preferred_backend = this.override_dnn_preferred_backend;
+		}
+		
+		if(this.override_dnn_preferred_target>-1)
+		{
+			this.dnn_preferred_target = this.override_dnn_preferred_target;
+		}
+		
+		if(this.override_dnn_confidence_threshold>-1)
+		{
+			this.dnn_confidence_threshold = this.override_dnn_confidence_threshold;
+		}
+	}
 	
 	public void setPluginConfig(PluginConfig aPluginConfig)
 	{
@@ -131,7 +153,6 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 				fModelFile = null;
 			}
 		}
-		
 		
 		return false;
 	}
@@ -513,6 +534,9 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 				DEF_INPUT_SIZE = new Size(dWidth,dHeight);
 			}
 		}
+		
+		setDnnConfigOverride();
+		
 		return true;
 	}
 	
@@ -583,6 +607,12 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 		return DEF_CONFIDENCE_THRESHOLD;
 	}
 	
+	public double setConfidenceThreshold_Override(double aConfidenceThreshold)
+	{
+		this.override_dnn_confidence_threshold = aConfidenceThreshold;
+		return this.override_dnn_confidence_threshold;
+	}
+	
 	public double getNMSThreshold()
 	{
 		return DEF_NMS_THRESHOLD;
@@ -598,7 +628,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 		return OBJ_CLASSESS.toArray(new String[OBJ_CLASSESS.size()]);
 	}
 	
-	public int setDnnBackendByText(String aDnnTargetText)
+	public int setDnnBackendByText_Override(String aDnnTargetText)
 	{
 		int iDnnBackendId = -1;
 		switch (aDnnTargetText)
@@ -632,13 +662,13 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 		}
 		
 		
-		return setDnnBackend(iDnnBackendId);
+		return setDnnBackend_Override(iDnnBackendId);
 	}
 	
-	public int setDnnBackend(int iDnnBackendId)
+	public int setDnnBackend_Override(int iDnnBackendId)
 	{
-		this.dnn_preferred_backend = iDnnBackendId;
-		return this.dnn_preferred_backend;
+		this.override_dnn_preferred_backend = iDnnBackendId;
+		return this.override_dnn_preferred_backend;
 	}
 	
 	public int getDnnBackend()
@@ -685,7 +715,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	}
 	
 	
-	public int setDnnTargetByText(String aDnnTargetText)
+	public int setDnnTargetByText_Override(String aDnnTargetText)
 	{
 		int iDnnTargetId = -1;
 		switch (aDnnTargetText)
@@ -737,15 +767,14 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 				iDnnTargetId = -1;
 		}
 		
-		return setDnnTarget(iDnnTargetId);
+		return setDnnTarget_Override(iDnnTargetId);
 	}
 	
-	public int setDnnTarget(int iDnnTargetId)
+	public int setDnnTarget_Override(int iDnnTargetId)
 	{
 		this.dnn_preferred_target = iDnnTargetId;
 		return this.dnn_preferred_target;
 	}
-	
 	
 	public int getDnnTarget()
 	{
