@@ -81,10 +81,27 @@ public class FrameDetectedObj {
 		
 		return (String[]) setObjClassName.toArray(new String[setObjClassName.size()]);
 	}
+	
 	public List<DetectedObj> getDetectedObjByObjClassName(String aObjClassName)
 	{
 		return this.mapDetectedObjs.get(aObjClassName);
 	}
+	
+
+	public List<DetectedObj> getAllDetectedObjs()
+	{
+		List<DetectedObj> listDetectedObj = new ArrayList<DetectedObj>(); 
+		String[] sObjClassNames = this.getObjClassNames();
+		for(String sObjClassName : sObjClassNames)
+		{
+			List<DetectedObj> listTmp = getDetectedObjByObjClassName(sObjClassName);
+		
+			listDetectedObj.addAll(listTmp);
+		}
+		
+		return listDetectedObj;
+	}
+	
 	
 	public void clearDetection()
 	{
