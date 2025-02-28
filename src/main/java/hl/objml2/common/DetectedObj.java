@@ -226,6 +226,17 @@ public class DetectedObj {
 		return this;
 	}
 	
+	public List<Point> getPoints()
+	{
+		List<Point> listPoints = new ArrayList<Point>();
+		MatOfPoint mp = getObj_shape_points();
+		if(mp!=null && !mp.empty())
+		{
+			listPoints = mp.toList();
+		}
+		return listPoints;
+	}
+	
 	public JSONObject toJson()
 	{
 		JSONObject json = new JSONObject();
@@ -245,11 +256,10 @@ public class DetectedObj {
 			json.put(JSON_OBJCLASS_CONF_SCORE, getObj_conf_score());
 		}
 		
-		MatOfPoint mp = getObj_shape_points();
-		if(mp!=null && !mp.empty())
+		List<Point> listPoints = getPoints();
+		if(listPoints!=null && listPoints.size()>0)
 		{
 			JSONArray jArrPoints = new JSONArray();
-			List<Point> listPoints = mp.toList();
 			for(Point p : listPoints)
 			{
 				JSONObject jsonPt = new JSONObject();
