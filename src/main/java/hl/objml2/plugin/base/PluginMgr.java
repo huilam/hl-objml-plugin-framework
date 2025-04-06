@@ -22,6 +22,7 @@ public class PluginMgr {
 	protected static String[] DEF_PLUGIN_BUNDLE_EXT = new String[] {"jar", "zip"};
 	protected String[] pluginBundleExtensions 		= DEF_PLUGIN_BUNDLE_EXT;
 	
+	public static String Verson = "1.0";
 	//
 	public PluginMgr()
 	{

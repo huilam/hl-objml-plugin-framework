@@ -31,11 +31,13 @@ import hl.opencv.util.OpenCvUtil;
 
 public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	
-	protected static String PROPKEY_NMS_THRESHOLD 			= "objml.mlmodel.detection.nms-threshold";
-	protected static String PROPKEY_CONFIDENCE_THRESHOLD 	= "objml.mlmodel.detection.confidence-threshold";
-	protected static String PROPKEY_INPUT_IMGSIZE 			= "objml.mlmodel.detection.input-size";
-	protected static String PROPKEY_SUPPORTED_LABELS 		= "objml.mlmodel.detection.support-labels";
-	protected static String PROPKEY_SUPPORTED_LABEL_PAFS 	= "objml.mlmodel.detection.support-labels.pafs";
+	protected static String PROPKEY_PREFIX 					= "objml.mlmodel.detection.";
+	
+	protected static String PROPKEY_CONFIDENCE_THRESHOLD 	= PROPKEY_PREFIX+"confidence-threshold";
+	protected static String PROPKEY_NMS_THRESHOLD 			= PROPKEY_PREFIX+"nms-threshold";
+	protected static String PROPKEY_INPUT_IMGSIZE 			= PROPKEY_PREFIX+"input-size";
+	protected static String PROPKEY_SUPPORTED_LABELS 		= PROPKEY_PREFIX+"support-labels";
+	protected static String PROPKEY_SUPPORTED_LABEL_PAFS 	= PROPKEY_PREFIX+"support-labels.pafs";
 	
 	protected static String PROPKEY_DNN_BACKEND 			= "objml.mlmodel.net.dnn.backend";
 	protected static String PROPKEY_DNN_TARGET 				= "objml.mlmodel.net.dnn.target";
@@ -429,8 +431,11 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	{	
 		if(isPluginOK())
 		{	
-			List<Mat> listOutput = doInference(aImageFile, this.NET_DNN);		
-			return parseDetections(aImageFile, listOutput);
+			List<Mat> listOutput = doInference(aImageFile, this.NET_DNN);
+			
+			MLPluginFrameOutput frameOutput = parseDetections(aImageFile, listOutput);
+			return frameOutput.getDetectionOutputMap();
+			
 		}
 		return null;
 	}
@@ -863,7 +868,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	}
 
 	@Override
-	public Map<String, Object> parseDetections(Mat aMatInput, List<Mat> aInferenceOutputMat) {
+	public MLPluginFrameOutput parseDetections(Mat aMatInput, List<Mat> aInferenceOutputMat) {
 		// TODO Auto-generated method stub
 		return null;
 	}

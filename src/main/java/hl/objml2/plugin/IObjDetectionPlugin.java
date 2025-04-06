@@ -1,7 +1,6 @@
 package hl.objml2.plugin;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import org.opencv.core.Mat;
@@ -17,7 +16,7 @@ public interface IObjDetectionPlugin extends IBasePlugin {
 	
 	abstract public List<Mat> doInference(Mat aMatInput, Net aDnnNet);
 	
-	abstract public Map<String,Object> parseDetections(Mat aMatInput, List<Mat> aInferenceOutputMat);
+	abstract public MLPluginFrameOutput parseDetections(Mat aMatInput, List<Mat> aInferenceOutputMat);
 	
 	abstract public Properties prePropInit(Properties aProps);
 	

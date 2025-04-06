@@ -10,6 +10,7 @@ import hl.common.FileUtil;
 import hl.objml2.common.FrameDetectedObj;
 import hl.objml2.common.FrameDetectionMeta;
 import hl.objml2.plugin.IObjDetectionPlugin;
+import hl.objml2.plugin.MLPluginFrameOutput;
 import hl.objml2.plugin.ObjDetBasePlugin;
 import hl.opencv.util.OpenCvUtil;
 
@@ -129,11 +130,12 @@ public class BaseTester {
 				long lInferenceStart = System.currentTimeMillis();
 				
 				List<Mat> listInferOutput = pluginDetector.doInference(matImg, pluginDetector.getDnnNet());
-				Map<String, Object> mapResult = pluginDetector.parseDetections(matImg, listInferOutput);
 				
+				MLPluginFrameOutput frameOutput = pluginDetector.parseDetections(matImg, listInferOutput);
 				
 				long lInferenceEnd = System.currentTimeMillis();
 				
+				Map<String, Object> mapResult = frameOutput.getDetectionOutputMap();
 				if(mapResult!=null)
 				{
 					long lInferenceMs =  lInferenceEnd-lInferenceStart;
