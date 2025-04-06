@@ -1,5 +1,7 @@
 package hl.objml.api;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONObject;
@@ -12,7 +14,31 @@ import hl.objml2.plugin.ObjDetBasePlugin;
 
 public class ObjMLApi {
 	
-	private MLPluginMgr pluginMge = new MLPluginMgr();
+	private MLPluginMgr pluginMgr 			= null;
+	private Map<String, String> mapPlugins 	= null;
+	
+	public ObjMLApi()
+	{
+		pluginMgr = new MLPluginMgr();
+		reScanPlugins();
+	}
+	
+	public void reScanPlugins()
+	{
+		mapPlugins = pluginMgr.scanForPluginJavaClassName();
+	}
+	
+	public List<String> listPlugins()
+	{
+		List<String> listPlugins = new ArrayList<String>();
+		
+		if(mapPlugins!=null && mapPlugins.size()>0)
+		{
+			listPlugins = new ArrayList<>(mapPlugins.keySet());
+		}
+		
+		return listPlugins;
+	}
 	
 	public FrameDetectedObj detectFrame(String aPluginName, ObjMLInputParam aObjMlInput)
 	{
@@ -31,7 +57,7 @@ public class ObjMLApi {
 	{
 		MLPluginFrameOutput frameOutput = null;
 	
-		ObjDetBasePlugin plugin = (ObjDetBasePlugin) pluginMge.getMLInstance(aPluginName);
+		ObjDetBasePlugin plugin = (ObjDetBasePlugin) pluginMgr.getMLInstance(aPluginName);
 		if(plugin!=null)
 		{
 			Mat matInputImg = aObjMlInput.getInput_image();
