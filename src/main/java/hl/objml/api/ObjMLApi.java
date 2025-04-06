@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import org.opencv.core.Mat;
 
 import hl.objml2.common.FrameDetectedObj;
+import hl.objml2.plugin.IObjDetectionPlugin;
 import hl.objml2.plugin.MLPluginFrameOutput;
 import hl.objml2.plugin.MLPluginMgr;
 import hl.objml2.plugin.ObjDetBasePlugin;
@@ -40,24 +41,41 @@ public class ObjMLApi {
 		return listPlugins;
 	}
 	
+	public FrameDetectedObj detectFrame(IObjDetectionPlugin aIObjDetPlugin, ObjMLInputParam aObjMlInput)
+	{
+		MLPluginFrameOutput frameOutput = doDetection(aIObjDetPlugin, aObjMlInput);
+		if(frameOutput!=null)
+		{
+			return frameOutput.getFrameDetectedObj();
+		}
+		return null;
+	}
+	
 	public FrameDetectedObj detectFrame(String aPluginName, ObjMLInputParam aObjMlInput)
 	{
-		FrameDetectedObj frameObj = null;
-		
 		MLPluginFrameOutput frameOutput = doDetection(aPluginName, aObjMlInput);
 		if(frameOutput!=null)
 		{
-			frameObj = frameOutput.getFrameDetectedObj();
+			return frameOutput.getFrameDetectedObj();
 		}
-		return frameObj;
+		return null;
 	}
-	
 	
 	private MLPluginFrameOutput doDetection(String aPluginName, ObjMLInputParam aObjMlInput)
 	{
+		if(aPluginName.trim().length()>0)
+		{
+			ObjDetBasePlugin plugin = (ObjDetBasePlugin) pluginMgr.getMLInstance(aPluginName);
+			return doDetection(plugin, aObjMlInput);
+		}
+		return null;
+	}
+	
+	private MLPluginFrameOutput doDetection(IObjDetectionPlugin aIObjDetPlugin, ObjMLInputParam aObjMlInput)
+	{
 		MLPluginFrameOutput frameOutput = null;
 	
-		ObjDetBasePlugin plugin = (ObjDetBasePlugin) pluginMgr.getMLInstance(aPluginName);
+		ObjDetBasePlugin plugin = (ObjDetBasePlugin) aIObjDetPlugin;
 		if(plugin!=null)
 		{
 			Mat matInputImg = aObjMlInput.getInput_image();
