@@ -20,7 +20,17 @@ public class ObjMLApi {
 	
 	public ObjMLApi()
 	{
-		pluginMgr = new MLPluginMgr();
+		initPluginMgr(new MLPluginMgr());
+	}
+	
+	public ObjMLApi(MLPluginMgr aMLPluginMgr)
+	{
+		initPluginMgr(aMLPluginMgr);
+	}
+	
+	private void initPluginMgr(MLPluginMgr aMLPluginMgr)
+	{
+		pluginMgr = aMLPluginMgr;
 		reScanPlugins();
 	}
 	
