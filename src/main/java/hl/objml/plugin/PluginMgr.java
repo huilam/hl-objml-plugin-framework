@@ -1,4 +1,4 @@
-package hl.plugin;
+package hl.objml.plugin;
 
 import java.io.File;
 import java.lang.reflect.Constructor;

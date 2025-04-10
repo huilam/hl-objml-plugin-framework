@@ -1,4 +1,4 @@
-package hl.objml.api;
+package hl.objml2.api;
 
 import java.util.HashMap;
 import java.util.Map;

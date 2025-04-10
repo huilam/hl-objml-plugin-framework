@@ -1,11 +1,11 @@
-package hl.plugin.image;
+package hl.objml.plugin.image;
 
 import java.util.Map;
 
 import org.json.JSONObject;
 import org.opencv.core.Mat;
 
-import hl.plugin.IBasePlugin;
+import hl.objml.plugin.IBasePlugin;
 
 @Deprecated
 public interface IMLDetectionPlugin extends IBasePlugin {

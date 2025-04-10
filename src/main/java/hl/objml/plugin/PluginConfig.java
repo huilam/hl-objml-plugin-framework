@@ -1,4 +1,4 @@
-package hl.plugin;
+package hl.objml.plugin;
 
 @Deprecated
 public class PluginConfig {
