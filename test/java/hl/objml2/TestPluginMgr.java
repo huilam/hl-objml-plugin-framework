@@ -9,31 +9,46 @@ import hl.objml2.plugin.ObjDetBasePlugin;
 import hl.objml2.plugin.test.BaseTester;
 import hl.opencv.util.OpenCvUtil;
 
-public class TestPlugins {
+public class TestPluginMgr {
+	
+	private static MLPluginConfig getCustomPluginConfig(String aPropFileName, String aPropPrefix)
+	{
+    	MLPluginConfig customPluginConfig = new MLPluginConfig();
+    	
+		/*** Custom configuration for properties ***/
+    	customPluginConfig.setProp_filename(aPropFileName);
+    	customPluginConfig.setPropkey_prefix(aPropPrefix);
+    	
+    	return customPluginConfig;
+	}
+	
+	private static File[] getPluginJarsPath(File aPluginFolder)
+	{
+		File[] fPluginJars = new File[]{};
+		
+		if(aPluginFolder!=null && aPluginFolder.isDirectory())
+		{
+			fPluginJars =  FileUtil.getFilesWithExtensions(aPluginFolder, new String[]{".jar",".zip"});
+    	
+		}
+    	System.out.println();
+    	System.out.println("plugin bundles discovered : "+fPluginJars.length);
+    	
+    	return fPluginJars;
+	}
 	
     public static void main(String main[]) throws Exception
     {
     	OpenCvUtil.initOpenCV();
     	
-    	File pluginsFolder =  new File("./test/plugins");
-    	File[] fPluginJars =  FileUtil.getFilesWithExtensions(pluginsFolder, new String[]{".jar",".zip"});
-    	
-    	System.out.println();
-    	System.out.println("plugin bundles discovered : "+fPluginJars.length);
-    	
-    	/*** Custom configuration for properties ***/
-    	MLPluginConfig customPluginConfig = new MLPluginConfig();
-    	customPluginConfig.setProp_filename("objml-plugin.properties");
-    	customPluginConfig.setPropkey_prefix("objml.");
-    	
     	/*** Init Plugin Mgr  ***/
     	MLPluginMgr mgr = new MLPluginMgr();
     	
-    	/*** Init Custom Plugin Config  ***/
-    	mgr.setCustomPluginConfig(customPluginConfig);
-    	
     	/*** Register non-classpath bundle files  ***/
-    	mgr.addPluginPaths(fPluginJars);
+    	mgr.addPluginPaths(getPluginJarsPath(new File("./test/plugins")));
+    	
+    	/*** Init Custom Plugin Config  ***/
+    	mgr.setCustomPluginConfig(getCustomPluginConfig("objml-plugin.properties", "objml."));
     	
     	/*** Perform javaClass scan for initial ***/
     	Map<String, String> mapPluginClassName = mgr.scanForPluginJavaClassName();
@@ -63,6 +78,5 @@ public class TestPlugins {
     	}
 	
     }
-    
     
 }
