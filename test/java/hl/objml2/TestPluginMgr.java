@@ -2,7 +2,7 @@ package hl.objml2;
 
 import java.io.File;
 import java.util.Map;
-import hl.common.FileUtil;
+
 import hl.objml2.plugin.MLPluginConfig;
 import hl.objml2.plugin.MLPluginMgr;
 import hl.objml2.plugin.ObjDetBasePlugin;
@@ -11,44 +11,26 @@ import hl.opencv.util.OpenCvUtil;
 
 public class TestPluginMgr {
 	
-	private static MLPluginConfig getCustomPluginConfig(String aPropFileName, String aPropPrefix)
-	{
-    	MLPluginConfig customPluginConfig = new MLPluginConfig();
-    	
-		/*** Custom configuration for properties ***/
-    	customPluginConfig.setProp_filename(aPropFileName);
-    	customPluginConfig.setPropkey_prefix(aPropPrefix);
-    	
-    	return customPluginConfig;
-	}
-	
-	private static File[] getPluginJarsPath(File aPluginFolder)
-	{
-		File[] fPluginJars = new File[]{};
-		
-		if(aPluginFolder!=null && aPluginFolder.isDirectory())
-		{
-			fPluginJars =  FileUtil.getFilesWithExtensions(aPluginFolder, new String[]{".jar",".zip"});
-    	
-		}
-    	System.out.println();
-    	System.out.println("plugin bundles discovered : "+fPluginJars.length);
-    	
-    	return fPluginJars;
-	}
-	
+	// *************************
+	// *************************
     public static void main(String main[]) throws Exception
     {
     	OpenCvUtil.initOpenCV();
     	
+    	MLPluginConfig pluginConfig = 
+    			UnitTestUtil.getCustomPluginConfig("objml-plugin.properties", "objml.");
+
+    	File[] pluginFolders = 
+    			UnitTestUtil.getPluginJarsPath(new File("./test/plugins"));	
+    	
     	/*** Init Plugin Mgr  ***/
     	MLPluginMgr mgr = new MLPluginMgr();
     	
+       	/*** Init Custom Plugin Config  ***/
+    	mgr.setCustomPluginConfig(pluginConfig);
+ 
     	/*** Register non-classpath bundle files  ***/
-    	mgr.addPluginPaths(getPluginJarsPath(new File("./test/plugins")));
-    	
-    	/*** Init Custom Plugin Config  ***/
-    	mgr.setCustomPluginConfig(getCustomPluginConfig("objml-plugin.properties", "objml."));
+    	mgr.addPluginPaths(pluginFolders);
     	
     	/*** Perform javaClass scan for initial ***/
     	Map<String, String> mapPluginClassName = mgr.scanForPluginJavaClassName();
