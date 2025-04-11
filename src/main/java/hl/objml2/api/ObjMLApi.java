@@ -39,7 +39,7 @@ public class ObjMLApi {
 		mapPlugins = pluginMgr.scanForPluginJavaClassName();
 	}
 	
-	public List<String> listPlugins()
+	public List<String> listPluginClassNames()
 	{
 		List<String> listPlugins = new ArrayList<String>();
 		
@@ -61,9 +61,9 @@ public class ObjMLApi {
 		return null;
 	}
 	
-	public FrameDetectedObj initAndDetectFrame(String aPluginName, ObjMLInputParam aObjMlInput)
+	public FrameDetectedObj initAndDetectFrame(String aPluginClassName, ObjMLInputParam aObjMlInput)
 	{
-		MLPluginFrameOutput frameOutput = doDetection(aPluginName, aObjMlInput);
+		MLPluginFrameOutput frameOutput = doDetection(aPluginClassName, aObjMlInput);
 		if(frameOutput!=null)
 		{
 			return frameOutput.getFrameDetectedObj();
@@ -71,19 +71,19 @@ public class ObjMLApi {
 		return null;
 	}
 	
-	public ObjDetBasePlugin initPlugin(String aPluginName)
+	public ObjDetBasePlugin initPlugin(String aPluginClassName)
 	{
-		if(aPluginName.trim().length()>0)
+		if(aPluginClassName.trim().length()>0)
 		{
-			return (ObjDetBasePlugin) pluginMgr.getMLInstance(aPluginName);
+			return (ObjDetBasePlugin) pluginMgr.getMLInstance(aPluginClassName);
 		}
 		return null;
 	}
 	//=========================================================
 	
-	private MLPluginFrameOutput doDetection(String aPluginName, ObjMLInputParam aObjMlInput)
+	private MLPluginFrameOutput doDetection(String aPluginClassName, ObjMLInputParam aObjMlInput)
 	{
-		ObjDetBasePlugin plugin = initPlugin(aPluginName);
+		ObjDetBasePlugin plugin = initPlugin(aPluginClassName);
 		if(plugin!=null)
 		{
 			return doDetection(plugin, aObjMlInput);
