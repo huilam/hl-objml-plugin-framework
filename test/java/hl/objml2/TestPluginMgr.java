@@ -2,6 +2,7 @@ package hl.objml2;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Properties;
 
 import hl.objml2.plugin.MLPluginConfig;
 import hl.objml2.plugin.MLPluginMgr;
@@ -33,7 +34,7 @@ public class TestPluginMgr {
     	mgr.addPluginPaths(pluginFolders);
     	
     	/*** Perform javaClass scan for initial ***/
-    	Map<String, String> mapPluginClassName = mgr.scanForPluginJavaClassName();
+    	Map<String, Properties> mapPluginClassName = mgr.scanForPluginJavaClassName();
     	
     	/*** Optional Manual Register Java Class Name that in classpath ***/
     	//listPluginClassName.add(Upscale.class.getName());

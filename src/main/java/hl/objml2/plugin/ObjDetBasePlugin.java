@@ -27,6 +27,7 @@ import org.opencv.imgcodecs.Imgcodecs;
 import hl.common.ImgUtil;
 import hl.common.PropUtil;
 import hl.objml2.plugin.base.PluginConfig;
+import hl.objml2.plugin.base.PluginMgr;
 import hl.opencv.util.OpenCvUtil;
 
 public class ObjDetBasePlugin implements IObjDetectionPlugin {
@@ -42,6 +43,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	protected static String PROPKEY_DNN_BACKEND 			= "objml.mlmodel.net.dnn.backend";
 	protected static String PROPKEY_DNN_TARGET 				= "objml.mlmodel.net.dnn.target";
 	
+	protected static String PROPKEY_PLUGIN_SOURCE 			= MLPluginMgr.PROPKEY_PLUGIN_SOURCE;
 	////////////////////
 	protected List<String>OBJ_CLASSESS			= new ArrayList<>();
 	protected List<int[]> OBJ_PAF_LIST			= new ArrayList<int[]>();

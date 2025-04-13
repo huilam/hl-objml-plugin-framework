@@ -3,6 +3,7 @@ package hl.objml2.api;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.json.JSONObject;
 import org.opencv.core.Mat;
@@ -16,7 +17,7 @@ import hl.objml2.plugin.ObjDetBasePlugin;
 public class ObjMLApi {
 	
 	private MLPluginMgr pluginMgr 			= null;
-	private Map<String, String> mapPlugins 	= null;
+	private Map<String, Properties> mapPlugins 	= null;
 	
 	public ObjMLApi()
 	{

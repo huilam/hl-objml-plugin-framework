@@ -22,6 +22,8 @@ import hl.objml2.plugin.base.PluginMgr;
 public class MLPluginMgr extends PluginMgr {
 
 	//
+	protected static String PROPKEY_PLUGIN_SOURCE 	= "objml.mlmodel.source";
+	
 	private boolean isUnzipBundle 			= true;
 	private MLPluginConfig pluginConfig 	= new MLPluginConfig();
 	
@@ -52,12 +54,12 @@ public class MLPluginMgr extends PluginMgr {
 	
 	///////////////
 	
-	public Map<String, String> scanForPluginJavaClassName()
+	public Map<String, Properties> scanForPluginJavaClassName()
 	{
 		return scanForPluginJavaClassName(this.pluginConfig.getProp_filename());
 	}
 	
-	public Map<String, String> scanForPluginJavaClassName(String aPluginPropFileName)
+	public Map<String, Properties> scanForPluginJavaClassName(String aPluginPropFileName)
 	{
 		return searchPluginClasses(
 				super.classLoaderPlugin, super.listPluginSources, aPluginPropFileName);
@@ -96,11 +98,11 @@ public class MLPluginMgr extends PluginMgr {
 	
 	/////////////////////////////////////////////////////////////////////
 	
-	private Map<String, String> searchPluginClasses(
+	private Map<String, Properties> searchPluginClasses(
 			URLClassLoader aPluginClassLoader, List<File> aPluginSources, 
 			final String aPluginPropFileName) 
 	{
-		Map<String, String> mapPluginClasses = new HashMap<String, String>();
+		Map<String, Properties> mapPluginClasses = new HashMap<String, Properties>();
 		
 		for(File f : aPluginSources)
     	{
@@ -185,10 +187,12 @@ public class MLPluginMgr extends PluginMgr {
 			
 			if(prop!=null && prop.size()>0)
 			{
+				prop.put(PROPKEY_PLUGIN_SOURCE, f.getName());
+				
 				String sPlugClassName = getPluginClassNameFromProp(prop);
 				if(sPlugClassName!=null)
 				{
-					mapPluginClasses.put(sPlugClassName, f.getAbsolutePath());
+					mapPluginClasses.put(sPlugClassName, prop);
 					System.out.println(" [+] "+sPlugClassName+" ("+f.getName()+")");
 				}
 			}
