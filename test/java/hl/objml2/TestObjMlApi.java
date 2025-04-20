@@ -2,7 +2,6 @@ package hl.objml2;
 
 import java.io.File;
 import java.util.List;
-import java.util.Properties;
 
 import org.opencv.core.Mat;
 
@@ -48,7 +47,7 @@ public class TestObjMlApi {
     	{
     		ObjDetBasePlugin plugin = objmlApi.initPlugin(aPluginName);
     		MLPluginConfigProp propPlugin 	=  plugin.getPluginProps();
-    		System.out.println("    - "+propPlugin.getMlModelJavaClassName());
+    		System.out.println("    - "+propPlugin.getMlModelName()+" ("+propPlugin.getMlModelLicense()+")");
  
     		
   	   		ObjMLInputParam inputParam = new ObjMLInputParam();
@@ -56,7 +55,7 @@ public class TestObjMlApi {
   	   		try {
 		   		for(File fileTestImg : testImages)
 	        	{
-		   			System.out.println("    - "+fileTestImg.getName());
+		   			System.out.println("        - Test Image ="+fileTestImg.getName());
 		   			matImputImage = OpenCvUtil.loadImage(fileTestImg.getAbsolutePath());
 		   			inputParam.setInput_image(matImputImage);
 		   			
@@ -66,7 +65,7 @@ public class TestObjMlApi {
 	    	   		for(DetectedObj obj : listDetectedObj)
 	    	   		{
 	    	   			i++;
-	    	   			System.out.println("	"+i+". "+obj.getObj_classname()+":"+obj.getObj_conf_score());
+	    	   			System.out.println("	    "+i+". "+obj.getObj_classname()+":"+obj.getObj_conf_score());
 	    	   		}
 	    	   		
 	        	}
