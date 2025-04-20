@@ -12,22 +12,6 @@ public class PluginConfigKey {
 	public PluginConfigKey()
 	{
 	}
-	
-	protected void setDefaultPropKeyPrefix(String aDefPropKeyPrefix)
-	{
-		this.DEF_PLUGIN_PROPKEY_PREFIX = aDefPropKeyPrefix;
-	}
-	
-	protected void setDefaultPluginPropFileName(String aDefFaileName)
-	{
-		this.DEF_PLUGIN_PROP_FILENAME = aDefFaileName;
-	}
-	//
-	public void reset()
-	{
-		this.prop_filename 		= DEF_PLUGIN_PROP_FILENAME;
-		this.propkey_prefix 	= DEF_PLUGIN_PROPKEY_PREFIX;
-	}
 	//
 	public String getProp_filename() {
 		return prop_filename;

@@ -10,14 +10,15 @@ import org.opencv.core.Mat;
 
 import hl.objml2.common.FrameDetectedObj;
 import hl.objml2.plugin.IObjDetectionPlugin;
+import hl.objml2.plugin.MLPluginConfigProp;
 import hl.objml2.plugin.MLPluginFrameOutput;
 import hl.objml2.plugin.MLPluginMgr;
 import hl.objml2.plugin.ObjDetBasePlugin;
 
 public class ObjMLApi {
 	
-	private MLPluginMgr pluginMgr 			= null;
-	private Map<String, Properties> mapPlugins 	= null;
+	private MLPluginMgr pluginMgr 						= null;
+	private Map<String, MLPluginConfigProp> mapPlugins 	= null;
 	
 	public ObjMLApi()
 	{
@@ -85,11 +86,20 @@ public class ObjMLApi {
 	
 	public ObjDetBasePlugin initPlugin(String aPluginClassName)
 	{
+		ObjDetBasePlugin plugin = null;
+		
 		if(aPluginClassName.trim().length()>0)
 		{
-			return (ObjDetBasePlugin) pluginMgr.getMLInstance(aPluginClassName);
+			plugin = (ObjDetBasePlugin) pluginMgr.getMLInstance(aPluginClassName);
+			if(plugin!=null)
+			{
+				if(!plugin.isPluginOK())
+				{
+					plugin = null;
+				}
+			}
 		}
-		return null;
+		return plugin;
 	}
 	//=========================================================
 	

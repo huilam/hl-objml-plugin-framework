@@ -11,6 +11,7 @@ import hl.objml2.api.ObjMLInputParam;
 import hl.objml2.common.DetectedObj;
 import hl.objml2.common.FrameDetectedObj;
 import hl.objml2.plugin.MLPluginConfigKey;
+import hl.objml2.plugin.MLPluginConfigProp;
 import hl.objml2.plugin.MLPluginMgr;
 import hl.objml2.plugin.ObjDetBasePlugin;
 import hl.opencv.util.OpenCvUtil;
@@ -45,13 +46,10 @@ public class TestObjMlApi {
     	System.out.println("Available Plugins : "+listPluginNames.size());
     	for(String aPluginName : listPluginNames)
     	{
-    		System.out.println("    - "+aPluginName);
-    		
     		ObjDetBasePlugin plugin = objmlApi.initPlugin(aPluginName);
-    		Properties propPlugin 	=  plugin.getPluginProps();
-    		
-    		
-    		
+    		MLPluginConfigProp propPlugin 	=  plugin.getPluginProps();
+    		System.out.println("    - "+propPlugin.getMlModelJavaClassName());
+ 
     		
   	   		ObjMLInputParam inputParam = new ObjMLInputParam();
   	   		Mat matImputImage = null;

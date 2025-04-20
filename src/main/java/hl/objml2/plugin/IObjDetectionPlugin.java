@@ -18,6 +18,6 @@ public interface IObjDetectionPlugin extends IBasePlugin {
 	
 	abstract public MLPluginFrameOutput parseDetections(Mat aMatInput, List<Mat> aInferenceOutputMat);
 	
-	abstract public Properties prePropInit(Properties aProps);
+	abstract public MLPluginConfigProp prePropInit(MLPluginConfigProp aProps);
 	
 }

@@ -2,9 +2,9 @@ package hl.objml2;
 
 import java.io.File;
 import java.util.Map;
-import java.util.Properties;
 
 import hl.objml2.plugin.MLPluginConfigKey;
+import hl.objml2.plugin.MLPluginConfigProp;
 import hl.objml2.plugin.MLPluginMgr;
 import hl.objml2.plugin.ObjDetBasePlugin;
 import hl.objml2.plugin.test.BaseTester;
@@ -34,7 +34,7 @@ public class TestPluginMgr {
     	mgr.addPluginPaths(pluginFolders);
     	
     	/*** Perform javaClass scan for initial ***/
-    	Map<String, Properties> mapPluginClassName = mgr.scanForPluginJavaClassName();
+    	Map<String, MLPluginConfigProp> mapPluginClassName = mgr.scanForPluginJavaClassName();
     	
     	/*** Optional Manual Register Java Class Name that in classpath ***/
     	//listPluginClassName.add(Upscale.class.getName());

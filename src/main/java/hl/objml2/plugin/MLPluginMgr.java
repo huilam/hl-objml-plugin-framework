@@ -22,8 +22,6 @@ import hl.objml2.plugin.base.PluginMgr;
 public class MLPluginMgr extends PluginMgr {
 
 	//
-	protected static String PROPKEY_PLUGIN_SOURCE 	= "objml.mlmodel.source";
-	
 	private boolean isUnzipBundle 				= true;
 	private MLPluginConfigKey pluginConfigKey 	= new MLPluginConfigKey();
 	
@@ -54,12 +52,12 @@ public class MLPluginMgr extends PluginMgr {
 	
 	///////////////
 	
-	public Map<String, Properties> scanForPluginJavaClassName()
+	public Map<String, MLPluginConfigProp> scanForPluginJavaClassName()
 	{
 		return scanForPluginJavaClassName(this.pluginConfigKey.getProp_filename());
 	}
 	
-	public Map<String, Properties> scanForPluginJavaClassName(String aPluginPropFileName)
+	public Map<String, MLPluginConfigProp> scanForPluginJavaClassName(String aPluginPropFileName)
 	{
 		return searchPluginClasses(
 				super.classLoaderPlugin, super.listPluginSources, aPluginPropFileName);
@@ -98,15 +96,15 @@ public class MLPluginMgr extends PluginMgr {
 	
 	/////////////////////////////////////////////////////////////////////
 	
-	private Map<String, Properties> searchPluginClasses(
+	private Map<String, MLPluginConfigProp> searchPluginClasses(
 			URLClassLoader aPluginClassLoader, List<File> aPluginSources, 
 			final String aPluginPropFileName) 
 	{
-		Map<String, Properties> mapPluginClasses = new HashMap<String, Properties>();
+		Map<String, MLPluginConfigProp> mapPluginClasses = new HashMap<String, MLPluginConfigProp>();
 		
 		for(File f : aPluginSources)
     	{
-			Properties prop = null;
+			MLPluginConfigProp propPlugin = new MLPluginConfigProp();
 			//zip or jar file
 			if(f.isFile())
 			{
@@ -126,8 +124,7 @@ public class MLPluginMgr extends PluginMgr {
 								isUnzip = true;
 								break;
 							}
-							prop = new Properties();
-							prop.load(aPluginClassLoader.getResourceAsStream(entry.getName()));
+							propPlugin.load(aPluginClassLoader.getResourceAsStream(entry.getName()));
 						}
 					}
 	    		} catch (FileNotFoundException e1) {
@@ -177,7 +174,8 @@ public class MLPluginMgr extends PluginMgr {
 				if(fileProp!=null)
 				{
 					try {
-						prop = PropUtil.loadProperties(fileProp.getAbsolutePath());
+						Properties prop = PropUtil.loadProperties(fileProp.getAbsolutePath());
+						propPlugin.putAll(prop);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -185,14 +183,14 @@ public class MLPluginMgr extends PluginMgr {
 				}
 			}
 			
-			if(prop!=null && prop.size()>0)
+			if(propPlugin!=null && propPlugin.size()>0)
 			{
-				prop.put(PROPKEY_PLUGIN_SOURCE, f.getName());
+				propPlugin.setMlModelSource(f.getName());
 				
-				String sPlugClassName = getPluginClassNameFromProp(prop);
+				String sPlugClassName = verifyPluginJavaClassName(propPlugin);
 				if(sPlugClassName!=null)
 				{
-					mapPluginClasses.put(sPlugClassName, prop);
+					mapPluginClasses.put(sPlugClassName, propPlugin);
 					System.out.println(" [+] "+sPlugClassName+" ("+f.getName()+")");
 				}
 			}
@@ -200,16 +198,10 @@ public class MLPluginMgr extends PluginMgr {
 		return mapPluginClasses;
 	}
 	
-	private String getPropImplClassNameKey()
-	{
-		return 
-			this.pluginConfigKey.getPropkey_prefix() + 
-			this.pluginConfigKey.getPropkey_pluginImplClassName();
-	}
 	
-	private String getPluginClassNameFromProp(Properties prop)
+	private String verifyPluginJavaClassName(MLPluginConfigProp prop)
 	{
-		String sPlugClassName = prop.getProperty(getPropImplClassNameKey());
+		String sPlugClassName = prop.getMlModelJavaClassName();
 		
 		try {
 			

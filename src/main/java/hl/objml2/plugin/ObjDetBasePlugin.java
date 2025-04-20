@@ -31,27 +31,15 @@ import hl.opencv.util.OpenCvUtil;
 
 public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	
-	protected static String PROPKEY_PREFIX 					= "objml.mlmodel.detection.";
-	
-	protected static String PROPKEY_CONFIDENCE_THRESHOLD 	= PROPKEY_PREFIX+"confidence-threshold";
-	protected static String PROPKEY_NMS_THRESHOLD 			= PROPKEY_PREFIX+"nms-threshold";
-	protected static String PROPKEY_INPUT_IMGSIZE 			= PROPKEY_PREFIX+"input-size";
-	protected static String PROPKEY_SUPPORTED_LABELS 		= PROPKEY_PREFIX+"support-labels";
-	protected static String PROPKEY_SUPPORTED_LABEL_PAFS 	= PROPKEY_PREFIX+"support-labels.pafs";
-	
-	protected static String PROPKEY_DNN_BACKEND 			= "objml.mlmodel.net.dnn.backend";
-	protected static String PROPKEY_DNN_TARGET 				= "objml.mlmodel.net.dnn.target";
-	
-	protected static String PROPKEY_PLUGIN_SOURCE 			= MLPluginMgr.PROPKEY_PLUGIN_SOURCE;
 	////////////////////
 	protected List<String>OBJ_CLASSESS			= new ArrayList<>();
 	protected List<int[]> OBJ_PAF_LIST			= new ArrayList<int[]>();
 	////////////////////
 	protected MLPluginConfigKey pluginCfgKey 	= new MLPluginConfigKey();
-	protected Class<?> thisclass 		= null;
-	protected Properties props_model 	= null;
-	protected String _model_filename 	= null;
-	protected String _plugin_source 	= null;
+	protected Class<?> thisclass 				= null;
+	protected MLPluginConfigProp props_model 	= null;
+	protected String _model_filename 			= null;
+	protected String _plugin_source 			= null;
 	/////////////////////
 	protected Net NET_DNN 				= null;
 	protected int dnn_preferred_backend	= Dnn.DNN_BACKEND_DEFAULT;
@@ -128,7 +116,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 		{
 			props_model = prePropInit(props_model);
 			
-			_model_filename = props_model.getProperty(getPropModelDetectFileName());
+			_model_filename = props_model.getMlModelDetectFileName();
 			
 			if(isValidateMLFileLoading())
 			{
@@ -161,20 +149,6 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	
 	
 	/////////////////////////////////////////////////////////////////////////////////////
-	
-	protected String getPropModelDetectFileName()
-	{
-		return
-			this.pluginCfgKey.getPropkey_prefix()
-			+ this.pluginCfgKey.getPropkey_pluginMLModelDetectFileName();
-	}
-	
-	protected String getPropModelName()
-	{
-		return
-			this.pluginCfgKey.getPropkey_prefix()
-			+ this.pluginCfgKey.getPropkey_pluginMLModelName();
-	}
 	
 	protected File getMLModelFile(String aModelFilePath)
 	{
@@ -333,7 +307,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 		return file;
 	}
 	
-	public Properties getPluginProps()
+	public MLPluginConfigProp getPluginProps()
 	{
 		if(props_model==null)
 			props_model = getPluginPropsByFileName(null);
@@ -346,19 +320,20 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 		return this._plugin_source;
 	}
 	
-	private Properties getPluginPropsByFileName(String aPropFileName)
+	private MLPluginConfigProp getPluginPropsByFileName(String aPropFileName)
 	{
 		if(props_model!=null && props_model.size()>0)
 			return props_model;
 		
-		Properties propPlugin = new Properties();
+		MLPluginConfigProp propPlugin = new MLPluginConfigProp(this.pluginCfgKey);
 		
 		if(aPropFileName==null)
 			aPropFileName = this.pluginCfgKey.getProp_filename();
 		
 		String sPluginPropPath = getResPath()+"/"+aPropFileName;
 		try {
-			propPlugin = PropUtil.loadProperties(thisclass, sPluginPropPath);
+			Properties prop = PropUtil.loadProperties(thisclass, sPluginPropPath);
+			propPlugin.putAll(prop);
 			
 			if(propPlugin!=null && propPlugin.size()>0)
 				props_model = propPlugin;
@@ -374,7 +349,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	
 	protected String getModelName()
 	{
-		return props_model.getProperty(getPropModelName());
+		return props_model.getMlModelName();
 	}
 	
 	public String getPluginMLModelFileName()
@@ -386,7 +361,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	{
 		if(_model_filename==null || _model_filename.trim().length()==0)
 		{
-			_model_filename = props_model.getProperty(getPropModelDetectFileName());
+			_model_filename = props_model.getMlModelDetectFileName();
 		}
 		return _model_filename;
 	}
@@ -443,24 +418,25 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	
 	protected boolean init()
 	{
-		Properties prop = prePropInit(getPluginProps());
+		MLPluginConfigProp propPlugin = prePropInit((MLPluginConfigProp) getPluginProps());
+		
 		
 		//
-		String sDnnBackend = prop.getProperty(PROPKEY_DNN_BACKEND);
+		String sDnnBackend = propPlugin.getDnnBackend();
 		if(isNumeric(sDnnBackend))
 		{
 			if(this.dnn_preferred_backend>-1)
 				this.dnn_preferred_backend = Integer.parseInt(sDnnBackend);
 		}
 		//
-		String sDnnTarget = prop.getProperty(PROPKEY_DNN_TARGET);
+		String sDnnTarget = propPlugin.getDnnTarget();
 		if(isNumeric(sDnnTarget))
 		{
 			if(this.dnn_preferred_target>-1)
 				this.dnn_preferred_target = Integer.parseInt(sDnnTarget);
 		}
 		//
-		String sConfThreshold = (String) prop.get(PROPKEY_CONFIDENCE_THRESHOLD);
+		String sConfThreshold = propPlugin.getMlModelConfidenceScore();
 		if(sConfThreshold!=null && sConfThreshold.trim().length()>0)
 		{
 			try {
@@ -471,14 +447,14 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 			}
 		}
 		//
-		String sSupporedLabels = (String) prop.get(PROPKEY_SUPPORTED_LABELS);
+		String sSupporedLabels = propPlugin.getMlModelSupportedLabels();
 		if(sSupporedLabels!=null && sSupporedLabels.trim().length()>0)
 		{
 			String[] objs = sSupporedLabels.split("\n");
 			OBJ_CLASSESS = new ArrayList<>(Arrays.asList(objs));
 			
 			//
-			String sLabelPAFs = (String) prop.get(PROPKEY_SUPPORTED_LABEL_PAFS);
+			String sLabelPAFs = propPlugin.getMlModelSupportedLabelPAFs();
 			if(sLabelPAFs!=null && sLabelPAFs.trim().length()>0)
 			{
 				String[] sPAFList = sLabelPAFs.split("\n");
@@ -500,7 +476,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 			
 		}
 		//
-		String sNMSThreshold = (String) prop.get(PROPKEY_NMS_THRESHOLD);
+		String sNMSThreshold = propPlugin.getMlModelNmsScore();
 		if(sNMSThreshold!=null && sNMSThreshold.trim().length()>0)
 		{
 			try {
@@ -511,7 +487,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 			}
 		}
 		//
-		String sInputImageSize = (String) prop.get(PROPKEY_INPUT_IMGSIZE);
+		String sInputImageSize = propPlugin.getMlModelInputSize();
 		if(sInputImageSize!=null && sInputImageSize.trim().length()>0)
 		{
 
@@ -875,7 +851,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	}
 
 	@Override
-	public Properties prePropInit(Properties aProps) {
+	public MLPluginConfigProp prePropInit(MLPluginConfigProp aProps) {
 		
 		return aProps;
 	}
