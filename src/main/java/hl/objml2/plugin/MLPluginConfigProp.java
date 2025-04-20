@@ -4,7 +4,7 @@ import java.util.Properties;
 
 public class MLPluginConfigProp extends Properties {
 	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -1051173645839316968L;
 	private MLPluginConfigKey pluginKeys = null;
 	
 	public MLPluginConfigProp()

@@ -26,14 +26,15 @@ import org.opencv.dnn.Net;
 import org.opencv.imgcodecs.Imgcodecs;
 import hl.common.ImgUtil;
 import hl.common.PropUtil;
+import hl.objml2.common.FrameDetectionMeta;
 import hl.objml2.plugin.base.PluginConfigKey;
 import hl.opencv.util.OpenCvUtil;
 
 public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	
 	////////////////////
-	protected List<String>OBJ_CLASSESS			= new ArrayList<>();
-	protected List<int[]> OBJ_PAF_LIST			= new ArrayList<int[]>();
+	private static String OBJ_SEPARATOR_REGEX 	= "[\n\\,]";
+
 	////////////////////
 	protected MLPluginConfigKey pluginCfgKey 	= new MLPluginConfigKey();
 	protected Class<?> thisclass 				= null;
@@ -41,16 +42,10 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	protected String _model_filename 			= null;
 	protected String _plugin_source 			= null;
 	/////////////////////
-	protected Net NET_DNN 				= null;
-	protected int dnn_preferred_backend	= Dnn.DNN_BACKEND_DEFAULT;
-	protected int dnn_preferred_target	= Dnn.DNN_TARGET_CPU;	
-	protected double dnn_confidence_threshold = 0;
-	protected double dnn_nms_threshold 	= 0;
-	protected Size dnn_input_size 		= new Size(0,0);
+	protected Net NET_DNN 						= null;
 	
-	protected int override_dnn_preferred_backend		= -1;
-	protected int override_dnn_preferred_target			= -1;	
-	protected double override_dnn_confidence_threshold 	= -1;
+	private FrameDetectionMeta pluginInitConf 	= new FrameDetectionMeta();
+	protected FrameDetectionMeta inferenceConf 	= new FrameDetectionMeta();
 	
 	private static Pattern patt_paf 	= Pattern.compile("\\s*([0-9]+)\\-([0-9]+)\\s*"); 
 	
@@ -60,24 +55,6 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	protected Map<String, String> mapObjClassMapping 	= new HashMap<String, String>();
 	//
 	private boolean isInited = false;
-	
-	private void setDnnConfigOverride()
-	{
-		if(this.override_dnn_preferred_backend>-1)
-		{
-			this.dnn_preferred_backend = this.override_dnn_preferred_backend;
-		}
-		
-		if(this.override_dnn_preferred_target>-1)
-		{
-			this.dnn_preferred_target = this.override_dnn_preferred_target;
-		}
-		
-		if(this.override_dnn_confidence_threshold>-1)
-		{
-			this.dnn_confidence_threshold = this.override_dnn_confidence_threshold;
-		}
-	}
 	
 	public void setPluginConfigKey(PluginConfigKey aPluginConfigKey)
 	{
@@ -406,7 +383,8 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	public Map<String, Object> detect(Mat aImageFile, JSONObject aCustomThresholdJson) 
 	{	
 		if(isPluginOK())
-		{	
+		{
+			
 			List<Mat> listOutput = doInference(aImageFile, this.NET_DNN);
 			
 			MLPluginFrameOutput frameOutput = parseDetections(aImageFile, listOutput);
@@ -420,27 +398,35 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	{
 		MLPluginConfigProp propPlugin = prePropInit((MLPluginConfigProp) getPluginProps());
 		
-		
 		//
 		String sDnnBackend = propPlugin.getDnnBackend();
 		if(isNumeric(sDnnBackend))
 		{
-			if(this.dnn_preferred_backend>-1)
-				this.dnn_preferred_backend = Integer.parseInt(sDnnBackend);
+			pluginInitConf.setDnn_backend(Integer.parseInt(sDnnBackend));
 		}
 		//
 		String sDnnTarget = propPlugin.getDnnTarget();
 		if(isNumeric(sDnnTarget))
 		{
-			if(this.dnn_preferred_target>-1)
-				this.dnn_preferred_target = Integer.parseInt(sDnnTarget);
+			pluginInitConf.setDnn_target(Integer.parseInt(sDnnTarget));
 		}
 		//
 		String sConfThreshold = propPlugin.getMlModelConfidenceScore();
 		if(sConfThreshold!=null && sConfThreshold.trim().length()>0)
 		{
 			try {
-				this.dnn_confidence_threshold = Double.parseDouble(sConfThreshold);
+				pluginInitConf.setConfidence_threshold(Double.parseDouble(sConfThreshold));
+			}catch(NumberFormatException ex)
+			{
+				ex.printStackTrace();
+			}
+		}
+		//
+		String sNmsThreshold = propPlugin.getMlModelNmsScore();
+		if(sNmsThreshold!=null && sNmsThreshold.trim().length()>0)
+		{
+			try {
+				pluginInitConf.setNms_threshold(Double.parseDouble(sNmsThreshold));
 			}catch(NumberFormatException ex)
 			{
 				ex.printStackTrace();
@@ -450,17 +436,16 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 		String sSupporedLabels = propPlugin.getMlModelSupportedLabels();
 		if(sSupporedLabels!=null && sSupporedLabels.trim().length()>0)
 		{
-			String[] objs = sSupporedLabels.split("\n");
-			OBJ_CLASSESS = new ArrayList<>(Arrays.asList(objs));
+			String[] objs = sSupporedLabels.split(OBJ_SEPARATOR_REGEX);
 			
+			pluginInitConf.setObj_of_interest(new ArrayList<>(Arrays.asList(objs)));
 			//
 			String sLabelPAFs = propPlugin.getMlModelSupportedLabelPAFs();
 			if(sLabelPAFs!=null && sLabelPAFs.trim().length()>0)
 			{
+				List<int[]> listObjPAFs = new ArrayList<int[]>();
+				
 				String[] sPAFList = sLabelPAFs.split("\n");
-				
-				OBJ_PAF_LIST =  new ArrayList<int[]>();
-				
 				for(String sPAF : sPAFList)
 				{
 					Matcher m = patt_paf.matcher(sPAF);
@@ -469,28 +454,20 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 						int iP1 = Integer.valueOf(m.group(1));
 						int iP2 = Integer.valueOf(m.group(2));
 						//
-						OBJ_PAF_LIST.add(new int[] {iP1, iP2});
+						listObjPAFs.add(new int[] {iP1, iP2});
 					}
 				}
-			}
-			
-		}
-		//
-		String sNMSThreshold = propPlugin.getMlModelNmsScore();
-		if(sNMSThreshold!=null && sNMSThreshold.trim().length()>0)
-		{
-			try {
-				this.dnn_nms_threshold = Double.parseDouble(sNMSThreshold);
-			}catch(NumberFormatException ex)
-			{
-				ex.printStackTrace();
+				
+				if(listObjPAFs.size()>0)
+				{
+					pluginInitConf.setObj_PAFs(listObjPAFs);
+				}
 			}
 		}
 		//
 		String sInputImageSize = propPlugin.getMlModelInputSize();
 		if(sInputImageSize!=null && sInputImageSize.trim().length()>0)
 		{
-
 			String sSeparator = "x";
 			if(sInputImageSize.indexOf(sSeparator)==-1)
 				sSeparator = ",";
@@ -512,11 +489,11 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 				{
 					ex.printStackTrace();
 				}
-				this.dnn_input_size = new Size(dWidth,dHeight);
+				pluginInitConf.setDnn_input_size(new Size(dWidth,dHeight));
 			}
 		}
 		
-		setDnnConfigOverride();
+		inferenceConf = pluginInitConf;
 		
 		return true;
 	}
@@ -533,6 +510,16 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	public String[] getObjClassesOfInterest()
 	{
 		return (String[]) this.obj_classes_of_interest.toArray();
+	}
+	
+	public void setObjClassesOfInterest(String[] aObjOfInterestLabels)
+	{
+		setObjClassesOfInterest(Arrays.asList(aObjOfInterestLabels));
+	}
+	
+	public void setObjClassesOfInterest(List<String> aObjOfInterestLabels)
+	{
+		this.obj_classes_of_interest = aObjOfInterestLabels;
 	}
 	
 	public void clearObjClassesOfInterest()
@@ -564,6 +551,12 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 		return this.obj_classes_of_interest.contains(aObjClassName.toLowerCase());
 	}
 	
+	public boolean isObjOfInterest(int aObjClassId)
+	{
+		String sObjClassName = getObjClassLabel(aObjClassId);
+		return isObjClassOfInterest(sObjClassName);
+	}
+	
 	/////
 	public void addObjClassMapping(String aOrgObjClassName, String aNewObjClassName)
 	{
@@ -583,78 +576,45 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 		return sMappedClassName;
 	}
 	///////////
+	public String getObjClassLabel(int aObjClassId)
+	{
+		List<String> listObjLabels = inferenceConf.getObj_of_interest();
+		if(aObjClassId < listObjLabels.size())
+			return listObjLabels.get(aObjClassId);
+		else 
+			return null;
+	}
+	
 	public double getConfidenceThreshold()
 	{
-		return this.dnn_confidence_threshold;
+		return inferenceConf.getConfidence_threshold();
 	}
-	
-	public double setConfidenceThreshold_Override(double aConfidenceThreshold)
-	{
-		this.override_dnn_confidence_threshold = aConfidenceThreshold;
-		return this.override_dnn_confidence_threshold;
-	}
-	
+
 	public double getNMSThreshold()
 	{
-		return this.dnn_nms_threshold;
+		return inferenceConf.getNms_threshold();
 	}
 	
 	public Size getImageInputSize()
 	{
-		return this.dnn_input_size;
+		return inferenceConf.getDnn_input_size();
 	}
 	
 	public String[] getSupportedObjectLabels()
 	{
-		return OBJ_CLASSESS.toArray(new String[OBJ_CLASSESS.size()]);
+		List<String> listObjOfInterest = inferenceConf.getObj_of_interest();
+
+		return listObjOfInterest.toArray(new String[listObjOfInterest.size()]);
 	}
 	
-	public int setDnnBackendByText_Override(String aDnnTargetText)
+	public List<int[]> getSupportedObjectPAFs()
 	{
-		int iDnnBackendId = -1;
-		switch (aDnnTargetText)
-		{
-			case "DNN_BACKEND_DEFAULT":
-				iDnnBackendId = Dnn.DNN_BACKEND_DEFAULT;
-				break;
-			case "DNN_BACKEND_OPENCV":
-				iDnnBackendId = Dnn.DNN_BACKEND_OPENCV;
-				break;
-			case "DNN_BACKEND_CUDA":
-				iDnnBackendId = Dnn.DNN_BACKEND_CUDA;
-				break;
-			case "DNN_BACKEND_INFERENCE_ENGINE":
-				iDnnBackendId = Dnn.DNN_BACKEND_INFERENCE_ENGINE;
-				break;
-			case "DNN_BACKEND_VKCOM":
-				iDnnBackendId = Dnn.DNN_BACKEND_VKCOM;
-				break;
-			case "DNN_BACKEND_WEBNN":
-				iDnnBackendId = Dnn.DNN_BACKEND_WEBNN;
-				break;
-			case "DNN_BACKEND_CANN":
-				iDnnBackendId = Dnn.DNN_BACKEND_CANN;
-				break;
-			case "DNN_BACKEND_TIMVX":
-				iDnnBackendId = Dnn.DNN_BACKEND_TIMVX;
-				break;
-			default:
-				iDnnBackendId = -1;
-		}
-		
-		
-		return setDnnBackend_Override(iDnnBackendId);
-	}
-	
-	public int setDnnBackend_Override(int iDnnBackendId)
-	{
-		this.override_dnn_preferred_backend = iDnnBackendId;
-		return this.override_dnn_preferred_backend;
+		return inferenceConf.getObj_PAFs();
 	}
 	
 	public int getDnnBackend()
 	{
-		return this.dnn_preferred_backend;
+		return inferenceConf.getDnn_backend();
 	}
 
 	public String getDnnBackendDesc()
@@ -694,7 +654,120 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 		}
 		return sbDnnBackEnd.toString();
 	}
+
+	public int getDnnTarget()
+	{
+		return inferenceConf.getDnn_target();
+	}
 	
+	public String getDnnTargetDesc()
+	{
+		StringBuffer sbDnnTarget = new StringBuffer();
+		sbDnnTarget.append(getDnnTarget());
+		switch(getDnnTarget())
+		{
+			case Dnn.DNN_TARGET_CPU :
+				sbDnnTarget.append(" (DNN_TARGET_CPU)");
+				break;
+			case Dnn.DNN_TARGET_CPU_FP16 :
+				sbDnnTarget.append(" (DNN_TARGET_CPU_FP16)");
+				break;
+			case Dnn.DNN_TARGET_OPENCL :
+				sbDnnTarget.append(" (DNN_TARGET_OPENCL)");
+				break;
+			case Dnn.DNN_TARGET_OPENCL_FP16 :
+				sbDnnTarget.append(" (DNN_TARGET_OPENCL_FP16)");
+				break;
+			case Dnn.DNN_TARGET_CUDA :
+				sbDnnTarget.append(" (DNN_TARGET_CUDA)");
+				break;
+			case Dnn.DNN_TARGET_CUDA_FP16 :
+				sbDnnTarget.append(" (DNN_TARGET_CUDA_FP16)");
+				break;
+			case Dnn.DNN_TARGET_NPU :
+				sbDnnTarget.append(" (DNN_TARGET_NPU)");
+				break;
+			case Dnn.DNN_TARGET_MYRIAD :
+				sbDnnTarget.append(" (DNN_TARGET_MYRIAD)");
+				break;
+			case Dnn.DNN_TARGET_VULKAN :
+				sbDnnTarget.append(" (DNN_TARGET_VULKAN)");
+				break;
+			case Dnn.DNN_TARGET_FPGA :
+				sbDnnTarget.append(" (DNN_TARGET_FPGA)");
+				break;
+			case Dnn.DNN_TARGET_HDDL :
+				sbDnnTarget.append(" (DNN_TARGET_HDDL)");
+				break;
+			default:
+		}
+		return sbDnnTarget.toString();
+	}
+	
+	///////////////
+	//  Override
+	//////////////
+	public double setConfidenceThreshold_Override(double aConfidenceThreshold)
+	{
+		if(aConfidenceThreshold>-1)
+		{
+			inferenceConf.setConfidence_threshold(aConfidenceThreshold);
+		}
+		return inferenceConf.getConfidence_threshold();
+	}
+	
+	public double setNMSThreshold_Override(double aNmsThreshold)
+	{
+		if(aNmsThreshold>-1)
+		{
+			inferenceConf.setNms_threshold(aNmsThreshold);
+		}
+		return inferenceConf.getNms_threshold();
+	}
+	
+	public int setDnnBackendByText_Override(String aDnnTargetText)
+	{
+		int iDnnBackendId = -1;
+		switch (aDnnTargetText)
+		{
+			case "DNN_BACKEND_DEFAULT":
+				iDnnBackendId = Dnn.DNN_BACKEND_DEFAULT;
+				break;
+			case "DNN_BACKEND_OPENCV":
+				iDnnBackendId = Dnn.DNN_BACKEND_OPENCV;
+				break;
+			case "DNN_BACKEND_CUDA":
+				iDnnBackendId = Dnn.DNN_BACKEND_CUDA;
+				break;
+			case "DNN_BACKEND_INFERENCE_ENGINE":
+				iDnnBackendId = Dnn.DNN_BACKEND_INFERENCE_ENGINE;
+				break;
+			case "DNN_BACKEND_VKCOM":
+				iDnnBackendId = Dnn.DNN_BACKEND_VKCOM;
+				break;
+			case "DNN_BACKEND_WEBNN":
+				iDnnBackendId = Dnn.DNN_BACKEND_WEBNN;
+				break;
+			case "DNN_BACKEND_CANN":
+				iDnnBackendId = Dnn.DNN_BACKEND_CANN;
+				break;
+			case "DNN_BACKEND_TIMVX":
+				iDnnBackendId = Dnn.DNN_BACKEND_TIMVX;
+				break;
+			default:
+				iDnnBackendId = -1;
+		}
+		return setDnnBackend_Override(iDnnBackendId);
+	}
+	
+	public int setDnnBackend_Override(int iDnnBackendId)
+	{
+		if(iDnnBackendId>-1)
+		{
+			inferenceConf.setDnn_backend(iDnnBackendId);
+		}
+		return inferenceConf.getDnn_backend();
+	}
 	
 	public int setDnnTargetByText_Override(String aDnnTargetText)
 	{
@@ -753,57 +826,11 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	
 	public int setDnnTarget_Override(int iDnnTargetId)
 	{
-		this.override_dnn_preferred_target = iDnnTargetId;
-		return this.override_dnn_preferred_target;
-	}
-	
-	public int getDnnTarget()
-	{
-		return this.dnn_preferred_target;
-	}
-	
-	public String getDnnTargetDesc()
-	{
-		StringBuffer sbDnnTarget = new StringBuffer();
-		sbDnnTarget.append(getDnnTarget());
-		switch(getDnnTarget())
+		if(iDnnTargetId>-1)
 		{
-			case Dnn.DNN_TARGET_CPU :
-				sbDnnTarget.append(" (DNN_TARGET_CPU)");
-				break;
-			case Dnn.DNN_TARGET_CPU_FP16 :
-				sbDnnTarget.append(" (DNN_TARGET_CPU_FP16)");
-				break;
-			case Dnn.DNN_TARGET_OPENCL :
-				sbDnnTarget.append(" (DNN_TARGET_OPENCL)");
-				break;
-			case Dnn.DNN_TARGET_OPENCL_FP16 :
-				sbDnnTarget.append(" (DNN_TARGET_OPENCL_FP16)");
-				break;
-			case Dnn.DNN_TARGET_CUDA :
-				sbDnnTarget.append(" (DNN_TARGET_CUDA)");
-				break;
-			case Dnn.DNN_TARGET_CUDA_FP16 :
-				sbDnnTarget.append(" (DNN_TARGET_CUDA_FP16)");
-				break;
-			case Dnn.DNN_TARGET_NPU :
-				sbDnnTarget.append(" (DNN_TARGET_NPU)");
-				break;
-			case Dnn.DNN_TARGET_MYRIAD :
-				sbDnnTarget.append(" (DNN_TARGET_MYRIAD)");
-				break;
-			case Dnn.DNN_TARGET_VULKAN :
-				sbDnnTarget.append(" (DNN_TARGET_VULKAN)");
-				break;
-			case Dnn.DNN_TARGET_FPGA :
-				sbDnnTarget.append(" (DNN_TARGET_FPGA)");
-				break;
-			case Dnn.DNN_TARGET_HDDL :
-				sbDnnTarget.append(" (DNN_TARGET_HDDL)");
-				break;
-			default:
+			inferenceConf.setDnn_target(iDnnTargetId);
 		}
-		return sbDnnTarget.toString();
+		return inferenceConf.getDnn_target();
 	}
 	
 	///////////

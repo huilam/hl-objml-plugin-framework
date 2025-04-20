@@ -1,6 +1,7 @@
 package hl.objml2;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 import org.opencv.core.Mat;
@@ -9,8 +10,10 @@ import hl.objml2.api.ObjMLApi;
 import hl.objml2.api.ObjMLInputParam;
 import hl.objml2.common.DetectedObj;
 import hl.objml2.common.FrameDetectedObj;
+import hl.objml2.common.FrameDetectionMeta;
 import hl.objml2.plugin.MLPluginConfigKey;
 import hl.objml2.plugin.MLPluginConfigProp;
+import hl.objml2.plugin.MLPluginFrameOutput;
 import hl.objml2.plugin.MLPluginMgr;
 import hl.objml2.plugin.ObjDetBasePlugin;
 import hl.opencv.util.OpenCvUtil;
@@ -47,7 +50,14 @@ public class TestObjMlApi {
     	{
     		ObjDetBasePlugin plugin = objmlApi.initPlugin(aPluginName);
     		MLPluginConfigProp propPlugin 	=  plugin.getPluginProps();
+    		
     		System.out.println("    - "+propPlugin.getMlModelName()+" ("+propPlugin.getMlModelLicense()+")");
+    		System.out.println("    - Source:"+propPlugin.getMlModelSource());
+    		System.out.println("    - ConfidenceScore:"+propPlugin.getMlModelConfidenceScore());
+    		System.out.println("    - NmsScore:"+propPlugin.getMlModelNmsScore());
+    		System.out.println("    - ObjLabels:"+propPlugin.getMlModelSupportedLabels());
+    		System.out.println("    - DnnBackend:"+propPlugin.getDnnBackend());
+    		System.out.println("    - DnnTarget:"+propPlugin.getDnnTarget());
  
     		
   	   		ObjMLInputParam inputParam = new ObjMLInputParam();
@@ -58,9 +68,15 @@ public class TestObjMlApi {
 		   			System.out.println("        - Test Image ="+fileTestImg.getName());
 		   			matImputImage = OpenCvUtil.loadImage(fileTestImg.getAbsolutePath());
 		   			inputParam.setInput_image(matImputImage);
+		   			inputParam.setConfidenceThreshold(0.1);
 		   			
-	    	   		FrameDetectedObj result = objmlApi.detectFrame(plugin, inputParam);
-	    	   		List<DetectedObj> listDetectedObj = result.getAllDetectedObjs();
+		   			MLPluginFrameOutput result = objmlApi.detectFrame(plugin, inputParam);
+
+		   			FrameDetectionMeta meta = result.getFrameDetectionMeta();
+		   			System.out.println(meta);
+		   			
+		   			FrameDetectedObj frameObjs = result.getFrameDetectedObj();
+	    	   		List<DetectedObj> listDetectedObj = frameObjs.getAllDetectedObjs();
 	    	   		int i = 0;
 	    	   		for(DetectedObj obj : listDetectedObj)
 	    	   		{

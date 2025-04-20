@@ -64,14 +64,9 @@ public class ObjMLApi {
 		return prop;
 	}
 	
-	public FrameDetectedObj detectFrame(IObjDetectionPlugin aIObjDetPlugin, ObjMLInputParam aObjMlInput)
+	public MLPluginFrameOutput detectFrame(IObjDetectionPlugin aIObjDetPlugin, ObjMLInputParam aObjMlInput)
 	{
-		MLPluginFrameOutput frameOutput = doDetection(aIObjDetPlugin, aObjMlInput);
-		if(frameOutput!=null)
-		{
-			return frameOutput.getFrameDetectedObj();
-		}
-		return null;
+		return doDetection(aIObjDetPlugin, aObjMlInput);
 	}
 	
 	public FrameDetectedObj initAndDetectFrame(String aPluginClassName, ObjMLInputParam aObjMlInput)
@@ -121,6 +116,13 @@ public class ObjMLApi {
 		if(plugin!=null)
 		{
 			Mat matInputImg = aObjMlInput.getInput_image();
+			
+			plugin.setConfidenceThreshold_Override(aObjMlInput.getConfidenceThreshold());
+			plugin.setNMSThreshold_Override(aObjMlInput.getNmsThreshold());
+			plugin.setDnnBackend_Override(aObjMlInput.getPrefferedDnnBackend());
+			plugin.setDnnTarget_Override(aObjMlInput.getPrefferedDnnTarget());
+			plugin.setObjClassesOfInterest(aObjMlInput.getObjOfInterest().split("[\n\\,]"));
+			
 			JSONObject jsonMLConfig = null;
 			
 			Map<String, Object> outputMap = plugin.detect(matInputImg, jsonMLConfig);
