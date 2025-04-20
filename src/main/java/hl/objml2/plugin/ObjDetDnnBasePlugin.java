@@ -49,7 +49,7 @@ public class ObjDetDnnBasePlugin extends ObjDetBasePlugin {
 	protected String getMLModelConfigFilePath()
 	{
 		String sMlModelConfig = props_model.getProperty(
-				pluginConfig.getPropkey_prefix()+MLMODEL_CONFIG_FILENAME, null);
+				pluginCfgKey.getPropkey_prefix()+MLMODEL_CONFIG_FILENAME, null);
 		
 		if(sMlModelConfig!=null && sMlModelConfig.trim().length()>0)
 		{

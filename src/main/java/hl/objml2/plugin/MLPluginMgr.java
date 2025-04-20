@@ -24,8 +24,8 @@ public class MLPluginMgr extends PluginMgr {
 	//
 	protected static String PROPKEY_PLUGIN_SOURCE 	= "objml.mlmodel.source";
 	
-	private boolean isUnzipBundle 			= true;
-	private MLPluginConfig pluginConfig 	= new MLPluginConfig();
+	private boolean isUnzipBundle 				= true;
+	private MLPluginConfigKey pluginConfigKey 	= new MLPluginConfigKey();
 	
 	//
 	public MLPluginMgr()
@@ -35,28 +35,28 @@ public class MLPluginMgr extends PluginMgr {
 	}
 
 	//
-	public void setCustomPluginConfig(MLPluginConfig aPluginConfig)
+	public void setCustomPluginConfigKey(MLPluginConfigKey aPluginConfigKey)
 	{
-		if(aPluginConfig==null)
+		if(aPluginConfigKey==null)
 		{
-			this.pluginConfig = new MLPluginConfig();
+			this.pluginConfigKey = new MLPluginConfigKey();
 		}
 		else
 		{
-			this.pluginConfig = aPluginConfig;
+			this.pluginConfigKey = aPluginConfigKey;
 		}
 	}
 	
 	public void setPluginPropFileName(String aPropfileName)
 	{
-		this.pluginConfig.setProp_filename(aPropfileName);
+		this.pluginConfigKey.setProp_filename(aPropfileName);
 	}
 	
 	///////////////
 	
 	public Map<String, Properties> scanForPluginJavaClassName()
 	{
-		return scanForPluginJavaClassName(this.pluginConfig.getProp_filename());
+		return scanForPluginJavaClassName(this.pluginConfigKey.getProp_filename());
 	}
 	
 	public Map<String, Properties> scanForPluginJavaClassName(String aPluginPropFileName)
@@ -70,7 +70,7 @@ public class MLPluginMgr extends PluginMgr {
 		IObjDetectionPlugin plugin = (IObjDetectionPlugin) getPluginInstance(aPluginClassName);
 		if(plugin!=null)
 		{
-			plugin.setPluginConfig(pluginConfig);
+			plugin.setPluginConfigKey(pluginConfigKey);
 			plugin.setPluginSource(getJavaClassSourcePath(plugin.getClass()));
 		}
 		return plugin;
@@ -203,8 +203,8 @@ public class MLPluginMgr extends PluginMgr {
 	private String getPropImplClassNameKey()
 	{
 		return 
-			this.pluginConfig.getPropkey_prefix() + 
-			this.pluginConfig.getPropkey_pluginImplClassName();
+			this.pluginConfigKey.getPropkey_prefix() + 
+			this.pluginConfigKey.getPropkey_pluginImplClassName();
 	}
 	
 	private String getPluginClassNameFromProp(Properties prop)

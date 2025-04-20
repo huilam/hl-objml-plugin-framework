@@ -26,8 +26,7 @@ import org.opencv.dnn.Net;
 import org.opencv.imgcodecs.Imgcodecs;
 import hl.common.ImgUtil;
 import hl.common.PropUtil;
-import hl.objml2.plugin.base.PluginConfig;
-import hl.objml2.plugin.base.PluginMgr;
+import hl.objml2.plugin.base.PluginConfigKey;
 import hl.opencv.util.OpenCvUtil;
 
 public class ObjDetBasePlugin implements IObjDetectionPlugin {
@@ -48,7 +47,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	protected List<String>OBJ_CLASSESS			= new ArrayList<>();
 	protected List<int[]> OBJ_PAF_LIST			= new ArrayList<int[]>();
 	////////////////////
-	protected MLPluginConfig pluginConfig 	= new MLPluginConfig();
+	protected MLPluginConfigKey pluginCfgKey 	= new MLPluginConfigKey();
 	protected Class<?> thisclass 		= null;
 	protected Properties props_model 	= null;
 	protected String _model_filename 	= null;
@@ -92,9 +91,9 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 		}
 	}
 	
-	public void setPluginConfig(PluginConfig aPluginConfig)
+	public void setPluginConfigKey(PluginConfigKey aPluginConfigKey)
 	{
-		this.pluginConfig = (MLPluginConfig) aPluginConfig;
+		this.pluginCfgKey = (MLPluginConfigKey) aPluginConfigKey;
 	}
 	
 	public void setPluginSource(String aPluginSource)
@@ -104,7 +103,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	
 	protected boolean isPluginOK(Class<?> aClass)
 	{
-		return isPluginOK(aClass, this.pluginConfig.getProp_filename());
+		return isPluginOK(aClass, this.pluginCfgKey.getProp_filename());
 	}
 	
 	public boolean isValidateMLFileLoading()
@@ -166,15 +165,15 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	protected String getPropModelDetectFileName()
 	{
 		return
-			this.pluginConfig.getPropkey_prefix()
-			+ this.pluginConfig.getPropkey_pluginMLModelDetectFileName();
+			this.pluginCfgKey.getPropkey_prefix()
+			+ this.pluginCfgKey.getPropkey_pluginMLModelDetectFileName();
 	}
 	
 	protected String getPropModelName()
 	{
 		return
-			this.pluginConfig.getPropkey_prefix()
-			+ this.pluginConfig.getPropkey_pluginMLModelName();
+			this.pluginCfgKey.getPropkey_prefix()
+			+ this.pluginCfgKey.getPropkey_pluginMLModelName();
 	}
 	
 	protected File getMLModelFile(String aModelFilePath)
@@ -355,7 +354,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 		Properties propPlugin = new Properties();
 		
 		if(aPropFileName==null)
-			aPropFileName = this.pluginConfig.getProp_filename();
+			aPropFileName = this.pluginCfgKey.getProp_filename();
 		
 		String sPluginPropPath = getResPath()+"/"+aPropFileName;
 		try {
@@ -842,7 +841,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 		boolean isOK = isPluginOK(getClass());
 		if(!isOK)
 		{
-			System.err.println("Failed to load/init properties file ! "+this.pluginConfig.getProp_filename());
+			System.err.println("Failed to load/init properties file ! "+this.pluginCfgKey.getProp_filename());
 			return false;
 		}
 		

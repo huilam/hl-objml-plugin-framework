@@ -1,20 +1,20 @@
 package hl.objml2.plugin;
 
-import hl.objml2.plugin.base.PluginConfig;
+import hl.objml2.plugin.base.PluginConfigKey;
 
-public class MLPluginConfig extends PluginConfig{
+public class MLPluginConfigKey extends PluginConfigKey {
 	//
 	private static final String DEF_PROPKEY_PLUGIN_IMPL_CLASSNAME 	= "mlmodel.detection.implementation.classname";
 	private static final String DEF_PROPKEY_MLMODEL_NAME 			= "mlmodel.name";
 	private static final String DEF_PROPKEY_MLMODEL_DETECT_FILENAME	= "mlmodel.detection.filename";
 	private static final String DEF_PROPKEY_MLMODEL_DEPENDENCIES	= "mlmodel.detection.dependencies";
 	//
-	private String propkey_pluginImplClassName 			= DEF_PROPKEY_PLUGIN_IMPL_CLASSNAME;
-	private String propkey_pluginMLModelName 			= DEF_PROPKEY_MLMODEL_NAME;
-	private String propkey_pluginMLModelDetectFileName 	= DEF_PROPKEY_MLMODEL_DETECT_FILENAME;
-	private String propkey_pluginMLModelDependencies	= DEF_PROPKEY_MLMODEL_DEPENDENCIES;
+	public String propkey_pluginImplClassName 			= DEF_PROPKEY_PLUGIN_IMPL_CLASSNAME;
+	public String propkey_pluginMLModelName 			= DEF_PROPKEY_MLMODEL_NAME;
+	public String propkey_pluginMLModelDetectFileName 	= DEF_PROPKEY_MLMODEL_DETECT_FILENAME;
+	public String propkey_pluginMLModelDependencies		= DEF_PROPKEY_MLMODEL_DEPENDENCIES;
 	//
-	public MLPluginConfig()
+	public MLPluginConfigKey()
 	{
 		setDefaultPluginPropFileName("objml-plugin.properties");
 		setDefaultPropKeyPrefix("objml.");

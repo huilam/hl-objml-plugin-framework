@@ -2,6 +2,7 @@ package hl.objml2;
 
 import java.io.File;
 import java.util.List;
+import java.util.Properties;
 
 import org.opencv.core.Mat;
 
@@ -9,7 +10,7 @@ import hl.objml2.api.ObjMLApi;
 import hl.objml2.api.ObjMLInputParam;
 import hl.objml2.common.DetectedObj;
 import hl.objml2.common.FrameDetectedObj;
-import hl.objml2.plugin.MLPluginConfig;
+import hl.objml2.plugin.MLPluginConfigKey;
 import hl.objml2.plugin.MLPluginMgr;
 import hl.objml2.plugin.ObjDetBasePlugin;
 import hl.opencv.util.OpenCvUtil;
@@ -23,15 +24,15 @@ public class TestObjMlApi {
     {
     	OpenCvUtil.initOpenCV();
     	
-    	MLPluginConfig pluginConfig = 
-    			UnitTestUtil.getCustomPluginConfig("objml-plugin.properties", "objml.");
+    	MLPluginConfigKey pluginConfigKey = 
+    			UnitTestUtil.getCustomPluginConfigKey("objml-plugin.properties", "objml.");
 
     	File[] pluginFolders = 
     			UnitTestUtil.getPluginJarsPath(new File("./test/plugins"));
     	
     	/*** Init Plugin Mgr  ***/
     	MLPluginMgr pluginMgr = new MLPluginMgr();
-    	pluginMgr.setCustomPluginConfig(pluginConfig);
+    	pluginMgr.setCustomPluginConfigKey(pluginConfigKey);
     	pluginMgr.addPluginPaths(pluginFolders);
     	
        	/** List all available test images **/
@@ -45,7 +46,12 @@ public class TestObjMlApi {
     	for(String aPluginName : listPluginNames)
     	{
     		System.out.println("    - "+aPluginName);
+    		
     		ObjDetBasePlugin plugin = objmlApi.initPlugin(aPluginName);
+    		Properties propPlugin 	=  plugin.getPluginProps();
+    		
+    		
+    		
     		
   	   		ObjMLInputParam inputParam = new ObjMLInputParam();
   	   		Mat matImputImage = null;

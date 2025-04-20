@@ -52,6 +52,17 @@ public class ObjMLApi {
 		return listPlugins;
 	}
 	
+	public Properties getPluginProps(String aJavaClassName)
+	{
+		Properties prop = null;
+		if(mapPlugins!=null)
+		{
+			prop = mapPlugins.get(aJavaClassName);
+		}
+		
+		return prop;
+	}
+	
 	public FrameDetectedObj detectFrame(IObjDetectionPlugin aIObjDetPlugin, ObjMLInputParam aObjMlInput)
 	{
 		MLPluginFrameOutput frameOutput = doDetection(aIObjDetPlugin, aObjMlInput);

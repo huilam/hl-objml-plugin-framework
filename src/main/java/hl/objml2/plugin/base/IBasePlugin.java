@@ -4,7 +4,7 @@ import java.util.Properties;
 
 public interface IBasePlugin {
 	
-	abstract public void setPluginConfig(PluginConfig pluginConfig);
+	abstract public void setPluginConfigKey(PluginConfigKey pluginConfig);
 	abstract public void setPluginSource(String aPluginSource);
 	
 	abstract public boolean isPluginOK();

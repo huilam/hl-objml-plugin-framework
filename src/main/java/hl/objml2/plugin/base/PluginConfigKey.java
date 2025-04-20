@@ -1,15 +1,15 @@
 package hl.objml2.plugin.base;
 
-public class PluginConfig {
+public class PluginConfigKey {
 	
 	//
 	protected String DEF_PLUGIN_PROP_FILENAME 	= "plugin.properties";
 	protected String DEF_PLUGIN_PROPKEY_PREFIX 	= "plugin.";
 	//
 	protected String prop_filename 				= DEF_PLUGIN_PROP_FILENAME;
-	protected String propkey_prefix 			= DEF_PLUGIN_PROPKEY_PREFIX;	
+	protected String propkey_prefix 			= DEF_PLUGIN_PROPKEY_PREFIX;
 	//
-	public PluginConfig()
+	public PluginConfigKey()
 	{
 	}
 	

@@ -2,13 +2,13 @@ package hl.objml2;
 
 import java.io.File;
 import hl.common.FileUtil;
-import hl.objml2.plugin.MLPluginConfig;
+import hl.objml2.plugin.MLPluginConfigKey;
 
 public class UnitTestUtil  {
 	
-	protected static MLPluginConfig getCustomPluginConfig(String aPropFileName, String aPropPrefix)
+	protected static MLPluginConfigKey getCustomPluginConfigKey(String aPropFileName, String aPropPrefix)
 	{
-    	MLPluginConfig customPluginConfig = new MLPluginConfig();
+		MLPluginConfigKey customPluginConfig = new MLPluginConfigKey();
     	
 		/*** Custom configuration for properties ***/
     	customPluginConfig.setProp_filename(aPropFileName);

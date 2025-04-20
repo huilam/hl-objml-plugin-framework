@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.Map;
 import java.util.Properties;
 
-import hl.objml2.plugin.MLPluginConfig;
+import hl.objml2.plugin.MLPluginConfigKey;
 import hl.objml2.plugin.MLPluginMgr;
 import hl.objml2.plugin.ObjDetBasePlugin;
 import hl.objml2.plugin.test.BaseTester;
@@ -18,8 +18,8 @@ public class TestPluginMgr {
     {
     	OpenCvUtil.initOpenCV();
     	
-    	MLPluginConfig pluginConfig = 
-    			UnitTestUtil.getCustomPluginConfig("objml-plugin.properties", "objml.");
+    	MLPluginConfigKey pluginConfigKey = 
+    			UnitTestUtil.getCustomPluginConfigKey("objml-plugin.properties", "objml.");
 
     	File[] pluginFolders = 
     			UnitTestUtil.getPluginJarsPath(new File("./test/plugins"));	
@@ -28,7 +28,7 @@ public class TestPluginMgr {
     	MLPluginMgr mgr = new MLPluginMgr();
     	
        	/*** Init Custom Plugin Config  ***/
-    	mgr.setCustomPluginConfig(pluginConfig);
+    	mgr.setCustomPluginConfigKey(pluginConfigKey);
  
     	/*** Register non-classpath bundle files  ***/
     	mgr.addPluginPaths(pluginFolders);
