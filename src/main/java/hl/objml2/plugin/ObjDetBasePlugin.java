@@ -45,7 +45,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	protected Net NET_DNN 						= null;
 	
 	private FrameDetectionMeta pluginInitConf 	= new FrameDetectionMeta();
-	protected FrameDetectionMeta inferenceConf 	= new FrameDetectionMeta();
+	protected FrameDetectionMeta inferenceConf 	= null;
 	
 	private static Pattern patt_paf 	= Pattern.compile("\\s*([0-9]+)\\-([0-9]+)\\s*"); 
 	
@@ -92,6 +92,19 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 		if(props_model!=null)
 		{
 			props_model = prePropInit(props_model);
+			
+			if(thisclass.getProtectionDomain()!=null)
+			{
+				String sSource = thisclass.getProtectionDomain().getCodeSource().getLocation().getPath();
+				if(sSource!=null)
+				{
+					File f = new File(sSource);
+					if(f.exists())
+					{
+						props_model.setMlModelSource(f.getAbsolutePath());
+					}
+				}
+			}
 			
 			_model_filename = props_model.getMlModelDetectFileName();
 			
@@ -397,7 +410,8 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	protected boolean init()
 	{
 		MLPluginConfigProp propPlugin = prePropInit((MLPluginConfigProp) getPluginProps());
-		
+		//
+		inferenceConf = null;
 		//
 		String sDnnBackend = propPlugin.getDnnBackend();
 		if(isNumeric(sDnnBackend))
@@ -493,9 +507,9 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 			}
 		}
 		
-		inferenceConf = pluginInitConf;
+		inferenceConf = pluginInitConf.clone();
 		
-		return true;
+		return (inferenceConf!=null);
 	}
 	
 	private static boolean isNumeric(String str) {
@@ -849,7 +863,6 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	}
 	
 	/////
-	
 	
 	@Override
 	public List<Mat> doInference(Mat aImageFile, Net aDnnNet) {

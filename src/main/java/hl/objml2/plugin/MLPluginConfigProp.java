@@ -76,11 +76,11 @@ public class MLPluginConfigProp extends Properties {
 	{
 		return getProperty(pluginKeys.propkey_pluginDnnTarget);
 	}
+	/////
 	public String getMlModelSource()
 	{
 		return getProperty(pluginKeys.propkey_pluginMLModelSource);
 	}
-	/////
 	public void setMlModelSource(String aMlModelSource)
 	{
 		this.setProperty(pluginKeys.propkey_pluginMLModelSource, aMlModelSource);

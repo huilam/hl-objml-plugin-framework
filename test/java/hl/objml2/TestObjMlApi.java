@@ -73,7 +73,7 @@ public class TestObjMlApi {
 		   			MLPluginFrameOutput result = objmlApi.detectFrame(plugin, inputParam);
 
 		   			FrameDetectionMeta meta = result.getFrameDetectionMeta();
-		   			System.out.println(meta);
+System.out.println("meta="+meta);
 		   			
 		   			FrameDetectedObj frameObjs = result.getFrameDetectedObj();
 	    	   		List<DetectedObj> listDetectedObj = frameObjs.getAllDetectedObjs();

@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.opencv.core.Size;
 
-public class FrameDetectionMeta {
+public class FrameDetectionMeta implements Cloneable {
 
 	//
 	private String objml_plugin_name 	= null;
@@ -99,5 +99,16 @@ public class FrameDetectionMeta {
 		this.dnn_backend = dnn_backend;
 	}
 	
+	@Override
+	public FrameDetectionMeta clone() {
+		
+		try {
+			return (FrameDetectionMeta) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 		
 }
