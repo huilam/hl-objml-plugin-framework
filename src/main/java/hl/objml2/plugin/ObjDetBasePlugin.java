@@ -52,6 +52,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	////////////////////
 	private boolean isRegObjsOfInterest 				= false;
 	protected List<String> obj_classes_of_interest 		= new ArrayList<String>();
+	//Allow multiple objects class to map to same class name
 	protected Map<String, String> mapObjClassMapping 	= new HashMap<String, String>();
 	//
 	private boolean isInited = false;
@@ -555,6 +556,29 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 		}
 		
 		return false;
+	}
+	
+	public boolean isObjOfInterest(String aObjClassName)
+	{
+		if(!isRegObjsOfInterest)
+			return true;
+		
+		if(aObjClassName!=null)
+			return this.obj_classes_of_interest.contains(aObjClassName.toLowerCase());
+		return false;
+	}
+	
+	public boolean isObjOfInterest(int aObjClassId)
+	{
+		if(!isRegObjsOfInterest)
+			return true;
+		
+		String sObjClassName = null;
+		if(aObjClassId>-1)
+		{
+			sObjClassName = inferenceConf.getObj_of_interest().get(aObjClassId);
+		}
+		return isObjOfInterest(sObjClassName);
 	}
 	
 	/////
