@@ -543,20 +543,6 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 		return false;
 	}
 	
-	public boolean isObjClassOfInterest(String aObjClassName)
-	{
-		if(!isRegObjsOfInterest)
-			return true;
-		
-		return this.obj_classes_of_interest.contains(aObjClassName.toLowerCase());
-	}
-	
-	public boolean isObjOfInterest(int aObjClassId)
-	{
-		String sObjClassName = getObjClassLabel(aObjClassId);
-		return isObjClassOfInterest(sObjClassName);
-	}
-	
 	/////
 	public void addObjClassMapping(String aOrgObjClassName, String aNewObjClassName)
 	{
