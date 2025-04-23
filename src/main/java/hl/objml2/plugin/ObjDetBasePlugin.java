@@ -524,7 +524,7 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 
 	public String[] getObjClassesOfInterest()
 	{
-		return (String[]) this.obj_classes_of_interest.toArray();
+		return this.obj_classes_of_interest.toArray(new String[0]);
 	}
 	
 	public void setObjClassesOfInterest(String[] aObjOfInterestLabels)
