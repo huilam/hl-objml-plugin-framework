@@ -52,12 +52,17 @@ public class TestObjMlApi {
     		MLPluginConfigProp propPlugin 	=  plugin.getPluginProps();
     		
     		System.out.println("    - "+propPlugin.getMlModelName()+" ("+propPlugin.getMlModelLicense()+")");
-    		System.out.println("    - Source:"+propPlugin.getMlModelSource());
-    		System.out.println("    - ConfidenceScore:"+propPlugin.getMlModelConfidenceScore());
-    		System.out.println("    - NmsScore:"+propPlugin.getMlModelNmsScore());
-    		System.out.println("    - ObjLabels:"+propPlugin.getMlModelSupportedLabels());
-    		System.out.println("    - DnnBackend:"+propPlugin.getDnnBackend());
-    		System.out.println("    - DnnTarget:"+propPlugin.getDnnTarget());
+    		System.out.println("    - Source :"+propPlugin.getMlModelSource());
+    		System.out.println("    - ConfidenceScore :"+propPlugin.getMlModelConfidenceScore());
+    		System.out.println("    - NmsScore :"+propPlugin.getMlModelNmsScore());
+    		String sObjLabels = propPlugin.getMlModelSupportedLabels();
+    		if(sObjLabels!=null)
+    		{
+    			sObjLabels = sObjLabels.replace("\n", ",");
+    		}
+    		System.out.println("    - ObjLabels :"+sObjLabels);
+    		System.out.println("    - DnnBackend :"+propPlugin.getDnnBackend());
+    		System.out.println("    - DnnTarget :"+propPlugin.getDnnTarget());
  
     		
   	   		ObjMLInputParam inputParam = new ObjMLInputParam();

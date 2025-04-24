@@ -401,8 +401,14 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 			
 			List<Mat> listOutput = doInference(aImageFile, this.NET_DNN);
 			
-			MLPluginFrameOutput frameOutput = parseDetections(aImageFile, listOutput);
-			return frameOutput.getDetectionOutputMap();
+			if(listOutput!=null)
+			{
+				MLPluginFrameOutput frameOutput = parseDetections(aImageFile, listOutput);
+				if(frameOutput!=null)
+				{
+					return frameOutput.getDetectionOutputMap();
+				}
+			}
 			
 		}
 		return null;
