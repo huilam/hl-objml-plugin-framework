@@ -125,11 +125,8 @@ public class ObjMLApi {
 			
 			JSONObject jsonMLConfig = null;
 			
-			Map<String, Object> outputMap = plugin.detect(matInputImg, jsonMLConfig);
-			if(outputMap!=null)
-			{
-				frameOutput = new MLPluginFrameOutput(outputMap);
-			}
+			frameOutput = plugin.detect(matInputImg, jsonMLConfig);
+			
 		}
 		return frameOutput;
 	}

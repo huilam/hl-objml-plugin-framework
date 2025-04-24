@@ -9,7 +9,7 @@ public class FrameDetectionMeta implements Cloneable {
 
 	//
 	private String objml_plugin_name 	= null;
-	private String objml_model_name 	= null;
+	private String objml_model_filename = null;
 	//
 	private double confidence_threshold = 0;
 	private double nms_threshold 		= 0;
@@ -30,11 +30,11 @@ public class FrameDetectionMeta implements Cloneable {
 	public void setObjml_plugin_name(String objml_plugin_name) {
 		this.objml_plugin_name = objml_plugin_name;
 	}
-	public String getObjml_model_name() {
-		return objml_model_name;
+	public String getObjml_model_filename() {
+		return objml_model_filename;
 	}
-	public void setObjml_model_name(String objml_model_name) {
-		this.objml_model_name = objml_model_name;
+	public void setObjml_model_filename(String objml_model_filename) {
+		this.objml_model_filename = objml_model_filename;
 	}
 	public String getSource_name() {
 		return source_name;
@@ -109,6 +109,20 @@ public class FrameDetectionMeta implements Cloneable {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public String toString()
+	{
+		StringBuffer sb = new StringBuffer();
+		sb.append("objml_plugin_name=").append(getObjml_plugin_name());
+		sb.append("\n").append("objml_model_filename=").append(getObjml_model_filename());
+		sb.append("\n").append("confidence_threshold=").append(getConfidence_threshold());
+		sb.append("\n").append("nms_threshold=").append(getNms_threshold());
+		sb.append("\n").append("dnn_input_size=").append(getDnn_input_size());
+		sb.append("\n").append("dnn_target=").append(getDnn_target());
+		sb.append("\n").append("dnn_backend=").append(getDnn_backend());
+		
+		return sb.toString();
 	}
 		
 }

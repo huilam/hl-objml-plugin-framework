@@ -394,8 +394,9 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 		return mat;
 	}
 
-	public Map<String, Object> detect(Mat aImageFile, JSONObject aCustomThresholdJson) 
+	public MLPluginFrameOutput detect(Mat aImageFile, JSONObject aCustomThresholdJson) 
 	{	
+		MLPluginFrameOutput frameOutput = null;
 		if(isPluginOK())
 		{
 			
@@ -403,15 +404,12 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 			
 			if(listOutput!=null)
 			{
-				MLPluginFrameOutput frameOutput = parseDetections(aImageFile, listOutput);
-				if(frameOutput!=null)
-				{
-					return frameOutput.getDetectionOutputMap();
-				}
+				frameOutput = parseDetections(aImageFile, listOutput);
+				frameOutput.setFrameDetectionMeta(inferenceConf);
 			}
 			
 		}
-		return null;
+		return frameOutput;
 	}
 	
 	protected boolean init()
@@ -419,6 +417,8 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 		MLPluginConfigProp propPlugin = prePropInit((MLPluginConfigProp) getPluginProps());
 		//
 		inferenceConf = null;
+		pluginInitConf.setObjml_model_filename(new File(getModelFileName()).getName());
+		pluginInitConf.setObjml_plugin_name(getPluginName());
 		//
 		String sDnnBackend = propPlugin.getDnnBackend();
 		if(isNumeric(sDnnBackend))

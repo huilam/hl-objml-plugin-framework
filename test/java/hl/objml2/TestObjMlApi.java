@@ -1,7 +1,6 @@
 package hl.objml2;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 
 import org.opencv.core.Mat;
@@ -77,18 +76,22 @@ public class TestObjMlApi {
 		   			
 		   			MLPluginFrameOutput result = objmlApi.detectFrame(plugin, inputParam);
 
-		   			FrameDetectionMeta meta = result.getFrameDetectionMeta();
-System.out.println("meta="+meta);
+		   			
 		   			
 		   			FrameDetectedObj frameObjs = result.getFrameDetectedObj();
 	    	   		List<DetectedObj> listDetectedObj = frameObjs.getAllDetectedObjs();
-	    	   		int i = 0;
-	    	   		for(DetectedObj obj : listDetectedObj)
-	    	   		{
-	    	   			i++;
-	    	   			System.out.println("	    "+i+". "+obj.getObj_classname()+":"+obj.getObj_conf_score());
-	    	   		}
 	    	   		
+	    	   		if(listDetectedObj!=null)
+	    	   		{
+	    	   			FrameDetectionMeta meta = result.getFrameDetectionMeta();
+	    	   			System.out.println("	    "+meta.toString());
+		    	   		int i = 0;
+		    	   		for(DetectedObj obj : listDetectedObj)
+		    	   		{
+		    	   			i++;
+		    	   			System.out.println("	    "+i+". "+obj.getObj_classname()+":"+obj.getObj_conf_score());
+		    	   		}
+	    	   		}
 	        	}
   	   		}finally
   	   		{

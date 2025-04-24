@@ -73,7 +73,7 @@ public class ObjMLInputParam {
 	}
 	private double getParamValueAsDouble(String aParamName)
 	{
-		double dVal = 0;
+		double dVal = -1;
 		String sVal = getInputParam(aParamName);
 		if(sVal!=null && sVal.trim().length()>0)
 		{
