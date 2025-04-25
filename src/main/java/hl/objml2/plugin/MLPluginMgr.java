@@ -124,7 +124,15 @@ public class MLPluginMgr extends PluginMgr {
 								isUnzip = true;
 								break;
 							}
-							propPlugin.load(aPluginClassLoader.getResourceAsStream(entry.getName()));
+							
+							Properties prop = PropUtil.loadProperties(entry.getName());
+							propPlugin.putAll(prop);
+							/**
+							Properties prop = new Properties();
+							prop.load(aPluginClassLoader.getResourceAsStream(entry.getName()));
+							//
+							propPlugin.putAll(prop);
+							**/
 						}
 					}
 	    		} catch (FileNotFoundException e1) {
