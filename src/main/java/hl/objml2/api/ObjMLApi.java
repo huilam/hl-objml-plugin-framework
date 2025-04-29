@@ -121,7 +121,11 @@ public class ObjMLApi {
 			plugin.setNMSThreshold_Override(aObjMlInput.getNmsThreshold());
 			plugin.setDnnBackend_Override(aObjMlInput.getPrefferedDnnBackend());
 			plugin.setDnnTarget_Override(aObjMlInput.getPrefferedDnnTarget());
-			plugin.setObjClassesOfInterest(aObjMlInput.getObjOfInterest().split("[\n\\,]"));
+			
+			if(aObjMlInput.getObjOfInterest().length()>0)
+			{
+				plugin.setObjClassesOfInterest(aObjMlInput.getObjOfInterest().split("[\n\\,]"));
+			}
 			
 			JSONObject jsonMLConfig = null;
 			

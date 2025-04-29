@@ -527,7 +527,12 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 	        return false;
 	    }
 	}
-
+	
+	public String[] getSupportedObjLabels()
+	{
+		return this.pluginInitConf.getObj_of_interest().toArray(new String[0]);
+	}
+	
 	public String[] getObjClassesOfInterest()
 	{
 		return this.obj_classes_of_interest.toArray(new String[0]);
