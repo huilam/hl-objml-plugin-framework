@@ -1,5 +1,6 @@
 package hl.objml2.api;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,12 @@ public class ObjMLApi {
 	private void initPluginMgr(MLPluginMgr aMLPluginMgr)
 	{
 		pluginMgr = aMLPluginMgr;
+		reScanPlugins();
+	}
+	
+	public void addPluginFolders(File[] aPluginFolders)
+	{
+		pluginMgr.addPluginPaths(aPluginFolders);
 		reScanPlugins();
 	}
 	
