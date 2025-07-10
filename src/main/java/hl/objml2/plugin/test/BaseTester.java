@@ -1,6 +1,9 @@
 package hl.objml2.plugin.test;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -22,6 +25,8 @@ public class BaseTester {
 	
 	private String 	 FOLDER_IMAGE = DEF_FOLDER_IMAGE;
 	private String[] IMGFILE_EXTS = DEF_IMG_FILE_EXTS;
+	
+	private BufferedWriter outputFile = null; 
 	
 	public void setOutputImageExtension(String aImgExt)
 	{
@@ -94,8 +99,8 @@ public class BaseTester {
 		
 		if(aDetector.isPluginOK())
 		{
-			System.out.println(" Detector : "+aDetector.getPluginName()+" ("+aDetector.getPluginMLModelFileName()+")");
-			System.out.println("   isPluginOK : "+aDetector.isPluginOK());
+			prnln(" Detector : "+aDetector.getPluginName()+" ("+aDetector.getPluginMLModelFileName()+")");
+			prnln("   isPluginOK : "+aDetector.isPluginOK());
 
 			Properties prop = aDetector.getPluginProps();
 			
@@ -110,20 +115,34 @@ public class BaseTester {
 					if(sVal.length()>60) sVal = sVal.substring(0, 60)+" ... (truncated)";
 					
 					String sKey = oKey.toString().substring(iKeyPrefix);
-					System.out.println("     - prop:"+sKey+" : "+sVal);
+					prnln("     - prop:"+sKey+" : "+sVal);
 				}
 			}
 			
-			File fileFolder = new File("./test/images/output/"+System.currentTimeMillis());
+			String sExecutionTS = ""+System.currentTimeMillis();
+			
+			File fileFolder = new File("./test/images/output/"+sExecutionTS);
+			fileFolder.mkdirs();
 			
 			int i = 1;
 			
 			ObjDetBasePlugin pluginDetector = (ObjDetBasePlugin) aDetector;
 			
+			
+			String sModelFileName = new File(aDetector.getPluginMLModelFileName()).getName();
+			File fOutputText = new File(fileFolder.getAbsolutePath()+"/"+sExecutionTS+"_"+sModelFileName+".txt");
+			try {
+				outputFile = new BufferedWriter(new FileWriter(fOutputText));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
 			for(File fImg : getTestImageFiles())
 			{
-				System.out.println();
-				System.out.print("    "+(i++)+". Perform test on "+fImg.getName()+" ... ");
+				prnln();
+				prn("    "+(i++)+". Perform test on "+fImg.getName()+" ... ");
 				
 				Mat matImg = ObjDetBasePlugin.getCvMatFromFile(fImg);
 				
@@ -141,16 +160,16 @@ public class BaseTester {
 					long lInferenceMs =  lInferenceEnd-lInferenceStart;
 					
 					
-					System.out.println();
-					System.out.println("     - Inference Model File : "+new File(aDetector.getPluginMLModelFileName()).getName());
-					System.out.println("     - Inference Input Size : "+matImg.size()+" -> "+pluginDetector.getImageInputSize().toString());
-					System.out.println("     - Inference Confidence Threshold : "+pluginDetector.getConfidenceThreshold());
-					System.out.println("     - Inference NMS Threshold : "+pluginDetector.getNMSThreshold());
-					System.out.println("     - Inference Backend    : "+pluginDetector.getDnnBackendDesc());
-					System.out.println("     - Inference Target     : "+pluginDetector.getDnnTargetDesc());
-					System.out.println("     - Inference Time       : "+lInferenceMs+ " ms");
+					prnln();
+					prnln("     - Inference Model File : "+sModelFileName);
+					prnln("     - Inference Input Size : "+matImg.size()+" -> "+pluginDetector.getImageInputSize().toString());
+					prnln("     - Inference Confidence Threshold : "+pluginDetector.getConfidenceThreshold());
+					prnln("     - Inference NMS Threshold : "+pluginDetector.getNMSThreshold());
+					prnln("     - Inference Backend    : "+pluginDetector.getDnnBackendDesc());
+					prnln("     - Inference Target     : "+pluginDetector.getDnnTargetDesc());
+					prnln("     - Inference Time       : "+lInferenceMs+ " ms");
 					
-					System.out.println("     - Inference Outputs    : ");
+					prnln("     - Inference Outputs    : ");
 					int outputIdx=0;
 					for(Mat matOutput : listInferOutput)
 					{
@@ -161,7 +180,7 @@ public class BaseTester {
 							sMatDims = sMatDims.substring(0, iPos) +" ]";
 						}
 						
-					System.out.println("        "+(outputIdx++)+" : "+sMatDims);	
+					prnln("        "+(outputIdx++)+" : "+sMatDims);	
 					}
 					
 			
@@ -169,19 +188,19 @@ public class BaseTester {
 					if(frameObjs!=null)
 					{
 						//
-						System.out.println("     - ObjClass Names : "+String.join(",", frameObjs.getObjClassNames()));
-						System.out.println("     - Total Detection : "+frameObjs.getFrame_total_detection());
+						prnln("     - ObjClass Names : "+String.join(",", frameObjs.getObjClassNames()));
+						prnln("     - Total Detection : "+frameObjs.getFrame_total_detection());
 					}
 					else
 					{
 						FrameDetectionMeta meta = (FrameDetectionMeta) mapResult.get(ObjDetBasePlugin._KEY_OUTPUT_FRAME_DETECTION_META);
 						if(meta!=null)
 						{
-							System.out.println("     - Total Detection : 1");
+							prnln("     - Total Detection : 1");
 						}
 						else
 						{
-							System.out.println("     - Total Detection : (No Detection Data)");
+							prnln("     - Total Detection : (No Detection Data)");
 						}
 					}
 		
@@ -194,18 +213,60 @@ public class BaseTester {
 								fileFolder, fImg.getName());
 						
 						if(savedFileName!=null)
-							System.out.println("     - [saved] "+savedFileName);
+							prnln("     - [saved] "+savedFileName);
 					}
+					
+					
 				}
 				else
 				{
-					System.out.println("     - No result found.");
+					prnln("     - No result found.");
 				}
 			}
 			
+			if(outputFile!=null)
+			{
+				try {
+					outputFile.flush();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				try {
+					outputFile.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				outputFile = null;
+			}
 		}	
 		
 		return frameObjs;
 	}
 	
+	private void prn(String aPrintText)
+	{
+		System.out.print(aPrintText);
+		if(outputFile!=null)
+		{
+			try {
+				outputFile.write(aPrintText);
+			} catch (IOException e) {
+				outputFile = null;
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private void prnln(String aPrintText)
+	{
+		prn(aPrintText+"\n");
+	}
+	
+	private void prnln()
+	{
+		prnln("");
+	}
 }
