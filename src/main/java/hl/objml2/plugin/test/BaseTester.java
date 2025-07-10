@@ -143,7 +143,7 @@ public class BaseTester {
 					
 					System.out.println();
 					System.out.println("     - Inference Model File : "+new File(aDetector.getPluginMLModelFileName()).getName());
-					System.out.println("     - Inference Input Size : "+pluginDetector.getImageInputSize().toString());
+					System.out.println("     - Inference Input Size : "+matImg.size()+" -> "+pluginDetector.getImageInputSize().toString());
 					System.out.println("     - Inference Confidence Threshold : "+pluginDetector.getConfidenceThreshold());
 					System.out.println("     - Inference NMS Threshold : "+pluginDetector.getNMSThreshold());
 					System.out.println("     - Inference Backend    : "+pluginDetector.getDnnBackendDesc());
