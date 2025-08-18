@@ -27,7 +27,8 @@ public class UnitTestUtil  {
     	
 		}
     	System.out.println();
-    	System.out.println("plugin bundles discovered : "+fPluginJars.length);
+    	System.out.println("Scanning "+aPluginFolder.getAbsolutePath()+" ... bundles discovered : "+fPluginJars.length);
+    	System.out.println();
     	
     	return fPluginJars;
 	}
