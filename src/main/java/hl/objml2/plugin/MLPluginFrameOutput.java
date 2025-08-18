@@ -3,6 +3,8 @@ package hl.objml2.plugin;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.opencv.core.Mat;
 
 import hl.objml2.common.FrameDetectedObj;
@@ -11,6 +13,7 @@ import hl.objml2.common.FrameDetectionMeta;
 public class MLPluginFrameOutput  {
 	
 	private Map<String,Object> map_plugin_output = null;
+	private JSONObject jsonErrors = new JSONObject();
 	
 	//=============
 	
@@ -32,8 +35,33 @@ public class MLPluginFrameOutput  {
 	public void clear()
 	{
 		map_plugin_output.clear();
+		clearErrors();
+	}
+	//=============
+	
+	public void clearErrors()
+	{
+		if(jsonErrors!=null)
+			jsonErrors.clear();
 	}
 	
+	public boolean addError(String aErrCat, String aErrMsg)
+	{
+		if(jsonErrors==null)
+			jsonErrors = new JSONObject();
+		
+		JSONArray jArrErrCat = jsonErrors.optJSONArray(aErrCat, null);
+		if(jArrErrCat==null)
+			jArrErrCat = new JSONArray();
+		jArrErrCat.put(aErrMsg);
+		jsonErrors.put(aErrCat, jArrErrCat);
+		return true;
+	}
+	
+	public JSONObject getErrorsJson()
+	{
+		return jsonErrors;
+	}
 	//=============
 	public void setFrameDetectedObj(FrameDetectedObj aFrameObj)
 	{
@@ -52,6 +80,9 @@ public class MLPluginFrameOutput  {
 			frameObj = (FrameDetectedObj) map_plugin_output.getOrDefault(
 					IObjDetectionPlugin._KEY_OUTPUT_FRAME_DETECTIONS, null);
 		}
+		
+		if(frameObj==null)
+			 frameObj = new FrameDetectedObj();
 		
 		return frameObj;
 	}
@@ -94,6 +125,9 @@ public class MLPluginFrameOutput  {
 			meta = (FrameDetectionMeta) map_plugin_output.getOrDefault(
 					IObjDetectionPlugin._KEY_OUTPUT_FRAME_DETECTION_META, null);
 		}
+		
+		if(meta==null)
+			meta = new FrameDetectionMeta();
 		
 		return meta;
 	}

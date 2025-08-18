@@ -76,7 +76,7 @@ public class FrameDetectedObj {
 	{
 		Set<String> setObjClassName = this.mapDetectedObjs.keySet();
 		
-		if(setObjClassName==null)
+		if(setObjClassName==null || setObjClassName.size()==0)
 			return new String[] {};
 		
 		return (String[]) setObjClassName.toArray(new String[setObjClassName.size()]);

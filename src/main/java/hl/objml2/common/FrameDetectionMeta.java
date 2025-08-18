@@ -3,10 +3,18 @@ package hl.objml2.common;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONObject;
 import org.opencv.core.Size;
 
 public class FrameDetectionMeta implements Cloneable {
 
+	private final static String META_PLUGIN_NAME 			= "objml_plugin_name";
+	private final static String META_MODEL_FILENAME 		= "objml_model_filename";
+	private final static String META_CONFIDENCE_THRESHOLD 	= "confidence_threshold";
+	private final static String META_NMS_THRESHOLD 			= "nms_threshold";
+	private final static String META_DNN_INPUT_SIZE 		= "dnn_input_size";
+	private final static String META_DNN_TARGET 			= "dnn_target";
+	private final static String META_DNN_BACKEND 			= "dnn_backend";
 	//
 	private String objml_plugin_name 	= null;
 	private String objml_model_filename = null;
@@ -111,16 +119,30 @@ public class FrameDetectionMeta implements Cloneable {
 		return null;
 	}
 	
+	public JSONObject toJson()
+	{
+		JSONObject json = new JSONObject();
+		json.put(META_PLUGIN_NAME, this.getObjml_plugin_name());
+		json.put(META_MODEL_FILENAME, this.getObjml_model_filename());
+		json.put(META_CONFIDENCE_THRESHOLD, this.getConfidence_threshold());
+		json.put(META_NMS_THRESHOLD, this.getNms_threshold());
+		json.put(META_DNN_INPUT_SIZE, this.getDnn_input_size());
+		json.put(META_DNN_TARGET, this.getDnn_target());
+		json.put(META_DNN_BACKEND, this.getDnn_backend());
+		
+		return json;
+	}
+	
 	public String toString()
 	{
 		StringBuffer sb = new StringBuffer();
-		sb.append("objml_plugin_name=").append(getObjml_plugin_name());
-		sb.append("\n").append("objml_model_filename=").append(getObjml_model_filename());
-		sb.append("\n").append("confidence_threshold=").append(getConfidence_threshold());
-		sb.append("\n").append("nms_threshold=").append(getNms_threshold());
-		sb.append("\n").append("dnn_input_size=").append(getDnn_input_size());
-		sb.append("\n").append("dnn_target=").append(getDnn_target());
-		sb.append("\n").append("dnn_backend=").append(getDnn_backend());
+		sb.append(META_PLUGIN_NAME).append("=").append(getObjml_plugin_name());
+		sb.append("\n").append(META_MODEL_FILENAME).append("=").append(getObjml_model_filename());
+		sb.append("\n").append(META_CONFIDENCE_THRESHOLD).append("=").append(getConfidence_threshold());
+		sb.append("\n").append(META_NMS_THRESHOLD).append("=").append(getNms_threshold());
+		sb.append("\n").append(META_DNN_INPUT_SIZE).append("=").append(getDnn_input_size());
+		sb.append("\n").append(META_DNN_TARGET).append("=").append(getDnn_target());
+		sb.append("\n").append(META_DNN_BACKEND).append("=").append(getDnn_backend());
 		
 		return sb.toString();
 	}
