@@ -203,6 +203,11 @@ public class FrameDetectedObj {
 		return frame;
 	}
 
+	public void release()
+	{
+		if(mat_output_frameimg!=null)
+			mat_output_frameimg.release();
+	}
 	
 	//////////////////////////
 	//////////////////////////

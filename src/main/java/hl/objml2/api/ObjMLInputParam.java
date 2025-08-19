@@ -89,6 +89,7 @@ public class ObjMLInputParam {
 	//////////
 	public void clearParams() {
 		input_param_map.clear();
+		release();
 	}
 	public String getInputParam(String aParamName) {
 		return input_param_map.get(aParamName);
@@ -98,6 +99,12 @@ public class ObjMLInputParam {
 	}
 	public void removeInputParam(String aParamName) {
 		input_param_map.remove(aParamName);
+	}
+	
+	public void release()
+	{
+		if(input_image!=null)
+			input_image.release();
 	}
 	
 }

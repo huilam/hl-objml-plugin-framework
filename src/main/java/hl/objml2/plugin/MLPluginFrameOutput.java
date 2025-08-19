@@ -132,4 +132,19 @@ public class MLPluginFrameOutput  {
 		return meta;
 	}
 	//
+	
+	public void release()
+	{
+		if(map_plugin_output!=null && map_plugin_output.size()>0)
+		{
+			for(Object o : map_plugin_output.values())
+			{
+				if(o instanceof Mat)
+				{
+					((Mat) o).release();
+				}
+			}
+			map_plugin_output.clear();
+		}
+	}
 }
