@@ -1,6 +1,8 @@
 package hl.objml2.plugin;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -106,6 +108,31 @@ public class MLPluginFrameOutput  {
 		}
 		
 		return matImg;
+	}
+	//=============
+	public void setDnnOutputMatList(List<Mat> aDnnOutputMatList)
+	{
+		if(aDnnOutputMatList!=null)
+		{
+			map_plugin_output.put(IObjDetectionPlugin._KEY_OUTPUT_DNN_OUTPUT_MAT_LIST, aDnnOutputMatList);
+		}
+		
+	}
+	@SuppressWarnings("unchecked")
+	public List<Mat> getDnnOutputMatList()
+	{
+		List<Mat> listDnnMat = null;
+		
+		if(map_plugin_output!=null)
+		{
+			listDnnMat = (List<Mat>) map_plugin_output.getOrDefault(
+					IObjDetectionPlugin._KEY_OUTPUT_DNN_OUTPUT_MAT_LIST, null);
+		}
+		
+		if(listDnnMat==null)
+			listDnnMat = new ArrayList<>();
+		
+		return listDnnMat;
 	}
 	//=============
 	public void setFrameDetectionMeta(FrameDetectionMeta aFrameDetectionMeta)

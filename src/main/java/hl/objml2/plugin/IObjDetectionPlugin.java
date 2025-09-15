@@ -11,6 +11,7 @@ public interface IObjDetectionPlugin extends IBasePlugin {
 	
 	public static final String _KEY_OUTPUT_FRAME_DETECTIONS 	= "output_frame_detections";
 	public static final String _KEY_OUTPUT_FRAME_DETECTION_META = "output_frame_detection_meta";
+	public static final String _KEY_OUTPUT_DNN_OUTPUT_MAT_LIST 	= "output_dnn_mat_list";
 	public static final String _KEY_OUTPUT_FRAME_ANNOTATED_IMG 	= "output_frame_annotated_image";
 	
 	abstract public List<Mat> doInference(Mat aMatInput, Net aDnnNet);
