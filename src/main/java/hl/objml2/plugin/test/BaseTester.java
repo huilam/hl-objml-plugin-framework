@@ -241,7 +241,7 @@ public class BaseTester {
 														  (Mat)objOutput, 
 														  fileFolder, fImg.getName()+"_"+sOutputKey);
 										if(savedFileName2!=null)
-											prnln("     - [saved] "+savedFileName);
+											prnln("     - [saved] "+savedFileName2);
 									}
 								}
 								
