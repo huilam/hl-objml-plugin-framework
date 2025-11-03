@@ -26,7 +26,19 @@ public class BaseTester {
 	private String 	 FOLDER_IMAGE = DEF_FOLDER_IMAGE;
 	private String[] IMGFILE_EXTS = DEF_IMG_FILE_EXTS;
 	
+	private boolean isSaveOutputMatAsFile = false; 
 	private BufferedWriter outputFile = null; 
+	
+	
+	public void setIsAutoSaveOutputMatAsFile(boolean aIsSaved)
+	{
+		isSaveOutputMatAsFile = aIsSaved;
+	}
+	
+	public boolean getIsAutoSaveOutputMatAsFile()
+	{
+		return isSaveOutputMatAsFile;
+	}
 	
 	public void setOutputImageExtension(String aImgExt)
 	{
@@ -214,6 +226,27 @@ public class BaseTester {
 						
 						if(savedFileName!=null)
 							prnln("     - [saved] "+savedFileName);
+						
+						if(getIsAutoSaveOutputMatAsFile())
+						{
+							for(String sOutputKey : mapResult.keySet())
+							{
+								Object objOutput = mapResult.get(sOutputKey);
+								if(!sOutputKey.contentEquals(ObjDetBasePlugin._KEY_OUTPUT_FRAME_ANNOTATED_IMG))
+								{
+									if(objOutput instanceof Mat)
+									{
+										String savedFileName2 = 
+												saveImage(aDetector.getPluginName(), 
+														  (Mat)objOutput, 
+														  fileFolder, fImg.getName()+"_"+sOutputKey);
+										if(savedFileName2!=null)
+											prnln("     - [saved] "+savedFileName);
+									}
+								}
+								
+							}
+						}
 					}
 					
 					

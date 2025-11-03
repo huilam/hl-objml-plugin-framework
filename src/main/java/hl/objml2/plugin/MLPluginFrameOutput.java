@@ -158,7 +158,16 @@ public class MLPluginFrameOutput  {
 		
 		return meta;
 	}
-	//
+	///////
+	public void putFrameOutputCustomObj(String aCustomObjName, Object aCustomObj)
+	{
+		map_plugin_output.put(aCustomObjName, aCustomObj);
+	}
+	public Object getFrameOutputCustomObj(String aCustomObjName)
+	{
+		return map_plugin_output.get(aCustomObjName);
+	}
+	///////
 	
 	public void release()
 	{
