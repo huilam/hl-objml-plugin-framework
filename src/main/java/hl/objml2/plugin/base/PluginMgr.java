@@ -155,28 +155,26 @@ public class PluginMgr {
     	//
 	}
 	
-	protected File searchAllSubFolders(File aFolder, String aTargetFileName)
+	protected List<File> searchAllSubFolders(File aFolder, String aTargetFileName)
 	{
-		File fileTarget = null;
+		List<File> listFileTarget = new ArrayList<>();
 		
 		for(File f: aFolder.listFiles())
 		{
 			if(f.isDirectory())
 			{
-				fileTarget = searchAllSubFolders(f, aTargetFileName);
-				if(fileTarget!=null)
-					return fileTarget;
+				listFileTarget.addAll(searchAllSubFolders(f, aTargetFileName));
 			}
 			else
 			{
 				if(f.getName().equalsIgnoreCase(aTargetFileName))
 				{
-					return f;
+					listFileTarget.add(f);
 				}
 			}
 		}
 		
-		return fileTarget;
+		return listFileTarget;
 	}
     
 }

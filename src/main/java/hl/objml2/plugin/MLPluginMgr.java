@@ -9,6 +9,7 @@ import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,12 +105,10 @@ public class MLPluginMgr extends PluginMgr {
 		
 		for(File f : aPluginSources)
     	{
-			MLPluginConfigProp propPlugin = new MLPluginConfigProp();
+			List<MLPluginConfigProp> listPropPlugin = new ArrayList<>();
 			//zip or jar file
 			if(f.isFile())
 			{
-				boolean isUnzip = false;
-				
 	    		ZipInputStream jar = null;
 	    		
 	    		try {
@@ -119,20 +118,25 @@ public class MLPluginMgr extends PluginMgr {
 					{
 						if(entry.getName().toLowerCase().indexOf("/"+aPluginPropFileName)>-1)
 						{
+							
 							if(isUnzipBundle)
 							{
-								isUnzip = true;
+								f = unzip(f);
 								break;
 							}
-							
-							Properties prop = PropUtil.loadProperties(entry.getName());
-							propPlugin.putAll(prop);
-							/**
-							Properties prop = new Properties();
-							prop.load(aPluginClassLoader.getResourceAsStream(entry.getName()));
-							//
-							propPlugin.putAll(prop);
-							**/
+							else
+							{
+								Properties prop = PropUtil.loadProperties(entry.getName());
+								MLPluginConfigProp propPlugin = new MLPluginConfigProp();
+								propPlugin.putAll(prop);
+								listPropPlugin.add(propPlugin);
+								/**
+								Properties prop = new Properties();
+								prop.load(aPluginClassLoader.getResourceAsStream(entry.getName()));
+								//
+								propPlugin.putAll(prop);
+								**/
+							}
 						}
 					}
 	    		} catch (FileNotFoundException e1) {
@@ -151,61 +155,73 @@ public class MLPluginMgr extends PluginMgr {
 						e.printStackTrace();
 					}
 	    		}
-	    		
-	    		if(isUnzip)
-	    		{
-	    			File unzipFolder = new File(f.getAbsoluteFile()+".dir");
-	    			
-	    			if(!unzipFolder.exists())
-	    			{
-		    			unzipFolder.mkdirs();
-		    			try {
-							ZipUtil.unZip(f.getAbsolutePath(), unzipFolder.getAbsolutePath());
-							f = unzipFolder;
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-	    			}
-	    			else
-	    			{
-	    				f = unzipFolder;
-	    			}
-	    		}
 			}
 			
 			
 			if(f.isDirectory())
 			{
 	    	    //classpath 
-				File fileProp = searchAllSubFolders(f, aPluginPropFileName);
-				if(fileProp!=null)
+				List<File> listFileProp = searchAllSubFolders(f, aPluginPropFileName);
+				if(listFileProp!=null && listFileProp.size()>0)
 				{
-					try {
-						Properties prop = PropUtil.loadProperties(fileProp.getAbsolutePath());
-						propPlugin.putAll(prop);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					for(File fileProp : listFileProp)
+					{
+						try {
+							Properties prop = PropUtil.loadProperties(fileProp.getAbsolutePath());
+							MLPluginConfigProp propPlugin = new MLPluginConfigProp();
+							propPlugin.putAll(prop);
+							listPropPlugin.add(propPlugin);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 				}
 			}
 			
-			if(propPlugin!=null && propPlugin.size()>0)
+			if(listPropPlugin!=null && listPropPlugin.size()>0)
 			{
-				propPlugin.setMlModelSource(f.getName());
-				
-				String sPlugClassName = verifyPluginJavaClassName(propPlugin);
-				if(sPlugClassName!=null)
+				for(MLPluginConfigProp propPlugin : listPropPlugin)
 				{
-					mapPluginClasses.put(sPlugClassName, propPlugin);
-					System.out.println(" [+] "+sPlugClassName+" ("+f.getName()+")");
+					propPlugin.setMlModelSource(f.getName());
+					
+					String sPlugClassName = verifyPluginJavaClassName(propPlugin);
+					if(sPlugClassName!=null)
+					{
+						mapPluginClasses.put(sPlugClassName, propPlugin);
+						System.out.println(" [+] "+sPlugClassName+" ("+f.getName()+")");
+					}
 				}
 			}
     	}
 		return mapPluginClasses;
 	}
 	
+	private File unzip(final File aZipFile)
+	{
+		if(aZipFile.getName().endsWith(".dir"))
+			return aZipFile;
+		
+		File unzipFolder = new File(aZipFile.getAbsoluteFile()+".dir");
+		
+		if(!unzipFolder.exists())
+		{
+			unzipFolder.mkdirs();
+			try {
+				ZipUtil.unZip(aZipFile.getAbsolutePath(), unzipFolder.getAbsolutePath());
+				return unzipFolder;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else if(unzipFolder.isDirectory())
+		{
+			return unzipFolder;
+		}
+		
+		return aZipFile;
+	}
 	
 	private String verifyPluginJavaClassName(MLPluginConfigProp prop)
 	{
