@@ -12,7 +12,7 @@
 	<classpathentry kind="lib" path="lib/opencv/cv4/native"/>
 	<classpathentry kind="lib" path="lib/opencv/cv5/native"/>
 	<classpathentry kind="lib" path="lib/opencv/cv4/hl-opencv_cv4_jdk25_20260607-2144-57.jar"/>
-	<classpathentry kind="lib" path="lib/opencv/cv4/hl-opencv_patch_cv4_jdk21_20260607-2041-50.jar"/>
 	<classpathentry kind="lib" path="lib/opencv/cv4/opencv-4120.jar"/>
+	<classpathentry kind="lib" path="lib/opencv/cv4/hl-opencv_patch_cv4_jdk21_20260607-2211-03.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
