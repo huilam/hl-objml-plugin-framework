@@ -9,7 +9,7 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Rect2d;
-import org.opencv.imgproc.Imgproc;
+import org.opencv.geometry.Geometry;
 
 public class DetectedObj {
 	
@@ -128,7 +128,7 @@ public class DetectedObj {
 		//calc bounding box
 		if(this.obj_shape_points!=null)
 		{
-			Rect rect = Imgproc.boundingRect(getObj_shape_points());
+			Rect rect = Geometry.boundingRect(getObj_shape_points());
 			this.obj_bounding_box = new Rect2d(rect.x, rect.y, rect.width, rect.height);
 		}
 		else

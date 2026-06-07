@@ -677,9 +677,6 @@ public class ObjDetBasePlugin implements IObjDetectionPlugin {
 			case Dnn.DNN_BACKEND_INFERENCE_ENGINE :
 				sbDnnBackEnd.append(" (DNN_BACKEND_INFERENCE_ENGINE)");
 				break;
-			case Dnn.DNN_BACKEND_HALIDE :
-				sbDnnBackEnd.append(" (DNN_BACKEND_HALIDE)");
-				break;
 			case Dnn.DNN_BACKEND_CANN :
 				sbDnnBackEnd.append(" (DNN_BACKEND_CANN)");
 				break;
